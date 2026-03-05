@@ -13,7 +13,7 @@
 
 ---
 
-## ⚙️ Движок Реальности | The Engine of Reality
+## ⚙️ Двигатель Реальности | The Engine of Reality
 
 Модель опирается на симметричную троичную логику (аппаратная реализация ЭВМ «Сетунь»):  
 *The model is based on symmetric ternary logic (hardware analog: "Setun" computer):*
