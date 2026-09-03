@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>ТЭВ: 3D-Визуализация нейтрино (Ввинчивание спинора)</title>
+    <style>
+        body { margin: 0; overflow: hidden; background: #010408; font-family: 'Segoe UI', Arial, sans-serif; color: #c0d8f0; user-select: none; }
+        #canvas-container { width: 100vw; height: 100vh; display: block; }
+        #overlay {
+            position: absolute; top: 15px; left: 15px; background: rgba(3, 10, 22, 0.88);
+            padding: 16px 20px; border-radius: 8px; border: 1px solid #163858;
+            max-width: 380px; box-shadow: 0 4px 25px rgba(0,0,0,0.7); backdrop-filter: blur(6px);
+        }
+        h2 { margin: 0 0 6px 0; font-size: 15px; color: #38bdf8; text-transform: uppercase; letter-spacing: 1px; }
+        p { margin: 4px 0; font-size: 12px; line-height: 1.4; color: #94a3b8; }
+        .badge { display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; }
+        .spin { background: #8b5cf6; color: white; }
+        .helicity { background: #059669; color: white; }
+
+        #controls {
+            position: absolute; bottom: 20px; left: 15px; background: rgba(3, 10, 22, 0.88);
+            padding: 14px 18px; border-radius: 8px; border: 1px solid #163858;
+            display: flex; flex-direction: column; gap: 8px; font-size: 12px;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.7); backdrop-filter: blur(6px);
+        }
+        .ctrl-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+        input[type=range] { width: 130px; accent-color: #38bdf8; }
+
+        .btn-group { display: flex; gap: 6px; margin-top: 4px; }
+        button {
+            background: #0f2744; border: 1px solid #1e4976; color: #7dd3fc;
+            padding: 5px 10px; border-radius: 4px; font-size: 11px; cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        button:hover { background: #1a497c; color: #ffffff; border-color: #38bdf8; }
+        button.active { background: #0284c7; color: white; border-color: #38bdf8; font-weight: bold; }
+
+        #cam-presets { position: absolute; top: 15px; right: 15px; display: flex; gap: 6px; }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+    <div id="overlay">
+        <h2>Нейтрино: 1D-спинорный солитон Мёбиуса</h2>
+        <p><span class="badge spin">Спин 1/2</span> <span id="helicity-badge" class="badge helicity">Левая спиральность (v-c)</span></p>
+        <p>Горизонтальное ввинчивание шнека в упругую матрицу вакуума. На концах — точечные рубиновые фазовые монополи.</p>
+
+        <div style="margin-top: 8px;">
+            <span style="font-size: 11px; color: #64748b; font-weight: bold;">БЫСТРЫЙ ВЫБОР ПОКОЛЕНИЯ:</span>
+            <div class="btn-group">
+                <button id="btn-nu1" onclick="setMode(1)">ν₁ (Дыхание)</button>
+                <button id="btn-nu2" onclick="setMode(2)">ν₂ (Торсион)</button>
+                <button id="btn-nu3" onclick="setMode(3)">ν₃ (Змейка)</button>
+                <button id="btn-osc" class="active" onclick="setMode('osc')">Осцилляция</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="cam-presets">
+        <button onclick="setCamera('side')">Вид сбоку</button>
+        <button onclick="setCamera('head')">В лоб (Штопор)</button>
+        <button onclick="setCamera('iso')">Изометрия</button>
+    </div>
+
+    <div id="controls">
+        <div class="ctrl-row">
+            <span>Скорость полета:</span>
+            <input id="speed" type="range" min="0" max="2" step="0.1" value="1.0">
+        </div>
+        <div class="ctrl-row">
+            <span>Шаг ввинчивания (Pitch):</span>
+            <input id="pitch" type="range" min="0.5" max="3.0" step="0.1" value="1.6">
+        </div>
+        <div class="ctrl-row">
+            <span>Мода ν₁ (Дыхание длины):</span>
+            <input id="amp1" type="range" min="0" max="0.4" step="0.02" value="0.15">
+        </div>
+        <div class="ctrl-row">
+            <span>Мода ν₂ (Торсионный узел):</span>
+            <input id="amp2" type="range" min="0" max="1.2" step="0.05" value="0.7">
+        </div>
+        <div class="ctrl-row">
+            <span>Мода ν₃ (Изгибная волна):</span>
+            <input id="amp3" type="range" min="0" max="0.6" step="0.05" value="0.25">
+        </div>
+        <div class="ctrl-row">
+            <span>Спиральность:</span>
+            <button id="btn-helicity" onclick="toggleHelicity()">Нейтрино (L)</button>
+        </div>
+    </div>
+
+    <div id="canvas-container"></div>
+
+    <script>
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0x010408, 0.025);
+
+        const camera = new THREE.PerspectiveCamera(42, window.innerWidth / window.innerHeight, 0.1, 100);
+        camera.position.set(0, 2.5, 12.0);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        container.appendChild(renderer.domElement);
+
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.06;
+
+        scene.add(new THREE.AmbientLight(0x1e293b, 1.2));
+        const dirLight = new THREE.DirectionalLight(0x38bdf8, 1.5);
+        dirLight.position.set(5, 10, 7);
+        scene.add(dirLight);
+
+        // 1. Построение сплюснутой ленты Мёбиуса
+        const N_S = 120; // Сегменты вдоль нити
+        const N_U = 8;   // Сегменты поперек ленты
+        const L0 = 5.5;  // Базовая длина нити
+        const W0 = 0.42; // Максимальная ширина ленты
+
+        const ribbonGeo = new THREE.PlaneGeometry(1, 1, N_S, N_U);
+        const ribbonMat = new THREE.MeshStandardMaterial({
+            color: 0x00e5ff,
+            emissive: 0x003355,
+            roughness: 0.2,
+            metalness: 0.8,
+            side: THREE.DoubleSide,
+            transparent: true,
+            opacity: 0.92
+        });
+        const ribbonMesh = new THREE.Mesh(ribbonGeo, ribbonMat);
+        scene.add(ribbonMesh);
+
+        // Центральная яркая осевая струна (белый световод)
+        const spineGeo = new THREE.BufferGeometry();
+        const spinePos = new Float32Array((N_S + 1) * 3);
+        spineGeo.setAttribute('position', new THREE.BufferAttribute(spinePos, 3));
+        const spineMat = new THREE.LineBasicMaterial({ color: 0xffffff, linewidth: 2 });
+        const spineLine = new THREE.Line(spineGeo, spineMat);
+        scene.add(spineLine);
+
+        // Точечные рубиновые монополи на концах (маленькие светящиеся сферы)
+        const monoGeo = new THREE.SphereGeometry(0.038, 16, 16);
+        const monoMat = new THREE.MeshBasicMaterial({ color: 0xff1744 });
+        const monoStart = new THREE.Mesh(monoGeo, monoMat);
+        const monoEnd = new THREE.Mesh(monoGeo, monoMat);
+        scene.add(monoStart);
+        scene.add(monoEnd);
+
+        // Внутренние световые искры монополей
+        const sparkLight1 = new THREE.PointLight(0xff1744, 1.5, 2.0);
+        const sparkLight2 = new THREE.PointLight(0xff1744, 1.5, 2.0);
+        scene.add(sparkLight1);
+        scene.add(sparkLight2);
+
+        // 2. Упругая 3D-сетка вакуума (деформируемая матрица сдвига)
+        const GRID_X = 24, GRID_Y = 6, GRID_Z = 6;
+        const baseGrid = [];
+        const dotCoords = [];
+
+        for (let ix = -GRID_X/2; ix <= GRID_X/2; ix += 1.0) {
+            for (let iy = -GRID_Y/2; iy <= GRID_Y/2; iy += 1.0) {
+                for (let iz = -GRID_Z/2; iz <= GRID_Z/2; iz += 1.0) {
+                    dotCoords.push(ix, iy, iz);
+                    baseGrid.push(new THREE.Vector3(ix, iy, iz));
+                }
+            }
+        }
+
+        const gridGeo = new THREE.BufferGeometry();
+        gridGeo.setAttribute('position', new THREE.Float32BufferAttribute(dotCoords, 3));
+        const gridMat = new THREE.PointsMaterial({
+            color: 0x1e3a5f, size: 0.045, transparent: true, opacity: 0.45
+        });
+        const gridPointsMesh = new THREE.Points(gridGeo, gridMat);
+        scene.add(gridPointsMesh);
+
+        // Переменные динамики
+        let time = 0;
+        let isLeftHanded = true; // Спиральность нейтрино
+        let activeMode = 'osc';
+
+        function toggleHelicity() {
+            isLeftHanded = !isLeftHanded;
+            const btn = document.getElementById('btn-helicity');
+            const badge = document.getElementById('helicity-badge');
+            if (isLeftHanded) {
+                btn.innerText = "Нейтрино (L)";
+                badge.innerText = "Левая спиральность (v-c)";
+                badge.style.background = "#059669";
+            } else {
+                btn.innerText = "Антинейтрино (R)";
+                badge.innerText = "Правая спиральность (v-c)";
+                badge.style.background = "#dc2626";
+            }
+        }
+
+        function setMode(m) {
+            activeMode = m;
+            document.querySelectorAll('.btn-group button').forEach(b => b.classList.remove('active'));
+            if (m === 1) {
+                document.getElementById('btn-nu1').classList.add('active');
+                document.getElementById('amp1').value = 0.35;
+                document.getElementById('amp2').value = 0.0;
+                document.getElementById('amp3').value = 0.0;
+            } else if (m === 2) {
+                document.getElementById('btn-nu2').classList.add('active');
+                document.getElementById('amp1').value = 0.05;
+                document.getElementById('amp2').value = 1.0;
+                document.getElementById('amp3').value = 0.0;
+            } else if (m === 3) {
+                document.getElementById('btn-nu3').classList.add('active');
+                document.getElementById('amp1').value = 0.05;
+                document.getElementById('amp2').value = 0.1;
+                document.getElementById('amp3').value = 0.55;
+            } else {
+                document.getElementById('btn-osc').classList.add('active');
+                document.getElementById('amp1').value = 0.15;
+                document.getElementById('amp2').value = 0.7;
+                document.getElementById('amp3').value = 0.25;
+            }
+        }
+
+        function setCamera(pos) {
+            if (pos === 'side') {
+                camera.position.set(0, 0, 11);
+            } else if (pos === 'head') {
+                camera.position.set(9, 0.5, 0.5);
+            } else {
+                camera.position.set(0, 3.5, 11);
+            }
+            controls.target.set(0, 0, 0);
+        }
+
+        const posAttribute = ribbonGeo.attributes.position;
+        const gridPositions = gridPointsMesh.geometry.attributes.position.array;
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            const speed = parseFloat(document.getElementById('speed').value);
+            const pitch = parseFloat(document.getElementById('pitch').value);
+            let A1 = parseFloat(document.getElementById('amp1').value);
+            let A2 = parseFloat(document.getElementById('amp2').value);
+            let A3 = parseFloat(document.getElementById('amp3').value);
+
+            // Если включен режим осцилляции — плавно перекачиваем энергию между модами
+            if (activeMode === 'osc') {
+                const oscPhase = time * 0.4;
+                A1 = 0.18 * Math.pow(Math.sin(oscPhase), 2);
+                A2 = 0.85 * Math.pow(Math.sin(oscPhase + Math.PI/3), 2);
+                A3 = 0.38 * Math.pow(Math.cos(oscPhase), 2);
+            }
+
+            time += 0.03 * speed;
+
+            // Горизонтальный полет слева направо вдоль оси X
+            const xFly = (time * 2.4) % 24.0 - 12.0;
+
+            // Мода 1: Продольное дыхание нити
+            const curL = L0 * (1.0 + A1 * Math.cos(time * 1.8));
+
+            let pIdx = 0;
+            const sPos = spineGeo.attributes.position.array;
+            const hSign = isLeftHanded ? 1.0 : -1.0;
+
+            for (let i = 0; i <= N_S; i++) {
+                const sNorm = (i / N_S) - 0.5; // от -0.5 (хвост) до +0.5 (нос)
+                const s = sNorm * curL;
+
+                // Несущая ось X (горизонталь)
+                const xCore = xFly + s;
+
+                // Мода 3: Поперечно-изгибное вихляние (змеевидная волна в плоскости Y-Z)
+                const yCore = A3 * Math.sin(s * 2.0 - time * 3.5);
+                const zCore = A3 * Math.cos(s * 2.0 - time * 3.5) * 0.8;
+
+                sPos[i * 3 + 0] = xCore;
+                sPos[i * 3 + 1] = yCore;
+                sPos[i * 3 + 2] = zCore;
+
+                if (i === 0) {
+                    monoStart.position.set(xCore, yCore, zCore);
+                    sparkLight1.position.set(xCore, yCore, zCore);
+                }
+                if (i === N_S) {
+                    monoEnd.position.set(xCore, yCore, zCore);
+                    sparkLight2.position.set(xCore, yCore, zCore);
+                }
+
+                // ВИНТОВАЯ КИНЕМАТИКА ВВИНЧИВАНИЯ:
+                // Знак согласует шаг резьбы со скоростью полета, устраняя пробуксовку!
+                const phiDrill = - hSign * (xCore * pitch + time * 3.5);
+
+                // Мёбиусный полуоборот на 180° вдоль струны
+                const phiMobius = Math.PI * (sNorm + 0.5);
+
+                // Мода 2: Стоячий торсионный маятник с узлом посередине
+                const phiTorsion = A2 * Math.sin(2.0 * Math.PI * sNorm) * Math.cos(time * 2.6);
+
+                const phiTotal = phiDrill + phiMobius + phiTorsion;
+
+                // Кавитационный конус ширины (нулевая ширина на монополях)
+                const w = W0 * Math.pow(Math.cos(Math.PI * sNorm), 2);
+
+                // Вектор нормали ленты перпендикулярен оси X
+                const ny = Math.cos(phiTotal);
+                const nz = Math.sin(phiTotal);
+
+                for (let j = 0; j <= N_U; j++) {
+                    const uNorm = (j / N_U) - 0.5;
+                    const u = uNorm * w;
+
+                    posAttribute.setXYZ(
+                        pIdx++,
+                        xCore,
+                        yCore + u * ny,
+                        zCore + u * nz
+                    );
+                }
+            }
+
+            posAttribute.needsUpdate = true;
+            ribbonGeo.computeVertexNormals();
+            spineGeo.attributes.position.needsUpdate = true;
+
+            // Упругая реакция матрицы среды на ввинчивание
+            for (let k = 0; k < baseGrid.length; k++) {
+                const bp = baseGrid[k];
+                const dx = bp.x - xFly;
+
+                if (Math.abs(dx) < curL * 0.55) {
+                    const distPerpSq = bp.y * bp.y + bp.z * bp.z;
+                    const envelope = Math.exp(-distPerpSq * 1.1) * Math.cos((dx / curL) * Math.PI);
+
+                    // Поперечный закручивающий сдвиг среды
+                    const rotAngle = envelope * 0.45 * Math.sin(time * 3.0);
+                    gridPositions[k * 3 + 0] = bp.x;
+                    gridPositions[k * 3 + 1] = bp.y * Math.cos(rotAngle) - bp.z * Math.sin(rotAngle);
+                    gridPositions[k * 3 + 2] = bp.y * Math.sin(rotAngle) + bp.z * Math.cos(rotAngle);
+                } else {
+                    // Мгновенный упругий возврат без остаточного следа
+                    gridPositions[k * 3 + 0] = bp.x;
+                    gridPositions[k * 3 + 1] = bp.y;
+                    gridPositions[k * 3 + 2] = bp.z;
+                }
+            }
+            gridPointsMesh.geometry.attributes.position.needsUpdate = true;
+
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        animate();
+    </script>
+</body>
+</html>
