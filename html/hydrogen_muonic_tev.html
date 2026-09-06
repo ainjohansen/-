@@ -2,55 +2,76 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>ТЭВ: Атом Водорода и Мюонный Водород (Точная геометрия)</title>
+    <title>ТЭВ v5.0: Атом Водорода (3D-Прецессия vs Плоский Меркурий)</title>
     <style>
         body { margin: 0; overflow: hidden; background: #010307; font-family: 'Segoe UI', Arial, sans-serif; color: #e2e8f0; user-select: none; }
         #canvas-container { width: 100vw; height: 100vh; display: block; }
 
         #hud {
-            position: absolute; top: 15px; left: 15px; background: rgba(2, 6, 15, 0.94);
-            padding: 16px 22px; border-radius: 10px; border: 1px solid #1e3a5f;
-            max-width: 450px; box-shadow: 0 8px 32px rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+            position: absolute; top: 15px; left: 15px; background: rgba(2, 8, 20, 0.94);
+            padding: 16px 20px; border-radius: 12px; border: 1px solid #1e3a5f;
+            max-width: 470px; box-shadow: 0 10px 35px rgba(0,0,0,0.85); backdrop-filter: blur(10px);
         }
         h1 { margin: 0 0 6px 0; font-size: 15px; color: #38bdf8; text-transform: uppercase; letter-spacing: 1.5px; }
-        p { margin: 4px 0; font-size: 12px; line-height: 1.4; color: #94a3b8; }
+        p { margin: 4px 0; font-size: 11.5px; line-height: 1.45; color: #94a3b8; }
+        
+        .scale-badge {
+            background: rgba(16, 185, 129, 0.12); border-left: 3px solid #10b981;
+            padding: 7px 10px; margin: 8px 0; border-radius: 4px; font-size: 11px; color: #6ee7b7;
+            line-height: 1.4;
+        }
+        .scale-alert-h {
+            background: rgba(245, 158, 11, 0.12); border-left: 3px solid #f59e0b;
+            padding: 7px 10px; margin: 8px 0; border-radius: 4px; font-size: 10.5px; color: #fbbf24;
+            line-height: 1.35;
+        }
+        .orbit-mode-badge {
+            background: rgba(168, 85, 247, 0.12); border-left: 3px solid #c084fc;
+            padding: 6px 10px; margin: 6px 0; border-radius: 4px; font-size: 10.5px; color: #e9d5ff;
+            line-height: 1.35;
+        }
+
         .tag { display: inline-block; padding: 2px 7px; border-radius: 4px; font-size: 10px; font-weight: bold; margin-right: 4px; }
         .tag-p { background: #e11d48; color: white; }
-        .tag-antinode { background: #f59e0b; color: black; }
+        .tag-uud { background: #f59e0b; color: black; font-weight: 800; }
         .tag-lep { background: #0284c7; color: white; }
 
         #nav {
             position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
-            background: rgba(2, 6, 15, 0.94); padding: 8px 20px; border-radius: 30px;
+            background: rgba(2, 8, 20, 0.94); padding: 8px 18px; border-radius: 30px;
             border: 1px solid #1e3a5f; display: flex; gap: 8px; align-items: center;
             box-shadow: 0 6px 30px rgba(0,0,0,0.85); backdrop-filter: blur(8px);
         }
         button {
-            background: #091728; border: 1px solid #1e4976; color: #93c5fd;
-            padding: 8px 16px; border-radius: 20px; font-size: 11px; cursor: pointer;
+            background: #091a2d; border: 1px solid #1e4976; color: #93c5fd;
+            padding: 8px 14px; border-radius: 20px; font-size: 11px; cursor: pointer;
             transition: all 0.2s ease;
         }
-        button:hover { background: #16385e; color: white; border-color: #38bdf8; }
+        button:hover { background: #163d66; color: white; border-color: #38bdf8; }
         button.active { background: #0284c7; color: white; border-color: #38bdf8; font-weight: bold; box-shadow: 0 0 14px rgba(56,189,248,0.55); }
-        .divider { width: 1px; height: 24px; background: #1e3a5f; margin: 0 4px; }
+        button.btn-orbit.active { background: #7e22ce; border-color: #c084fc; box-shadow: 0 0 14px rgba(192,132,252,0.6); }
+        button.btn-photo { border-color: #f59e0b; color: #fde68a; }
+        button.btn-photo.active { background: #b45309; border-color: #f59e0b; box-shadow: 0 0 14px rgba(245,158,11,0.6); }
+        .divider { width: 1px; height: 22px; background: #1e3a5f; margin: 0 4px; }
 
         #toggles-box {
-            position: absolute; top: 15px; right: 15px; background: rgba(2, 6, 15, 0.92);
-            padding: 16px 20px; border-radius: 10px; border: 1px solid #1e3a5f;
-            width: 280px; box-shadow: 0 8px 32px rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+            position: absolute; top: 15px; right: 15px; background: rgba(2, 8, 20, 0.94);
+            padding: 16px 18px; border-radius: 12px; border: 1px solid #1e3a5f;
+            width: 300px; box-shadow: 0 10px 35px rgba(0,0,0,0.85); backdrop-filter: blur(10px);
         }
-        #toggles-box h2 { margin: 0 0 10px 0; font-size: 13px; color: #38bdf8; text-transform: uppercase; border-bottom: 1px solid #1e3a5f; padding-bottom: 6px; }
+        #toggles-box h2 { margin: 0 0 10px 0; font-size: 12px; color: #38bdf8; text-transform: uppercase; border-bottom: 1px solid #1e3a5f; padding-bottom: 6px; }
         .row { display: flex; justify-content: space-between; align-items: center; margin: 8px 0; font-size: 11px; }
-        input[type=range] { width: 120px; accent-color: #38bdf8; }
+        input[type=range] { width: 130px; accent-color: #38bdf8; }
         .check-row { display: flex; align-items: center; gap: 8px; font-size: 11px; margin: 6px 0; cursor: pointer; color: #cbd5e1; }
         .check-row input { cursor: pointer; accent-color: #38bdf8; }
         
         #quick-zoom { display: flex; gap: 6px; margin-top: 10px; padding-top: 8px; border-top: 1px dashed #1e3a5f; }
-        #quick-zoom button { padding: 4px 8px; font-size: 10px; border-radius: 12px; }
+        #quick-zoom button { padding: 4px 8px; font-size: 10px; border-radius: 12px; flex: 1; }
 
-        #scale-info {
-            font-family: monospace; font-size: 11px; color: #f59e0b; margin-top: 10px;
-            padding-top: 8px; border-top: 1px dashed #1e3a5f; line-height: 1.4;
+        #photo-indicator {
+            display: none; background: rgba(245, 158, 11, 0.15); border: 1px solid #f59e0b;
+            padding: 6px 8px; border-radius: 6px; font-size: 10px; color: #fef3c7;
+            margin-top: 8px; text-align: center; font-weight: bold;
         }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -58,42 +79,63 @@
 </head>
 <body>
     <div id="hud">
-        <h1 id="title-main">Атом Водорода (e⁻ + p)</h1>
+        <h1 id="title-main">Мюонный Водород (μ⁻ + p)</h1>
+        
+        <div id="scale-banner" class="scale-badge">
+            <b>ЧЕСТНЫЙ МАСШТАБ 1:300:</b> Орбита мюона ($256$ фм) шире ядра ($0.84$ фм) ровно в 300 раз! Вся орбита атома МЕНЬШЕ кольца свободного электрона ($386$ фм).
+        </div>
+
+        <div id="orbit-banner" class="orbit-mode-badge">
+            <b>⚛️ КВАНТОВАЯ 3D-ПРЕЦЕССИЯ (L = 0):</b> Плоскость орбиты кувыркается по всем 3 осям, заметая сферу. Поэтому атом круглый, а не плоский, как Солнечная система!
+        </div>
+
         <p id="desc-main">
-            <b>Масштабная иерархия:</b> Кольцо электрона R_e крупнее протона в 460 раз, а боровская орбита a₀ шире электрона еще в 140 раз! Протон в центре кувыркается по 3 осям, 3 пучности сидят строго на вершинах лепестков.
+            <b>Мюон — пухлый узел T(3,2):</b> Фактор $p/q = 1.5$ делает трубку на 50% толще электрона. Протон тонкий, 3 пучности помечены uud в дань уважения СМ.
         </p>
+
         <div style="margin-top: 6px;">
-            <span class="tag tag-p">Протон T(3,2) (3 оси)</span>
-            <span class="tag tag-antinode">Вершины лепестков D₃</span>
-            <span class="tag tag-lep" id="badge-lepton">Электрон: Тор R_e</span>
+            <span class="tag tag-p">Протон T(3,2) тонкий</span>
+            <span class="tag tag-uud">Пучности uud</span>
+            <span class="tag tag-lep" id="badge-lepton">Мюон T(3,2) пухлый</span>
         </div>
     </div>
 
     <div id="toggles-box">
-        <h2>Слои реальности ТЭВ</h2>
+        <h2>Управление Лабораторией</h2>
+        
+        <label class="check-row">
+            <input type="checkbox" id="chk-trail" checked onchange="toggleLayer('trail')">
+            <span>Шлейф орбиты (Заметание сферы)</span>
+        </label>
+
+        <label class="check-row">
+            <input type="checkbox" id="chk-membrane" checked onchange="toggleLayer('membrane')">
+            <span>Упругая мембрана (Хвосты натяжения)</span>
+        </label>
         
         <label class="check-row">
             <input type="checkbox" id="chk-cloud" checked onchange="toggleLayer('cloud')">
             <span>1s-Облако вероятности (|ψ|²)</span>
         </label>
-        
-        <label class="check-row">
-            <input type="checkbox" id="chk-field" checked onchange="toggleLayer('field')">
-            <span>Срез гашения кулоновских хвостов</span>
-        </label>
 
         <label class="check-row">
             <input type="checkbox" id="chk-antinodes" checked onchange="toggleLayer('antinodes')">
-            <span>3 Пучности на вершинах лепестков</span>
+            <span>Метки uud на лепестках</span>
         </label>
 
-        <div class="row" style="margin-top: 12px;">
+        <div class="row" style="margin-top: 10px;">
             <span>Скорость времени:</span>
-            <input id="sl-speed" type="range" min="0" max="2.5" step="0.1" value="1.0">
+            <input id="sl-speed" type="range" min="0" max="3.0" step="0.05" value="0.9" oninput="onSpeedChange()">
         </div>
+
         <div class="row">
-            <span>Яркость 1s-облака:</span>
-            <input id="sl-cloud-op" type="range" min="0.05" max="0.8" step="0.05" value="0.45">
+            <span>Амплитуда мембраны:</span>
+            <input id="sl-membrane-amp" type="range" min="0.2" max="2.5" step="0.1" value="1.2">
+        </div>
+
+        <div id="photo-indicator">
+            📸 РЕЖИМ 3D-ФОТОГРАФИИ (СТОДОЛЬНА 2013)<br>
+            <span style="font-weight: normal; font-size: 9.5px;">Экспозиция орбитали: стоячая волна усреднена во времени</span>
         </div>
 
         <div id="quick-zoom">
@@ -101,17 +143,16 @@
             <button onclick="focusView('lepton')">Лептон</button>
             <button onclick="focusView('atom')">Весь атом</button>
         </div>
-
-        <div id="scale-info">
-            Боровский радиус: a₀ = 52 917 фм<br>
-            Кольцо электрона: R_e = 386 фм<br>
-            Керн протона: R_p ≈ 0.84 фм
-        </div>
     </div>
 
     <div id="nav">
-        <button id="btn-h" class="active" onclick="switchSystem('H')">1. Обычный Водород (Галактический масштаб)</button>
-        <button id="btn-muh" onclick="switchSystem('MuH')">2. МЮОННЫЙ ВОДОРОД (Тесный танец узлов)</button>
+        <button id="btn-muh" class="active" onclick="switchSystem('MuH')">1. Мюонный (1:300)</button>
+        <button id="btn-h" onclick="switchSystem('H')">2. Обычный H (Сжатый)</button>
+        <div class="divider"></div>
+        <button id="btn-orb-precess" class="btn-orbit active" onclick="setOrbitMode('precess')">⚛️ 3D-Прецессия ТЭВ</button>
+        <button id="btn-orb-mercury" class="btn-orbit" onclick="setOrbitMode('mercury')">🪐 Плоский «Меркурий»</button>
+        <div class="divider"></div>
+        <button id="btn-photo" class="btn-photo" onclick="togglePhotoMode()">📸 3D-Фото 2013</button>
     </div>
 
     <div id="canvas-container"></div>
@@ -119,43 +160,65 @@
     <script>
         const container = document.getElementById('canvas-container');
         const scene = new THREE.Scene();
-        scene.fog = new THREE.FogExp2(0x010307, 0.008);
+        scene.fog = new THREE.FogExp2(0x010307, 0.007);
 
         const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-        camera.position.set(0, 12, 28);
+        camera.position.set(0, 6, 18);
 
         const renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         container.appendChild(renderer.domElement);
 
         const controls = new THREE.OrbitControls(camera, renderer.domElement);
         controls.enableDamping = true;
         controls.dampingFactor = 0.06;
 
-        // ИСПРАВЛЕНИЕ 1: Камера полностью слушается мышь!
         let isTransitioning = false;
-        let targetCam = new THREE.Vector3(0, 12, 28);
+        let targetCam = new THREE.Vector3(0, 6, 18);
         let targetLook = new THREE.Vector3(0, 0, 0);
 
-        controls.addEventListener('start', () => {
-            isTransitioning = false; // При касании мыши автопилот отключается!
-        });
+        controls.addEventListener('start', () => { isTransitioning = false; });
 
-        scene.add(new THREE.AmbientLight(0x0a1626, 2.2));
-        const dirLight = new THREE.DirectionalLight(0x38bdf8, 1.8);
-        dirLight.position.set(15, 25, 20);
+        scene.add(new THREE.AmbientLight(0x0f172a, 2.0));
+        const dirLight = new THREE.DirectionalLight(0x38bdf8, 1.6);
+        dirLight.position.set(15, 30, 20);
         scene.add(dirLight);
 
-        let currentSystem = 'H';
+        let currentSystem = 'MuH';
+        let orbitMode = 'precess'; // 'precess' (ТЭВ 3D) или 'mercury' (плоская эклиптика)
+        let isPhotoMode = false;
+
+        function makeTextSprite(message, colorBg, colorText = '#ffffff') {
+            const canvas = document.createElement('canvas');
+            canvas.width = 160;
+            canvas.height = 64;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = colorBg;
+            ctx.beginPath();
+            ctx.roundRect(10, 10, 140, 44, 12);
+            ctx.fill();
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = '#ffffff';
+            ctx.stroke();
+            ctx.fillStyle = colorText;
+            ctx.font = 'bold 24px "Segoe UI", Arial, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(message, 80, 32);
+
+            const texture = new THREE.CanvasTexture(canvas);
+            const spriteMaterial = new THREE.SpriteMaterial({ map: texture, depthTest: false });
+            const sprite = new THREE.Sprite(spriteMaterial);
+            sprite.scale.set(0.45, 0.2, 1);
+            return sprite;
+        }
 
         // =====================================================================
-        // 1. ПРОТОН: УЗЕЛ T(3,2) С ВЕРШИННЫМИ ПУЧНОСТЯМИ И 3-ОСЕВЫМ КУВЫРКОМ
+        // 1. ПРОТОН: ТОНКИЙ ТРИЛИСТНИК T(3,2)
         // =====================================================================
         const protonRoot = new THREE.Group();
         scene.add(protonRoot);
-
-        // Внутренняя группа для 3-осевого кувырка протона
         const protonTumble = new THREE.Group();
         protonRoot.add(protonTumble);
 
@@ -163,7 +226,6 @@
             constructor(scale = 0.35) { super(); this.scale = scale; }
             getPoint(t) {
                 const phi = t * Math.PI * 2;
-                // Строгая параметризация D3 трилистника
                 const x = (Math.sin(phi) + 1.85 * Math.sin(2 * phi)) * this.scale;
                 const y = (Math.cos(phi) - 1.85 * Math.cos(2 * phi)) * this.scale;
                 const z = (-Math.sin(3 * phi)) * (this.scale * 1.15);
@@ -171,116 +233,180 @@
             }
         }
 
-        const protonCurve = new SymmetricTrefoilCurve(0.32);
+        const protonCurve = new SymmetricTrefoilCurve(0.35);
         const protonMesh = new THREE.Mesh(
-            new THREE.TubeGeometry(protonCurve, 200, 0.058, 16, true),
-            new THREE.MeshStandardMaterial({ color: 0xf43f5e, emissive: 0x9f1239, roughness: 0.2, metalness: 0.85 })
+            new THREE.TubeGeometry(protonCurve, 200, 0.035, 16, true),
+            new THREE.MeshStandardMaterial({ color: 0xf43f5e, emissive: 0x9f1239, roughness: 0.15, metalness: 0.9 })
         );
         protonTumble.add(protonMesh);
 
-        // Одиночный фотон, бегущий по трилистнику
-        const pPhoton = new THREE.Mesh(
-            new THREE.SphereGeometry(0.065, 16, 16),
-            new THREE.MeshBasicMaterial({ color: 0xffffff })
-        );
+        const pPhoton = new THREE.Mesh(new THREE.SphereGeometry(0.055, 16, 16), new THREE.MeshBasicMaterial({ color: 0xffffff }));
         protonTumble.add(pPhoton);
 
-        // ИСПРАВЛЕНИЕ 3: Пучности сидят строго на вершинах 3 лепестков (t = 1/6, 1/2, 5/6)!
         const antinodesGroup = new THREE.Group();
         protonTumble.add(antinodesGroup);
 
-        const antinodePoints = [
-            protonCurve.getPoint(1.0 / 6.0), // Вершина лепестка 1 (угол 30°)
-            protonCurve.getPoint(1.0 / 2.0), // Вершина лепестка 2 (угол 270°)
-            protonCurve.getPoint(5.0 / 6.0)  // Вершина лепестка 3 (угол 150°)
+        const antinodeData = [
+            { t: 1.0 / 6.0, label: "u (+2/3)", color: "#f59e0b" },
+            { t: 1.0 / 2.0, label: "u (+2/3)", color: "#f59e0b" },
+            { t: 5.0 / 6.0, label: "d (-1/3)", color: "#3b82f6" }
         ];
 
         const antinodeMeshes = [];
-        antinodePoints.forEach(pos => {
-            const anMesh = new THREE.Mesh(
-                new THREE.SphereGeometry(0.14, 16, 16),
-                new THREE.MeshBasicMaterial({
-                    color: 0xfbbf24, transparent: true, opacity: 0.9, blending: THREE.AdditiveBlending
-                })
+        antinodeData.forEach(d => {
+            const pos = protonCurve.getPoint(d.t);
+            const sphere = new THREE.Mesh(
+                new THREE.SphereGeometry(0.10, 16, 16),
+                new THREE.MeshBasicMaterial({ color: 0xfbbf24, transparent: true, opacity: 0.95, blending: THREE.AdditiveBlending })
             );
-            anMesh.position.copy(pos);
-            antinodesGroup.add(anMesh);
-            antinodeMeshes.push(anMesh);
+            sphere.position.copy(pos);
+            antinodesGroup.add(sphere);
+            antinodeMeshes.push(sphere);
+
+            const sprite = makeTextSprite(d.label, d.color);
+            sprite.position.copy(pos).add(new THREE.Vector3(0, 0.24, 0));
+            antinodesGroup.add(sprite);
         });
 
-        // Положительный кулоновский ореол протона (+e)
-        const pAura = new THREE.Mesh(
-            new THREE.SphereGeometry(1.1, 24, 24),
-            new THREE.MeshBasicMaterial({ color: 0xe11d48, transparent: true, opacity: 0.1, wireframe: true })
-        );
-        protonRoot.add(pAura);
-
         // =====================================================================
-        // 2. ЛЕПТОНЫ: ЭЛЕКТРОН (ТОР R_e) И МЮОН (КОМПАКТНЫЙ ТОР)
+        // 2. ЛЕПТОНЫ: ЭЛЕКТРОН И ПУХЛЫЙ МЮОН T(3,2)
         // =====================================================================
-        // А) Электрон: ИСПРАВЛЕНИЕ 2 — Тор электрона КРУПНЕЕ протона!
         const electronRoot = new THREE.Group();
         scene.add(electronRoot);
         const eTumble = new THREE.Group();
         electronRoot.add(eTumble);
 
-        // Комптоновский тор электрона (радиус 0.95 — в разы больше керна протона!)
         const eTorus = new THREE.Mesh(
-            new THREE.TorusGeometry(0.95, 0.016, 16, 80),
-            new THREE.MeshStandardMaterial({ color: 0x38bdf8, emissive: 0x0284c7, roughness: 0.1 })
+            new THREE.TorusGeometry(0.95, 0.022, 16, 80),
+            new THREE.MeshStandardMaterial({ color: 0x38bdf8, emissive: 0x0284c7, roughness: 0.1, metalness: 0.8 })
         );
         eTumble.add(eTorus);
         const ePhoton = new THREE.Mesh(new THREE.SphereGeometry(0.045, 12, 12), new THREE.MeshBasicMaterial({ color: 0xffffff }));
         eTumble.add(ePhoton);
+        electronRoot.visible = false;
 
-        // Б) Мюон: Тор в 206 раз меньше электрона
         const muonRoot = new THREE.Group();
         scene.add(muonRoot);
         const muTumble = new THREE.Group();
         muonRoot.add(muTumble);
 
-        const muTorus = new THREE.Mesh(
-            new THREE.TorusGeometry(0.22, 0.018, 16, 60),
-            new THREE.MeshStandardMaterial({ color: 0x10b981, emissive: 0x047857, roughness: 0.2, metalness: 0.8 })
+        class MuonTorusKnotDense extends THREE.Curve {
+            constructor(R = 0.38, r = 0.16) { super(); this.R = R; this.r = r; }
+            getPoint(t) {
+                const theta = t * Math.PI * 2;
+                const x = (this.R + this.r * Math.cos(2 * theta)) * Math.cos(3 * theta);
+                const y = (this.R + this.r * Math.cos(2 * theta)) * Math.sin(3 * theta);
+                const z = this.r * Math.sin(2 * theta);
+                return new THREE.Vector3(x, y, z);
+            }
+        }
+
+        const muCurve = new MuonTorusKnotDense();
+        // Пухлая трубка 0.044 (r/R = 1.5 alpha)
+        const muMesh = new THREE.Mesh(
+            new THREE.TubeGeometry(muCurve, 160, 0.044, 16, true),
+            new THREE.MeshStandardMaterial({ color: 0x10b981, emissive: 0x047857, roughness: 0.25, metalness: 0.8 })
         );
-        muTumble.add(muTorus);
-        const muPhoton = new THREE.Mesh(new THREE.SphereGeometry(0.03, 12, 12), new THREE.MeshBasicMaterial({ color: 0xffffff }));
+        muTumble.add(muMesh);
+
+        const muPhoton = new THREE.Mesh(new THREE.SphereGeometry(0.048, 12, 12), new THREE.MeshBasicMaterial({ color: 0xffffff }));
         muTumble.add(muPhoton);
 
-        muonRoot.visible = false;
+        // =====================================================================
+        // 3. ДИНАМИЧЕСКИЙ ШЛЕЙФ ТРАЕКТОРИИ (ORBITAL TRAIL)
+        // =====================================================================
+        const TRAIL_LEN = 200;
+        const trailPositions = new Float32Array(TRAIL_LEN * 3);
+        const trailColors = new Float32Array(TRAIL_LEN * 3);
+        const trailGeo = new THREE.BufferGeometry();
+        trailGeo.setAttribute('position', new THREE.BufferAttribute(trailPositions, 3));
+        trailGeo.setAttribute('color', new THREE.BufferAttribute(trailColors, 3));
+
+        const trailMat = new THREE.LineBasicMaterial({
+            vertexColors: true, transparent: true, opacity: 0.85, blending: THREE.AdditiveBlending, linewidth: 2
+        });
+        const trailLine = new THREE.Line(trailGeo, trailMat);
+        scene.add(trailLine);
+
+        const trailHistory = [];
 
         // =====================================================================
-        // 3. 1s-ОБЛАКО ПЛОТНОСТИ ВЕРОЯТНОСТИ
+        // 4. РЕЖИМ 3D-ФОТОГРАФИИ (СТОДОЛЬНА 2013)
         // =====================================================================
-        const N_CLOUD_POINTS = 5000;
+        const photoModeGroup = new THREE.Group();
+        scene.add(photoModeGroup);
+        photoModeGroup.visible = false;
+
+        const orbitDiscGeo = new THREE.RingGeometry(5.8, 6.6, 80);
+        const orbitDiscMat = new THREE.MeshBasicMaterial({
+            color: 0x10b981, side: THREE.DoubleSide, transparent: true, opacity: 0.35, blending: THREE.AdditiveBlending
+        });
+        const orbitDiscMesh = new THREE.Mesh(orbitDiscGeo, orbitDiscMat);
+        orbitDiscMesh.rotation.x = Math.PI / 2;
+        photoModeGroup.add(orbitDiscMesh);
+
+        const shell1 = new THREE.Mesh(
+            new THREE.SphereGeometry(2.5, 32, 32),
+            new THREE.MeshBasicMaterial({ color: 0x059669, transparent: true, opacity: 0.1, wireframe: true })
+        );
+        const shell2 = new THREE.Mesh(
+            new THREE.SphereGeometry(6.2, 32, 32),
+            new THREE.MeshBasicMaterial({ color: 0x10b981, transparent: true, opacity: 0.12, wireframe: true })
+        );
+        photoModeGroup.add(shell1);
+        photoModeGroup.add(shell2);
+
+        // =====================================================================
+        // 5. УПРУГАЯ МЕМБРАНА ВАКУУМА
+        // =====================================================================
+        const MEMB_RES = 60;
+        const MEMB_SIZE = 24.0;
+        const membGeo = new THREE.PlaneGeometry(MEMB_SIZE, MEMB_SIZE, MEMB_RES - 1, MEMB_RES - 1);
+        membGeo.rotateX(-Math.PI / 2);
+
+        const countV = membGeo.attributes.position.count;
+        const membColors = new Float32Array(countV * 3);
+        membGeo.setAttribute('color', new THREE.BufferAttribute(membColors, 3));
+
+        const membMat = new THREE.MeshStandardMaterial({
+            color: 0xffffff, vertexColors: true, wireframe: true, transparent: true, opacity: 0.72, roughness: 0.3
+        });
+        const membraneMesh = new THREE.Mesh(membGeo, membMat);
+        membraneMesh.position.y = -0.4;
+        scene.add(membraneMesh);
+
+        // =====================================================================
+        // 6. 1s-ОБЛАКО ПЛОТНОСТИ ВЕРОЯТНОСТИ
+        // =====================================================================
+        const N_CLOUD = 6000;
         const cloudGeo = new THREE.BufferGeometry();
-        const cloudPositions = new Float32Array(N_CLOUD_POINTS * 3);
-        const cloudColors = new Float32Array(N_CLOUD_POINTS * 3);
-        cloudGeo.setAttribute('position', new THREE.BufferAttribute(cloudPositions, 3));
-        cloudGeo.setAttribute('color', new THREE.BufferAttribute(cloudColors, 3));
+        const cloudPos = new Float32Array(N_CLOUD * 3);
+        const cloudCol = new Float32Array(N_CLOUD * 3);
+        cloudGeo.setAttribute('position', new THREE.BufferAttribute(cloudPos, 3));
+        cloudGeo.setAttribute('color', new THREE.BufferAttribute(cloudCol, 3));
 
         const cloudMat = new THREE.PointsMaterial({
-            size: 0.06, vertexColors: true, transparent: true, opacity: 0.45, blending: THREE.AdditiveBlending
+            size: 0.065, vertexColors: true, transparent: true, opacity: 0.45, blending: THREE.AdditiveBlending
         });
         const cloudMesh = new THREE.Points(cloudGeo, cloudMat);
         scene.add(cloudMesh);
 
         function rebuildCloud(orbitA, colorBase) {
             let p = 0;
-            while (p < N_CLOUD_POINTS) {
-                const r = -0.5 * orbitA * Math.log(Math.random() * Math.random() * Math.random() + 0.0001);
-                if (r < orbitA * 2.8) {
+            while (p < N_CLOUD) {
+                const r = -0.5 * orbitA * Math.log(Math.random() * Math.random() * Math.random() + 0.00005);
+                if (r < orbitA * 2.6) {
                     const theta = Math.acos(2 * Math.random() - 1);
                     const phi = 2 * Math.PI * Math.random();
 
-                    cloudPositions[p * 3 + 0] = r * Math.sin(theta) * Math.cos(phi);
-                    cloudPositions[p * 3 + 1] = r * Math.sin(theta) * Math.sin(phi);
-                    cloudPositions[p * 3 + 2] = r * Math.cos(theta);
+                    cloudPos[p * 3 + 0] = r * Math.sin(theta) * Math.cos(phi);
+                    cloudPos[p * 3 + 1] = r * Math.sin(theta) * Math.sin(phi);
+                    cloudPos[p * 3 + 2] = r * Math.cos(theta);
 
                     const bright = Math.exp(-r / orbitA);
-                    cloudColors[p * 3 + 0] = colorBase.r * (0.2 + bright * 0.8);
-                    cloudColors[p * 3 + 1] = colorBase.g * (0.2 + bright * 0.8);
-                    cloudColors[p * 3 + 2] = colorBase.b * (0.2 + bright * 0.8);
+                    cloudCol[p * 3 + 0] = colorBase.r * (0.2 + bright * 0.8);
+                    cloudCol[p * 3 + 1] = colorBase.g * (0.2 + bright * 0.8);
+                    cloudCol[p * 3 + 2] = colorBase.b * (0.2 + bright * 0.8);
                     p++;
                 }
             }
@@ -289,61 +415,34 @@
         }
 
         // =====================================================================
-        // 4. СРЕЗ КУЛОНОВСКИХ ХВОСТОВ МАТРИЦЫ (u_p + u_l -> 0)
-        // =====================================================================
-        const GRID_RES = 70;
-        const GRID_SIZE = 26.0;
-        const fieldGeo = new THREE.BufferGeometry();
-        const fieldCoords = [], baseCoords = [], fieldColors = [];
-
-        for (let iz = 0; iz < GRID_RES; iz++) {
-            const z = (iz / (GRID_RES - 1)) * GRID_SIZE - GRID_SIZE / 2;
-            for (let ix = 0; ix < GRID_RES; ix++) {
-                const x = (ix / (GRID_RES - 1)) * GRID_SIZE - GRID_SIZE / 2;
-                fieldCoords.push(x, -0.6, z);
-                baseCoords.push({ x: x, y: -0.6, z: z });
-                fieldColors.push(0, 0, 0);
-            }
-        }
-
-        fieldGeo.setAttribute('position', new THREE.Float32BufferAttribute(fieldCoords, 3));
-        fieldGeo.setAttribute('color', new THREE.Float32BufferAttribute(fieldColors, 3));
-
-        const fieldMat = new THREE.PointsMaterial({
-            size: 0.07, vertexColors: true, transparent: true, opacity: 0.8, blending: THREE.AdditiveBlending
-        });
-        const fieldMesh = new THREE.Points(fieldGeo, fieldMat);
-        scene.add(fieldMesh);
-
-        // =====================================================================
-        // 5. КОНФИГУРАЦИЯ СИСТЕМ (МАСШТАБЫ)
+        // 7. КОНФИГУРАЦИЯ СИСТЕМ
         // =====================================================================
         const SYS_CONFIG = {
-            H: {
-                title: "Атом Водорода (e⁻ + p)",
-                desc: "<b>Честный масштаб:</b> Керн протона в центре — крошечный узелок. Кольцо электрона R_e крупнее протона, а боровская орбита a₀ огромна! Снаружи атома хвосты (+e) и (-e) гасят друг друга в ноль.",
-                badge: "Электрон: Тор R_e",
-                badgeClass: "tag-lep",
-                orbitR: 10.5, // Широкая боровская орбита
-                speedMult: 0.8,
-                protonScale: 0.45, // Протон меньше орбиты в 23 раза
-                cloudColor: new THREE.Color(0x0284c7),
-                camPos: new THREE.Vector3(0, 12, 28),
-                camTarget: new THREE.Vector3(0, 0, 0),
-                scaleDesc: "Боровский радиус: a₀ = 52 917 фм<br>Кольцо электрона: R_e = 386 фм<br>Керн протона: R_p ≈ 0.84 фм"
-            },
             MuH: {
-                title: "МЮОННЫЙ ВОДОРОД (μ⁻ + p)",
-                desc: "<b>Орбита в 206 раз теснее:</b> Мюон летает вплотную к 3 лепесткам протона (a_μ ≈ 256 фм)! Протон кувыркается по 3 осям, пучности сидят строго на вершинах.",
-                badge: "Мюон: Тор T(1,1) компактный",
-                badgeClass: "tag-lep",
-                orbitR: 1.85, // Теснейший контакт прямо возле вершин трилистника
-                speedMult: 2.2,
-                protonScale: 0.85, // Увеличиваем протон для детального рассмотрения
+                title: "Мюонный Водород (μ⁻ + p) — ЧЕСТНЫЙ МАСШТАБ",
+                bannerClass: "scale-badge",
+                bannerText: "<b>ЧЕСТНЫЙ МАСШТАБ 1:300:</b> Орбита мюона ($256$ фм) шире ядра ($0.84$ фм) ровно в 300 раз! Вся орбита атома МЕНЬШЕ кольца свободного электрона ($386$ фм).",
+                badge: "Мюон: Пухлый узел T(3,2)",
+                orbitR: 6.2,
+                protonScale: 0.12,
+                muonScale: 0.55,
+                speedMult: 1.5,
                 cloudColor: new THREE.Color(0x10b981),
-                camPos: new THREE.Vector3(0, 2.5, 5.5),
-                camTarget: new THREE.Vector3(0, 0, 0),
-                scaleDesc: "Мюонный радиус: a_μ = 256 фм (в 206 раз ближе!)<br>Тор мюона скользит по вершинам лепестков протона."
+                camPos: new THREE.Vector3(0, 6, 18),
+                camTarget: new THREE.Vector3(0, 0, 0)
+            },
+            H: {
+                title: "Обычный Водород (e⁻ + p) — СЖАТЫЙ МАСШТАБ",
+                bannerClass: "scale-alert-h",
+                bannerText: "<b>⚠️ СЖАТЫЙ МАСШТАБ:</b> В реальности $a_0$ шире протона в 63&nbsp;000 раз. Масштаб сжат для сопоставления. Протон сделан тонким, чтобы видеть 3D-топологию.",
+                badge: "Электрон: Тор R_e стройный",
+                orbitR: 11.0,
+                protonScale: 0.38,
+                muonScale: 1.0,
+                speedMult: 0.8,
+                cloudColor: new THREE.Color(0x0284c7),
+                camPos: new THREE.Vector3(0, 14, 30),
+                camTarget: new THREE.Vector3(0, 0, 0)
             }
         };
 
@@ -353,32 +452,50 @@
 
             document.getElementById('btn-h').classList.toggle('active', sys === 'H');
             document.getElementById('btn-muh').classList.toggle('active', sys === 'MuH');
-
             document.getElementById('title-main').innerHTML = cfg.title;
-            document.getElementById('desc-main').innerHTML = cfg.desc;
-            const b = document.getElementById('badge-lepton');
-            b.innerText = cfg.badge;
-            document.getElementById('scale-info').innerHTML = cfg.scaleDesc;
+            document.getElementById('badge-lepton').innerText = cfg.badge;
+
+            const sb = document.getElementById('scale-banner');
+            sb.className = cfg.bannerClass;
+            sb.innerHTML = cfg.bannerText;
 
             electronRoot.visible = (sys === 'H');
             muonRoot.visible = (sys === 'MuH');
 
             protonRoot.scale.setScalar(cfg.protonScale);
-            rebuildCloud(cfg.orbitR, cfg.cloudColor);
+            muonRoot.scale.setScalar(cfg.muonScale);
 
-            // Плавный запуск перелета камеры
-            targetCam.copy(cfg.camPos);
-            targetLook.copy(cfg.camTarget);
-            isTransitioning = true;
+            rebuildCloud(cfg.orbitR, cfg.cloudColor);
+            trailHistory.length = 0; // Сбрасываем шлейф при переключении
+
+            if (!isPhotoMode) {
+                targetCam.copy(cfg.camPos);
+                targetLook.copy(cfg.camTarget);
+                isTransitioning = true;
+            }
+        }
+
+        function setOrbitMode(mode) {
+            orbitMode = mode;
+            document.getElementById('btn-orb-precess').classList.toggle('active', mode === 'precess');
+            document.getElementById('btn-orb-mercury').classList.toggle('active', mode === 'mercury');
+            
+            const ob = document.getElementById('orbit-banner');
+            if (mode === 'precess') {
+                ob.innerHTML = "<b>⚛️ КВАНТОВАЯ 3D-ПРЕЦЕССИЯ (L = 0):</b> Плоскость орбиты непрерывно кувыркается по сфере. Шлейф заметает шар, создавая сферическое 1s-облако!";
+            } else {
+                ob.innerHTML = "<b>🪐 ПЛОСКИЙ «МЕРКУРИЙ» (ЭКЛИПТИКА):</b> Классическая планетарная 2D-орбита Резерфорда. Атом получается плоским блином (противоречит сферичности 1s).";
+            }
+            trailHistory.length = 0;
         }
 
         function focusView(mode) {
             const cfg = SYS_CONFIG[currentSystem];
             if (mode === 'proton') {
-                targetCam.set(0, 0.8, 2.8);
+                targetCam.set(0, 0.4, 1.6);
                 targetLook.set(0, 0, 0);
             } else if (mode === 'lepton') {
-                targetCam.set(cfg.orbitR, 1.0, 2.5);
+                targetCam.set(cfg.orbitR, 0.8, 2.0);
                 targetLook.set(cfg.orbitR, 0, 0);
             } else {
                 targetCam.copy(cfg.camPos);
@@ -389,64 +506,127 @@
 
         function toggleLayer(layer) {
             if (layer === 'cloud') cloudMesh.visible = document.getElementById('chk-cloud').checked;
-            if (layer === 'field') fieldMesh.visible = document.getElementById('chk-field').checked;
+            if (layer === 'membrane') membraneMesh.visible = document.getElementById('chk-membrane').checked;
             if (layer === 'antinodes') antinodesGroup.visible = document.getElementById('chk-antinodes').checked;
+            if (layer === 'trail') trailLine.visible = document.getElementById('chk-trail').checked;
+        }
+
+        function onSpeedChange() {
+            const sp = parseFloat(document.getElementById('sl-speed').value);
+            if (sp >= 2.85 && !isPhotoMode) setPhotoMode(true);
+            else if (sp < 2.85 && isPhotoMode) setPhotoMode(false);
+        }
+
+        function togglePhotoMode() { setPhotoMode(!isPhotoMode); }
+
+        function setPhotoMode(enable) {
+            isPhotoMode = enable;
+            document.getElementById('btn-photo').classList.toggle('active', isPhotoMode);
+            document.getElementById('photo-indicator').style.display = isPhotoMode ? 'block' : 'none';
+            photoModeGroup.visible = isPhotoMode;
+
+            if (isPhotoMode) {
+                document.getElementById('sl-speed').value = 3.0;
+                cloudMat.opacity = 0.75;
+            } else {
+                cloudMat.opacity = 0.45;
+            }
         }
 
         // =====================================================================
-        // 6. ГЛАВНЫЙ ЦИКЛ АНИМАЦИИ
+        // 8. АНИМАЦИОННЫЙ ЦИКЛ
         // =====================================================================
         let clock = 0;
-        rebuildCloud(SYS_CONFIG.H.orbitR, SYS_CONFIG.H.cloudColor);
-        protonRoot.scale.setScalar(SYS_CONFIG.H.protonScale);
+        switchSystem('MuH');
 
         function animate() {
             requestAnimationFrame(animate);
 
             const speedUser = parseFloat(document.getElementById('sl-speed').value);
-            const cloudOp = parseFloat(document.getElementById('sl-cloud-op').value);
-            cloudMat.opacity = cloudOp;
-
+            const membAmp = parseFloat(document.getElementById('sl-membrane-amp').value);
             const cfg = SYS_CONFIG[currentSystem];
+            
             clock += 0.02 * speedUser * cfg.speedMult;
 
-            // ИСПРАВЛЕНИЕ 1: Камера двигается только во время активного перелета!
             if (isTransitioning) {
                 camera.position.lerp(targetCam, 0.06);
                 controls.target.lerp(targetLook, 0.06);
-                if (camera.position.distanceTo(targetCam) < 0.05) {
-                    isTransitioning = false; // Прилетели — отдаем управление мыши!
-                }
+                if (camera.position.distanceTo(targetCam) < 0.05) isTransitioning = false;
             }
             controls.update();
 
-            // ИСПРАВЛЕНИЕ 4: ПРОТОН КУВЫРКАЕТСЯ ПО ВСЕМ 3 ОСЯМ!
+            // Эргодический кувырок протона
             protonTumble.rotation.x += 0.015 * speedUser;
             protonTumble.rotation.y += 0.024 * speedUser;
             protonTumble.rotation.z += 0.011 * speedUser;
 
-            // Фотон мчится по контуру трилистника
             const pT = (clock * 1.8) % 1.0;
             pPhoton.position.copy(protonCurve.getPoint(pT));
 
-            // Пульсация 3 пучностей стоячей волны на вершинах лепестков
             const antinodePulse = 1.0 + 0.22 * Math.sin(clock * 6.0);
-            antinodeMeshes.forEach(mesh => {
-                mesh.scale.setScalar(antinodePulse);
-            });
+            antinodeMeshes.forEach(m => m.scale.setScalar(antinodePulse));
 
-            // Орбитальное движение лептона
-            const orbAngle = clock * 1.2;
+            // =================================================================
+            // КИНЕМАТИКА ОРБИТЫ: ПЛОСКИЙ МЕРКУРИЙ VS 3D-ПРЕЦЕССИЯ ТЭВ
+            // =================================================================
             const curOrbitR = cfg.orbitR;
-            const lepPos = new THREE.Vector3(
-                curOrbitR * Math.cos(orbAngle),
-                0.2 * Math.sin(clock * 2.0),
-                curOrbitR * Math.sin(orbAngle)
-            );
+            const orbAngle = clock * 1.3;
+            let lepPos = new THREE.Vector3();
 
+            if (orbitMode === 'mercury') {
+                // Жесткая плоская эклиптика (горизонтальная плоскость XZ)
+                lepPos.set(
+                    curOrbitR * Math.cos(orbAngle),
+                    0.05 * Math.sin(clock * 3.0),
+                    curOrbitR * Math.sin(orbAngle)
+                );
+            } else {
+                // Квантовая 3D-прецессия ТЭВ: плоскость непрерывно кувыркается по 3 осям
+                const vBase = new THREE.Vector3(
+                    curOrbitR * Math.cos(orbAngle),
+                    0,
+                    curOrbitR * Math.sin(orbAngle)
+                );
+                const rotEuler = new THREE.Euler(
+                    clock * 0.35,  // Прецессия угла наклона
+                    clock * 0.52,  // Прецессия восходящего узла
+                    clock * 0.21   // Нутация плоскости
+                );
+                lepPos.copy(vBase).applyEuler(rotEuler);
+            }
+
+            // Обновление истории шлейфа
+            trailHistory.push(lepPos.clone());
+            if (trailHistory.length > TRAIL_LEN) trailHistory.shift();
+
+            const tPositions = trailLine.geometry.attributes.position.array;
+            const tColors = trailLine.geometry.attributes.color.array;
+            const baseColor = cfg.cloudColor;
+
+            for (let i = 0; i < TRAIL_LEN; i++) {
+                if (i < trailHistory.length) {
+                    const pt = trailHistory[i];
+                    tPositions[i * 3 + 0] = pt.x;
+                    tPositions[i * 3 + 1] = pt.y;
+                    tPositions[i * 3 + 2] = pt.z;
+
+                    const alpha = (i / trailHistory.length);
+                    tColors[i * 3 + 0] = baseColor.r * alpha * 1.2;
+                    tColors[i * 3 + 1] = baseColor.g * alpha * 1.2;
+                    tColors[i * 3 + 2] = baseColor.b * alpha * 1.2;
+                } else {
+                    tPositions[i * 3 + 0] = lepPos.x;
+                    tPositions[i * 3 + 1] = lepPos.y;
+                    tPositions[i * 3 + 2] = lepPos.z;
+                    tColors[i * 3 + 0] = 0; tColors[i * 3 + 1] = 0; tColors[i * 3 + 2] = 0;
+                }
+            }
+            trailLine.geometry.attributes.position.needsUpdate = true;
+            trailLine.geometry.attributes.color.needsUpdate = true;
+
+            // Позиционирование и вращение самого лептона
             if (currentSystem === 'H') {
                 electronRoot.position.copy(lepPos);
-                // 3-осевой кувырок электрона
                 eTumble.rotation.x += 0.04;
                 eTumble.rotation.y += 0.06;
                 eTumble.rotation.z += 0.085;
@@ -454,60 +634,53 @@
                 ePhoton.position.set(0.95 * Math.cos(pAngle), 0.95 * Math.sin(pAngle), 0);
             } else {
                 muonRoot.position.copy(lepPos);
-                muTumble.rotation.x += 0.06;
-                muTumble.rotation.y += 0.09;
-                muTumble.rotation.z += 0.12;
-                const muPAngle = clock * 16.0;
-                muPhoton.position.set(0.22 * Math.cos(muPAngle), 0.22 * Math.sin(muPAngle), 0);
+                muTumble.rotation.z += 0.05;
+                muTumble.rotation.x += 0.035;
+                const muT = (clock * 4.0) % 1.0;
+                muPhoton.position.copy(muCurve.getPoint(muT));
             }
 
-            // Динамический расчет кулоновских хвостов (u_p + u_l -> 0)
-            if (fieldMesh.visible) {
-                const fPos = fieldMesh.geometry.attributes.position.array;
-                const fCol = fieldMesh.geometry.attributes.color.array;
+            if (isPhotoMode) {
+                photoModeGroup.rotation.y += 0.002;
+            }
+
+            // Упругая мембрана кулоновских хвостов
+            if (membraneMesh.visible) {
+                const posAttr = membraneMesh.geometry.attributes.position;
+                const colAttr = membraneMesh.geometry.attributes.color;
                 const pPos = protonRoot.position;
 
-                for (let k = 0; k < baseCoords.length; k++) {
-                    const bp = baseCoords[k];
+                for (let i = 0; i < posAttr.count; i++) {
+                    const vx = posAttr.getX(i);
+                    const vz = posAttr.getZ(i);
 
-                    const rxP = bp.x - pPos.x, rzP = bp.z - pPos.z;
-                    const distPSq = rxP * rxP + rzP * rzP + 0.15;
-                    const distP = Math.sqrt(distPSq);
+                    const dxP = vx - pPos.x, dzP = vz - pPos.z;
+                    const dSqP = dxP * dxP + dzP * dzP + 0.3;
+                    const potP = 1.5 / Math.sqrt(dSqP);
 
-                    const rxL = bp.x - lepPos.x, rzL = bp.z - lepPos.z;
-                    const distLSq = rxL * rxL + rzL * rzL + 0.15;
-                    const distL = Math.sqrt(distLSq);
+                    const dxL = vx - lepPos.x, dzL = vz - lepPos.z;
+                    const dSqL = dxL * dxL + dzL * dzL + 0.3;
+                    const potL = -1.5 / Math.sqrt(dSqL);
 
-                    const EpX = rxP / (distP * distPSq);
-                    const EpZ = rzP / (distP * distPSq);
+                    const netPot = (potP + potL) * membAmp;
 
-                    const ElX = - rxL / (distL * distLSq);
-                    const ElZ = - rzL / (distL * distLSq);
+                    // Зона взаимного гашения снаружи орбиты
+                    const distCenter = Math.sqrt(vx * vx + vz * vz);
+                    const outsideFactor = Math.max(0.0, (distCenter - curOrbitR * 1.05) / 2.8);
+                    const cancelCoeff = Math.exp(-outsideFactor * 3.2);
 
-                    const EnetX = EpX + ElX;
-                    const EnetZ = EpZ + ElZ;
-                    const energyStrain = Math.sqrt(EnetX * EnetX + EnetZ * EnetZ);
+                    const finalY = netPot * cancelCoeff;
+                    posAttr.setY(i, finalY);
 
-                    const clampE = Math.min(1.0, energyStrain * 0.85);
-                    fPos[k * 3 + 1] = -0.6 + clampE * 0.5;
-
-                    // Зона нейтрализации: снаружи орбиты поле гаснет в темноту!
-                    const distFromCenter = Math.sqrt(bp.x * bp.x + bp.z * bp.z);
-                    const isOutside = Math.max(0.0, (distFromCenter - curOrbitR * 1.05) / 3.5);
-                    const cancellationFactor = Math.exp(-isOutside * 2.8);
-
-                    if (currentSystem === 'H') {
-                        fCol[k * 3 + 0] = clampE * 0.15 * cancellationFactor;
-                        fCol[k * 3 + 1] = clampE * 0.55 * cancellationFactor;
-                        fCol[k * 3 + 2] = clampE * 1.0 * cancellationFactor;
+                    const strain = Math.abs(finalY);
+                    if (finalY >= 0) {
+                        colAttr.setXYZ(i, 0.95 * strain, 0.12 * strain, 0.35 * strain);
                     } else {
-                        fCol[k * 3 + 0] = clampE * 0.1 * cancellationFactor;
-                        fCol[k * 3 + 1] = clampE * 0.95 * cancellationFactor;
-                        fCol[k * 3 + 2] = clampE * 0.5 * cancellationFactor;
+                        colAttr.setXYZ(i, 0.1 * strain, 0.65 * strain, 1.0 * strain);
                     }
                 }
-                fieldMesh.geometry.attributes.position.needsUpdate = true;
-                fieldMesh.geometry.attributes.color.needsUpdate = true;
+                posAttr.needsUpdate = true;
+                colAttr.needsUpdate = true;
             }
 
             renderer.render(scene, camera);
