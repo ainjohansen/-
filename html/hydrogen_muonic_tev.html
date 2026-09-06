@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>ТЭВ v5.0: Атом Водорода (3D-Прецессия vs Плоский Меркурий)</title>
+    <title>ТЭВ v07: Атом Водорода (Отдача Протона, Барицентр и 3D-Прецессия)</title>
     <style>
         body { margin: 0; overflow: hidden; background: #010307; font-family: 'Segoe UI', Arial, sans-serif; color: #e2e8f0; user-select: none; }
         #canvas-container { width: 100vw; height: 100vh; display: block; }
@@ -10,19 +10,25 @@
         #hud {
             position: absolute; top: 15px; left: 15px; background: rgba(2, 8, 20, 0.94);
             padding: 16px 20px; border-radius: 12px; border: 1px solid #1e3a5f;
-            max-width: 470px; box-shadow: 0 10px 35px rgba(0,0,0,0.85); backdrop-filter: blur(10px);
+            max-width: 480px; box-shadow: 0 10px 35px rgba(0,0,0,0.85); backdrop-filter: blur(10px);
         }
         h1 { margin: 0 0 6px 0; font-size: 15px; color: #38bdf8; text-transform: uppercase; letter-spacing: 1.5px; }
         p { margin: 4px 0; font-size: 11.5px; line-height: 1.45; color: #94a3b8; }
         
+        .recoil-badge {
+            background: rgba(225, 29, 72, 0.12); border-left: 3px solid #f43f5e;
+            padding: 7px 10px; margin: 7px 0; border-radius: 4px; font-size: 11px; color: #fda4af;
+            line-height: 1.4;
+        }
+
         .scale-badge {
             background: rgba(16, 185, 129, 0.12); border-left: 3px solid #10b981;
-            padding: 7px 10px; margin: 8px 0; border-radius: 4px; font-size: 11px; color: #6ee7b7;
+            padding: 7px 10px; margin: 7px 0; border-radius: 4px; font-size: 11px; color: #6ee7b7;
             line-height: 1.4;
         }
         .scale-alert-h {
             background: rgba(245, 158, 11, 0.12); border-left: 3px solid #f59e0b;
-            padding: 7px 10px; margin: 8px 0; border-radius: 4px; font-size: 10.5px; color: #fbbf24;
+            padding: 7px 10px; margin: 7px 0; border-radius: 4px; font-size: 10.5px; color: #fbbf24;
             line-height: 1.35;
         }
         .orbit-mode-badge {
@@ -35,6 +41,7 @@
         .tag-p { background: #e11d48; color: white; }
         .tag-uud { background: #f59e0b; color: black; font-weight: 800; }
         .tag-lep { background: #0284c7; color: white; }
+        .tag-bary { background: #64748b; color: white; }
 
         #nav {
             position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
@@ -57,7 +64,7 @@
         #toggles-box {
             position: absolute; top: 15px; right: 15px; background: rgba(2, 8, 20, 0.94);
             padding: 16px 18px; border-radius: 12px; border: 1px solid #1e3a5f;
-            width: 300px; box-shadow: 0 10px 35px rgba(0,0,0,0.85); backdrop-filter: blur(10px);
+            width: 310px; box-shadow: 0 10px 35px rgba(0,0,0,0.85); backdrop-filter: blur(10px);
         }
         #toggles-box h2 { margin: 0 0 10px 0; font-size: 12px; color: #38bdf8; text-transform: uppercase; border-bottom: 1px solid #1e3a5f; padding-bottom: 6px; }
         .row { display: flex; justify-content: space-between; align-items: center; margin: 8px 0; font-size: 11px; }
@@ -79,24 +86,29 @@
 </head>
 <body>
     <div id="hud">
-        <h1 id="title-main">Мюонный Водород (μ⁻ + p)</h1>
+        <h1 id="title-main">Мюонный Водород (μ⁻ + p) — ТЭВ v07</h1>
         
         <div id="scale-banner" class="scale-badge">
             <b>ЧЕСТНЫЙ МАСШТАБ 1:300:</b> Орбита мюона ($256$ фм) шире ядра ($0.84$ фм) ровно в 300 раз! Вся орбита атома МЕНЬШЕ кольца свободного электрона ($386$ фм).
         </div>
 
+        <div id="recoil-banner" class="recoil-badge">
+            <b>ДВУХЧАСТИЧНЫЙ ВАЛЬС (ОТДАЧА ЯДРА 10.1%):</b> Масса мюона всего в 8.9 раз меньше протона. Ядро не стоит на месте: протон описывает противофазную орбиту радиусом $25.9$ фм (10% от всей системы) вокруг барицентра!
+        </div>
+
         <div id="orbit-banner" class="orbit-mode-badge">
-            <b>⚛️ КВАНТОВАЯ 3D-ПРЕЦЕССИЯ (L = 0):</b> Плоскость орбиты кувыркается по всем 3 осям, заметая сферу. Поэтому атом круглый, а не плоский, как Солнечная система!
+            <b>⚛️ КВАНТОВАЯ 3D-ПРЕЦЕССИЯ (L = 0):</b> Плоскость взаимного обращения непрерывно кувыркается по сфере. Шлейфы заметают замкнутый шар, создавая сферическое 1s-облако.
         </div>
 
         <p id="desc-main">
-            <b>Мюон — пухлый узел T(3,2):</b> Фактор $p/q = 1.5$ делает трубку на 50% толще электрона. Протон тонкий, 3 пучности помечены uud в дань уважения СМ.
+            <b>Мюон — пухлый узел T(3,2):</b> Фактор $p/q = 1.5$ утолщает сечение трубки ($r/R = 1.5\alpha$). Протон тонкий, 3 пучности помечены uud в дань традиции СМ.
         </p>
 
         <div style="margin-top: 6px;">
             <span class="tag tag-p">Протон T(3,2) тонкий</span>
             <span class="tag tag-uud">Пучности uud</span>
             <span class="tag tag-lep" id="badge-lepton">Мюон T(3,2) пухлый</span>
+            <span class="tag tag-bary">Барицентр (0,0,0)</span>
         </div>
     </div>
 
@@ -104,13 +116,28 @@
         <h2>Управление Лабораторией</h2>
         
         <label class="check-row">
+            <input type="checkbox" id="chk-recoil" checked onchange="toggleLayer('recoil')">
+            <span>Отдача протона (Движение ядра)</span>
+        </label>
+
+        <label class="check-row">
+            <input type="checkbox" id="chk-barycenter" checked onchange="toggleLayer('barycenter')">
+            <span>Маркер Барицентра (Центр масс)</span>
+        </label>
+
+        <label class="check-row">
             <input type="checkbox" id="chk-trail" checked onchange="toggleLayer('trail')">
-            <span>Шлейф орбиты (Заметание сферы)</span>
+            <span>Шлейф лептона (Заметание сферы)</span>
+        </label>
+
+        <label class="check-row">
+            <input type="checkbox" id="chk-ptrail" checked onchange="toggleLayer('ptrail')">
+            <span>Шлейф отдачи протона</span>
         </label>
 
         <label class="check-row">
             <input type="checkbox" id="chk-membrane" checked onchange="toggleLayer('membrane')">
-            <span>Упругая мембрана (Хвосты натяжения)</span>
+            <span>Упругая мембрана (Воронки натяжения)</span>
         </label>
         
         <label class="check-row">
@@ -133,6 +160,11 @@
             <input id="sl-membrane-amp" type="range" min="0.2" max="2.5" step="0.1" value="1.2">
         </div>
 
+        <div class="row" id="row-boost-h" style="display: none;">
+            <span style="color: #fbbf24;">Усиление отдачи в H:</span>
+            <input id="sl-boost-h" type="range" min="1" max="150" step="5" value="70" oninput="onHBoostChange()">
+        </div>
+
         <div id="photo-indicator">
             📸 РЕЖИМ 3D-ФОТОГРАФИИ (СТОДОЛЬНА 2013)<br>
             <span style="font-weight: normal; font-size: 9.5px;">Экспозиция орбитали: стоячая волна усреднена во времени</span>
@@ -141,12 +173,13 @@
         <div id="quick-zoom">
             <button onclick="focusView('proton')">Ядро (p)</button>
             <button onclick="focusView('lepton')">Лептон</button>
+            <button onclick="focusView('bary')">Барицентр</button>
             <button onclick="focusView('atom')">Весь атом</button>
         </div>
     </div>
 
     <div id="nav">
-        <button id="btn-muh" class="active" onclick="switchSystem('MuH')">1. Мюонный (1:300)</button>
+        <button id="btn-muh" class="active" onclick="switchSystem('MuH')">1. Мюонный (1:300, Отдача 10%)</button>
         <button id="btn-h" onclick="switchSystem('H')">2. Обычный H (Сжатый)</button>
         <div class="divider"></div>
         <button id="btn-orb-precess" class="btn-orbit active" onclick="setOrbitMode('precess')">⚛️ 3D-Прецессия ТЭВ</button>
@@ -186,8 +219,10 @@
         scene.add(dirLight);
 
         let currentSystem = 'MuH';
-        let orbitMode = 'precess'; // 'precess' (ТЭВ 3D) или 'mercury' (плоская эклиптика)
+        let orbitMode = 'precess';
         let isPhotoMode = false;
+        let enableRecoil = true;
+        let hBoostFactor = 70.0; // Для наглядной визуализации петли 28.8 фм в H
 
         function makeTextSprite(message, colorBg, colorText = '#ffffff') {
             const canvas = document.createElement('canvas');
@@ -215,7 +250,26 @@
         }
 
         // =====================================================================
-        // 1. ПРОТОН: ТОНКИЙ ТРИЛИСТНИК T(3,2)
+        // 0. МАРКЕР БАРИЦЕНТРА (ЦЕНТР МАСС В НУЛЕ)
+        // =====================================================================
+        const barycenterGroup = new THREE.Group();
+        scene.add(barycenterGroup);
+
+        const baryDot = new THREE.Mesh(
+            new THREE.SphereGeometry(0.06, 16, 16),
+            new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true })
+        );
+        barycenterGroup.add(baryDot);
+
+        const baryAxes = new THREE.AxesHelper(0.5);
+        barycenterGroup.add(baryAxes);
+
+        const barySprite = makeTextSprite("Барицентр CM", "#475569");
+        barySprite.position.set(0, 0.45, 0);
+        barycenterGroup.add(barySprite);
+
+        // =====================================================================
+        // 1. ПРОТОН: ТОНКИЙ ТРИЛИСТНИК T(3,2) С ОТДАЧЕЙ
         // =====================================================================
         const protonRoot = new THREE.Group();
         scene.add(protonRoot);
@@ -302,7 +356,6 @@
         }
 
         const muCurve = new MuonTorusKnotDense();
-        // Пухлая трубка 0.044 (r/R = 1.5 alpha)
         const muMesh = new THREE.Mesh(
             new THREE.TubeGeometry(muCurve, 160, 0.044, 16, true),
             new THREE.MeshStandardMaterial({ color: 0x10b981, emissive: 0x047857, roughness: 0.25, metalness: 0.8 })
@@ -313,9 +366,11 @@
         muTumble.add(muPhoton);
 
         // =====================================================================
-        // 3. ДИНАМИЧЕСКИЙ ШЛЕЙФ ТРАЕКТОРИИ (ORBITAL TRAIL)
+        // 3. ДВОЙНОЙ ШЛЕЙФ: ТРАЕКТОРИЯ ЛЕПТОНА + ТРАЕКТОРИЯ ПРОТОНА
         // =====================================================================
-        const TRAIL_LEN = 200;
+        const TRAIL_LEN = 220;
+        
+        // Шлейф лептона
         const trailPositions = new Float32Array(TRAIL_LEN * 3);
         const trailColors = new Float32Array(TRAIL_LEN * 3);
         const trailGeo = new THREE.BufferGeometry();
@@ -327,8 +382,21 @@
         });
         const trailLine = new THREE.Line(trailGeo, trailMat);
         scene.add(trailLine);
-
         const trailHistory = [];
+
+        // Шлейф отдачи протона
+        const pTrailPositions = new Float32Array(TRAIL_LEN * 3);
+        const pTrailColors = new Float32Array(TRAIL_LEN * 3);
+        const pTrailGeo = new THREE.BufferGeometry();
+        pTrailGeo.setAttribute('position', new THREE.BufferAttribute(pTrailPositions, 3));
+        pTrailGeo.setAttribute('color', new THREE.BufferAttribute(pTrailColors, 3));
+
+        const pTrailMat = new THREE.LineBasicMaterial({
+            vertexColors: true, transparent: true, opacity: 0.9, blending: THREE.AdditiveBlending, linewidth: 2
+        });
+        const pTrailLine = new THREE.Line(pTrailGeo, pTrailMat);
+        scene.add(pTrailLine);
+        const pTrailHistory = [];
 
         // =====================================================================
         // 4. РЕЖИМ 3D-ФОТОГРАФИИ (СТОДОЛЬНА 2013)
@@ -337,7 +405,7 @@
         scene.add(photoModeGroup);
         photoModeGroup.visible = false;
 
-        const orbitDiscGeo = new THREE.RingGeometry(5.8, 6.6, 80);
+        const orbitDiscGeo = new THREE.RingGeometry(5.2, 6.2, 80);
         const orbitDiscMat = new THREE.MeshBasicMaterial({
             color: 0x10b981, side: THREE.DoubleSide, transparent: true, opacity: 0.35, blending: THREE.AdditiveBlending
         });
@@ -419,26 +487,30 @@
         // =====================================================================
         const SYS_CONFIG = {
             MuH: {
-                title: "Мюонный Водород (μ⁻ + p) — ЧЕСТНЫЙ МАСШТАБ",
+                title: "Мюонный Водород (μ⁻ + p) — ТЭВ v07",
                 bannerClass: "scale-badge",
                 bannerText: "<b>ЧЕСТНЫЙ МАСШТАБ 1:300:</b> Орбита мюона ($256$ фм) шире ядра ($0.84$ фм) ровно в 300 раз! Вся орбита атома МЕНЬШЕ кольца свободного электрона ($386$ фм).",
+                recoilText: "<b>ДВУХЧАСТИЧНЫЙ ВАЛЬС (ОТДАЧА ЯДРА 10.1%):</b> Масса мюона в 8.9 раз меньше протона. Ядро не стоит на месте: протон описывает противофазную орбиту радиусом $25.9$ фм (10% от всей системы) вокруг барицентра!",
                 badge: "Мюон: Пухлый узел T(3,2)",
                 orbitR: 6.2,
                 protonScale: 0.12,
                 muonScale: 0.55,
+                recoilRatio: 0.1012, // Честные 10.12% отдачи протона!
                 speedMult: 1.5,
                 cloudColor: new THREE.Color(0x10b981),
                 camPos: new THREE.Vector3(0, 6, 18),
                 camTarget: new THREE.Vector3(0, 0, 0)
             },
             H: {
-                title: "Обычный Водород (e⁻ + p) — СЖАТЫЙ МАСШТАБ",
+                title: "Обычный Водород (e⁻ + p) — ТЭВ v07",
                 bannerClass: "scale-alert-h",
                 bannerText: "<b>⚠️ СЖАТЫЙ МАСШТАБ:</b> В реальности $a_0$ шире протона в 63&nbsp;000 раз. Масштаб сжат для сопоставления. Протон сделан тонким, чтобы видеть 3D-топологию.",
+                recoilText: "<b>ОТДАЧА ПРОТОНА В ВОДОРОДЕ:</b> Петля отдачи $r_p = 28.8$ фм (в 34 раза шире самого протона!). В масштабе атома это 0.054% (используйте ползунок усиления для наглядности).",
                 badge: "Электрон: Тор R_e стройный",
                 orbitR: 11.0,
                 protonScale: 0.38,
                 muonScale: 1.0,
+                recoilRatio: 0.000544, // 1/1837.15 = 0.0544%
                 speedMult: 0.8,
                 cloudColor: new THREE.Color(0x0284c7),
                 camPos: new THREE.Vector3(0, 14, 30),
@@ -459,6 +531,9 @@
             sb.className = cfg.bannerClass;
             sb.innerHTML = cfg.bannerText;
 
+            document.getElementById('recoil-banner').innerHTML = cfg.recoilText;
+            document.getElementById('row-boost-h').style.display = (sys === 'H') ? 'flex' : 'none';
+
             electronRoot.visible = (sys === 'H');
             muonRoot.visible = (sys === 'MuH');
 
@@ -466,7 +541,8 @@
             muonRoot.scale.setScalar(cfg.muonScale);
 
             rebuildCloud(cfg.orbitR, cfg.cloudColor);
-            trailHistory.length = 0; // Сбрасываем шлейф при переключении
+            trailHistory.length = 0;
+            pTrailHistory.length = 0;
 
             if (!isPhotoMode) {
                 targetCam.copy(cfg.camPos);
@@ -482,21 +558,26 @@
             
             const ob = document.getElementById('orbit-banner');
             if (mode === 'precess') {
-                ob.innerHTML = "<b>⚛️ КВАНТОВАЯ 3D-ПРЕЦЕССИЯ (L = 0):</b> Плоскость орбиты непрерывно кувыркается по сфере. Шлейф заметает шар, создавая сферическое 1s-облако!";
+                ob.innerHTML = "<b>⚛️ КВАНТОВАЯ 3D-ПРЕЦЕССИЯ (L = 0):</b> Плоскость взаимного обращения непрерывно кувыркается по сфере. Шлейфы заметают шар, создавая сферическое 1s-облако!";
             } else {
                 ob.innerHTML = "<b>🪐 ПЛОСКИЙ «МЕРКУРИЙ» (ЭКЛИПТИКА):</b> Классическая планетарная 2D-орбита Резерфорда. Атом получается плоским блином (противоречит сферичности 1s).";
             }
             trailHistory.length = 0;
+            pTrailHistory.length = 0;
         }
 
         function focusView(mode) {
             const cfg = SYS_CONFIG[currentSystem];
             if (mode === 'proton') {
-                targetCam.set(0, 0.4, 1.6);
-                targetLook.set(0, 0, 0);
+                targetCam.copy(protonRoot.position).add(new THREE.Vector3(0, 0.4, 1.6));
+                targetLook.copy(protonRoot.position);
             } else if (mode === 'lepton') {
-                targetCam.set(cfg.orbitR, 0.8, 2.0);
-                targetLook.set(cfg.orbitR, 0, 0);
+                const curPos = (currentSystem === 'H') ? electronRoot.position : muonRoot.position;
+                targetCam.copy(curPos).add(new THREE.Vector3(0, 0.8, 2.0));
+                targetLook.copy(curPos);
+            } else if (mode === 'bary') {
+                targetCam.set(0, 1.2, 3.5);
+                targetLook.set(0, 0, 0);
             } else {
                 targetCam.copy(cfg.camPos);
                 targetLook.copy(cfg.camTarget);
@@ -509,12 +590,19 @@
             if (layer === 'membrane') membraneMesh.visible = document.getElementById('chk-membrane').checked;
             if (layer === 'antinodes') antinodesGroup.visible = document.getElementById('chk-antinodes').checked;
             if (layer === 'trail') trailLine.visible = document.getElementById('chk-trail').checked;
+            if (layer === 'ptrail') pTrailLine.visible = document.getElementById('chk-ptrail').checked;
+            if (layer === 'barycenter') barycenterGroup.visible = document.getElementById('chk-barycenter').checked;
+            if (layer === 'recoil') enableRecoil = document.getElementById('chk-recoil').checked;
         }
 
         function onSpeedChange() {
             const sp = parseFloat(document.getElementById('sl-speed').value);
             if (sp >= 2.85 && !isPhotoMode) setPhotoMode(true);
             else if (sp < 2.85 && isPhotoMode) setPhotoMode(false);
+        }
+
+        function onHBoostChange() {
+            hBoostFactor = parseFloat(document.getElementById('sl-boost-h').value);
         }
 
         function togglePhotoMode() { setPhotoMode(!isPhotoMode); }
@@ -534,10 +622,10 @@
         }
 
         // =====================================================================
-        // 8. АНИМАЦИОННЫЙ ЦИКЛ
+        // 8. ГЛАВНЫЙ АНИМАЦИОННЫЙ ЦИКЛ (БАРИЦЕНТР И ДВУХЧАСТИЧНЫЙ ВАЛЬС)
         // =====================================================================
         let clock = 0;
-        switchSystem('MuH');
+        switchSystem('MuH'); // По умолчанию стартуем с честного масштаба Мюонного атома!
 
         function animate() {
             requestAnimationFrame(animate);
@@ -555,7 +643,7 @@
             }
             controls.update();
 
-            // Эргодический кувырок протона
+            // Эргодический кувырок протона вокруг собственного репера
             protonTumble.rotation.x += 0.015 * speedUser;
             protonTumble.rotation.y += 0.024 * speedUser;
             protonTumble.rotation.z += 0.011 * speedUser;
@@ -567,64 +655,111 @@
             antinodeMeshes.forEach(m => m.scale.setScalar(antinodePulse));
 
             // =================================================================
-            // КИНЕМАТИКА ОРБИТЫ: ПЛОСКИЙ МЕРКУРИЙ VS 3D-ПРЕЦЕССИЯ ТЭВ
+            // КИНЕМАТИКА ОТНОСИТЕЛЬНОГО ВЕКТОРА r_rel(t)
             // =================================================================
             const curOrbitR = cfg.orbitR;
             const orbAngle = clock * 1.3;
-            let lepPos = new THREE.Vector3();
+            let relVec = new THREE.Vector3();
 
             if (orbitMode === 'mercury') {
-                // Жесткая плоская эклиптика (горизонтальная плоскость XZ)
-                lepPos.set(
+                relVec.set(
                     curOrbitR * Math.cos(orbAngle),
                     0.05 * Math.sin(clock * 3.0),
                     curOrbitR * Math.sin(orbAngle)
                 );
             } else {
-                // Квантовая 3D-прецессия ТЭВ: плоскость непрерывно кувыркается по 3 осям
                 const vBase = new THREE.Vector3(
                     curOrbitR * Math.cos(orbAngle),
                     0,
                     curOrbitR * Math.sin(orbAngle)
                 );
                 const rotEuler = new THREE.Euler(
-                    clock * 0.35,  // Прецессия угла наклона
-                    clock * 0.52,  // Прецессия восходящего узла
-                    clock * 0.21   // Нутация плоскости
+                    clock * 0.35,
+                    clock * 0.52,
+                    clock * 0.21
                 );
-                lepPos.copy(vBase).applyEuler(rotEuler);
+                relVec.copy(vBase).applyEuler(rotEuler);
             }
 
-            // Обновление истории шлейфа
+            // =================================================================
+            // РАЗДЕЛЕНИЕ НА ЛЕПТОН И ПРОТОН (ОТДАЧА ВОКРУГ БАРИЦЕНТРА)
+            // =================================================================
+            let fRecoil = cfg.recoilRatio;
+            if (currentSystem === 'H') {
+                fRecoil *= hBoostFactor; // Для демонстрации петли протона 28.8 фм в H
+            }
+            if (!enableRecoil) fRecoil = 0.0;
+
+            // Положение протона: строго в противофазе к лептону!
+            const pPos = relVec.clone().multiplyScalar(-fRecoil);
+            protonRoot.position.copy(pPos);
+
+            // Положение лептона: (1 - fRecoil) от вектора
+            const lepPos = relVec.clone().multiplyScalar(1.0 - fRecoil);
+
+            // -----------------------------------------------------------------
+            // ОБНОВЛЕНИЕ ШЛЕЙФОВ (ЛЕПТОН И ПРОТОН)
+            // -----------------------------------------------------------------
             trailHistory.push(lepPos.clone());
             if (trailHistory.length > TRAIL_LEN) trailHistory.shift();
 
-            const tPositions = trailLine.geometry.attributes.position.array;
-            const tColors = trailLine.geometry.attributes.color.array;
-            const baseColor = cfg.cloudColor;
+            pTrailHistory.push(pPos.clone());
+            if (pTrailHistory.length > TRAIL_LEN) pTrailHistory.shift();
+
+            // Шлейф лептона
+            const tPosArr = trailLine.geometry.attributes.position.array;
+            const tColArr = trailLine.geometry.attributes.color.array;
+            const lepColor = cfg.cloudColor;
 
             for (let i = 0; i < TRAIL_LEN; i++) {
                 if (i < trailHistory.length) {
                     const pt = trailHistory[i];
-                    tPositions[i * 3 + 0] = pt.x;
-                    tPositions[i * 3 + 1] = pt.y;
-                    tPositions[i * 3 + 2] = pt.z;
+                    tPosArr[i * 3 + 0] = pt.x;
+                    tPosArr[i * 3 + 1] = pt.y;
+                    tPosArr[i * 3 + 2] = pt.z;
 
                     const alpha = (i / trailHistory.length);
-                    tColors[i * 3 + 0] = baseColor.r * alpha * 1.2;
-                    tColors[i * 3 + 1] = baseColor.g * alpha * 1.2;
-                    tColors[i * 3 + 2] = baseColor.b * alpha * 1.2;
+                    tColArr[i * 3 + 0] = lepColor.r * alpha * 1.2;
+                    tColArr[i * 3 + 1] = lepColor.g * alpha * 1.2;
+                    tColArr[i * 3 + 2] = lepColor.b * alpha * 1.2;
                 } else {
-                    tPositions[i * 3 + 0] = lepPos.x;
-                    tPositions[i * 3 + 1] = lepPos.y;
-                    tPositions[i * 3 + 2] = lepPos.z;
-                    tColors[i * 3 + 0] = 0; tColors[i * 3 + 1] = 0; tColors[i * 3 + 2] = 0;
+                    tPosArr[i * 3 + 0] = lepPos.x;
+                    tPosArr[i * 3 + 1] = lepPos.y;
+                    tPosArr[i * 3 + 2] = lepPos.z;
+                    tColArr[i * 3 + 0] = 0; tColArr[i * 3 + 1] = 0; tColArr[i * 3 + 2] = 0;
                 }
             }
             trailLine.geometry.attributes.position.needsUpdate = true;
             trailLine.geometry.attributes.color.needsUpdate = true;
 
-            // Позиционирование и вращение самого лептона
+            // Шлейф отдачи протона (рубиново-красный)
+            const ptPosArr = pTrailLine.geometry.attributes.position.array;
+            const ptColArr = pTrailLine.geometry.attributes.color.array;
+
+            for (let i = 0; i < TRAIL_LEN; i++) {
+                if (i < pTrailHistory.length) {
+                    const pt = pTrailHistory[i];
+                    ptPosArr[i * 3 + 0] = pt.x;
+                    ptPosArr[i * 3 + 1] = pt.y;
+                    ptPosArr[i * 3 + 2] = pt.z;
+
+                    const alpha = (i / pTrailHistory.length);
+                    ptColArr[i * 3 + 0] = 0.95 * alpha;
+                    ptColArr[i * 3 + 1] = 0.12 * alpha;
+                    ptColArr[i * 3 + 2] = 0.35 * alpha;
+                } else {
+                    ptPosArr[i * 3 + 0] = pPos.x;
+                    ptPosArr[i * 3 + 1] = pPos.y;
+                    ptPosArr[i * 3 + 2] = pPos.z;
+                    ptColArr[i * 3 + 0] = 0; ptColArr[i * 3 + 1] = 0; ptColArr[i * 3 + 2] = 0;
+                }
+            }
+            pTrailLine.geometry.attributes.position.needsUpdate = true;
+            pTrailLine.geometry.attributes.color.needsUpdate = true;
+
+            // -----------------------------------------------------------------
+            // ОРИЕНТАЦИЯ ЛЕПТОНОВ
+            // -----------------------------------------------------------------
             if (currentSystem === 'H') {
                 electronRoot.position.copy(lepPos);
                 eTumble.rotation.x += 0.04;
@@ -644,27 +779,30 @@
                 photoModeGroup.rotation.y += 0.002;
             }
 
-            // Упругая мембрана кулоновских хвостов
+            // =================================================================
+            // УПРУГАЯ МЕМБРАНА: ОБЕ ВОРОНКИ СИНХРОННО ВРАЩАЮТСЯ ВОКРУГ БАРИЦЕНТРА!
+            // =================================================================
             if (membraneMesh.visible) {
                 const posAttr = membraneMesh.geometry.attributes.position;
                 const colAttr = membraneMesh.geometry.attributes.color;
-                const pPos = protonRoot.position;
 
                 for (let i = 0; i < posAttr.count; i++) {
                     const vx = posAttr.getX(i);
                     const vz = posAttr.getZ(i);
 
+                    // Воронка протона (+e) поднимается в pPos.x, pPos.z
                     const dxP = vx - pPos.x, dzP = vz - pPos.z;
                     const dSqP = dxP * dxP + dzP * dzP + 0.3;
                     const potP = 1.5 / Math.sqrt(dSqP);
 
+                    // Воронка лептона (-e) опускается в lepPos.x, lepPos.z
                     const dxL = vx - lepPos.x, dzL = vz - lepPos.z;
                     const dSqL = dxL * dxL + dzL * dzL + 0.3;
                     const potL = -1.5 / Math.sqrt(dSqL);
 
                     const netPot = (potP + potL) * membAmp;
 
-                    // Зона взаимного гашения снаружи орбиты
+                    // Зона взаимного гашения за пределами орбиты относительно барицентра
                     const distCenter = Math.sqrt(vx * vx + vz * vz);
                     const outsideFactor = Math.max(0.0, (distCenter - curOrbitR * 1.05) / 2.8);
                     const cancelCoeff = Math.exp(-outsideFactor * 3.2);
