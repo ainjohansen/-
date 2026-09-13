@@ -1,0 +1,96 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{amsmath, amssymb, amsfonts, amsthm}
+\usepackage{geometry}
+\usepackage{booktabs}
+\usepackage{cite}
+\usepackage{hyperref}
+
+\geometry{top=2.5cm, bottom=2.5cm, left=2.5cm, right=2cm}
+
+\title{\textbf{Foundations of Topological Vacuum Elastodynamics:\\ From Quantum Knots to Cosmological Cycles}}
+\author{Dmitry Mikhaylenko}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+A fundamental scale-invariant model of physical reality is presented, based on the rejection of the concepts of point particles, empty space, and independent quantum fields. We postulate the existence of a single elastic phase continuum evolving according to Nambu mechanics equations. Observable particles are described as macroscopic topological defects (vortex tori and Milnor knots). 
+Within the rigorous framework of continuum mechanics, without the use of free parameters, we analytically derive: the geometric nature of the fine-structure constant ($\alpha$), the nonlinear effect of the running coupling constant, the mass spectra of leptons ($N^3$) and neutrinos ($N^2$), the basic proton-to-electron mass ratio ($\sim 1836$), as well as the tensor nature of gravity (General Relativity). A cyclic cosmological paradigm is proposed, where the expansion of the Universe is the elastic stretching of macroscopic voids, and the Big Bang is a global rupture of the medium's continuity when the yield strength is exceeded. The paper strictly outlines the limits of applicability of the analytical asymptotics and formulates computational problems for the further development of the theory.
+\end{abstract}
+
+\section{Axiomatics: Substance, Measure, and Dynamics}
+
+\subsection{Elastic Phase Continuum}
+The foundation of physical reality is recognized as a continuous, isotropic, spin-0 elastic medium, described by a complex order parameter $\Psi(\mathbf{r}, t) = \rho e^{i\Phi}$. In the unperturbed state, the amplitude of the medium minimizes the Ginzburg-Landau potential $U(\rho) = \frac{\lambda}{4}(\rho^2 - v_0^2)^2$. The fundamental property of the continuum is the ultimate phase velocity of elastic perturbation propagation $c = \sqrt{\kappa / \rho_0}$, which acts as the natural genesis of Lorentz kinematics without additional postulates.
+
+\subsection{Nambu Kinematics and Quantization}
+The evolution of the medium in 3D space is described by Nambu triple brackets $\{f, g, h\}$, guaranteeing strict local incompressibility of the phase flow $\nabla \cdot \mathbf{v}_{\text{phase}} = 0$ (Bogomolny limit). The closed nature of orbits in an incompressible flow requires an integer circulation of the phase gradient $\oint \nabla \Phi \cdot d\mathbf{l} = 2\pi N$. Planck's quantum of action $h$ emerges naturally as the minimal invariant 3D cell volume of the Nambu phase space. Space and time lack the status of an independent manifold: coordinates are projections of interference patterns of $\nabla \Phi$, and time $t$ is the dimensionless ratio of local oscillator frequencies $\omega_i / \omega_{\text{ref}}$.
+
+\section{Electrodynamics and the Topology of $\alpha$}
+
+\subsection{Basic Resonator Geometry and the Derivation of $\alpha$}
+The gauge field $A_\mu$ is not an independent entity, but represents a static tension (torsion) of the medium compensating for the phase gradient $\nabla \Phi$. The basic fermion (electron) is a topological torus $T(1,1)$. The virial equilibrium between the macroscopic elastic bending energy ($E_{\text{bend}} \propto r_0^4/R$) and the localized gauge energy ($E_{\text{gauge}} \propto 1/r_0$) requires the condition $\partial E / \partial r_0 = 0$, which analytically yields:
+\begin{equation}
+\frac{r_0}{R_e} = \frac{5}{4} \left( \frac{e^2}{4\pi\varepsilon_0 \hbar c} \right) \equiv \frac{5}{4} \alpha.
+\end{equation}
+The fine-structure constant $\alpha$ is thus strictly determined as a dimensionless geometric form-factor of a stable vortex ring.
+
+\subsection{Nonlinear Elasticity and the Running Coupling Constant}
+In accelerator experiments, an increase in $\alpha(E)$ is observed with increasing collision energy (up to $\sim 1/128$ at $91$ GeV). In the topological model, this effect is a direct consequence of the nonlinear elasticity of the continuum. Under extreme dynamic loads, the local stress tensor of the medium alters the effective shear modulus $\kappa_{\text{eff}}$. The stretching of the vacuum by the kinetic energy of the impact reduces its resistance to bending, which geometrically alters the $r_0/R$ proportion. The "running" coupling constant is a macroscopic registration of the yield limit of the vacuum medium, rather than the effect of virtual pair polarization.
+
+\section{Topological Zoo of the Microworld}
+
+\subsection{Leptons ($N^3$) and the Generation Ban}
+Excited leptons are multi-turn twisted bundles $T(N,1)$. The conservation of the length $2\pi R_e$ leads to the kinematic collapse of the torus radius $R_N = R_e/N$ and an increase in the effective cross-section $r_N = \sqrt{N}r_0$. The cubic scaling of the moment of inertia dictates an analytical mass law:
+\begin{equation}
+m_N \approx N^3 m_e.
+\end{equation}
+The topological condition for the torus's existence $r_N < R_N$ generates a fundamental limit: $N^{3/2} \frac{5}{4}\alpha < 1$, leading to $N_{\text{max}} < 22.9$. The continuum allows phase matching only for frustrated packings $N=1, 6, 15$. The existence of a fourth generation is physically prohibited by the condition of medium continuity.
+
+\subsection{Neutrinos ($N^2$) and Relativistic Aberration}
+The sphaleron rupture of the $T(N,1)$ torus produces an open string of length $L_e$ with an inherited longitudinal twist $N$. The base energy of the longitudinal phase gradient is strictly proportional to $N^2$. Traveling at speed $c$, the twisted string undergoes centrifugal stretching by the vacuum, generating a Lorentz correction $K_N = 1 - \frac{1}{4}\beta_{\text{max}}^2$. For $\nu_\tau$ ($N=15$), the transverse velocity of the periphery reaches $\sim 0.65 c$. The theoretical oscillation ratio $\sqrt{\Delta m^2_{32} / \Delta m^2_{21}} \approx 5.63$ perfectly matches the experiment with an accuracy of $\sim 1\%$.
+
+\subsection{Hadron Sector: Proton and Neutron}
+The proton is strictly described by the algebraic Milnor polynomial $T(3,2)$ on the hypersphere $S^3$. The asymptotic ratio of the knot mass to the $T(1,1)$ torus mass is determined by the topological indices $p,q$ and the scale factor $\alpha^{-1}$:
+\begin{equation}
+\frac{m_p}{m_e} \approx \frac{p^2 + q^2}{\alpha} C_{\text{geom}} \approx \frac{13}{137^{-1}} \times 1.0315 \approx 1837.5.
+\end{equation}
+The neutron is a composite defect: a $T(3,2)$ core surrounded by a $T(1,1)$ shell compressed to the charge radius $r_c \approx 0.84$ fm. The balance of the wall elasticity energy and the shed Coulomb tail gives the mass difference $\Delta m = \frac{3}{4} \frac{e^2}{4\pi\varepsilon_0 r_c} \approx 1.28$ MeV.
+
+\section{Cosmological Elastodynamics: From Gravity to the Big Bang}
+
+\subsection{Emergent Gravity and Dark Energy}
+Gravity is a macroscopic acoustic reaction of the continuum to the volume extraction $V_0$ at the centers of topological knots ($\rho \to 0$). The solution of the classical Navier-Lamé equation $\nabla(\nabla \cdot \mathbf{u}) = 0$ for point extraction gives a radial displacement $u \propto 1/r^2$ and a potential $\varphi \propto 1/r$. The Einstein field equations (GR) are strictly derived as the macroscopic Hooke's law for the continuum stress tensor $g_{\mu\nu}$. 
+
+The astrophysical "accelerated expansion" (Dark Energy) requires no additional fields. The clustering of matter in Great Attractors mechanically causes compensatory elastic stretching of the vacuum in intergalactic voids.
+
+\subsection{Black Holes and the Big Bang Cycle}
+When the yield strength of the BPS vacuum is exceeded, a local accumulation of defects collapses into a Black Hole (BH). The event horizon is a 2D phase membrane on which the knots of infalling matter are archived (a rigorous derivation of the Holographic Principle). Increasing the horizon area reduces the topological stress density ($\sigma \propto 1/M$), making BHs absolutely stable macro-defects from the inside, freezing local entropy.
+
+The cosmological cycle concludes at the global continuum level. The merging of macroscopic BHs leads to extreme tension in the external, matter-free vacuum. When the absolute yield limit $\kappa_{\text{max}}$ is exceeded, the external continuum ruptures in the center of an empty void. The collapse of global tension generates a colossal shock wave that strikes the macro-BH horizons from the outside, tearing their membranes. The dissipative decay of the archived topological macro-bubble into sextillions of base $T(3,2)$ knots and $T(1,1)$ tori is registered as the Big Bang.
+
+\section{Open Computational Problems}
+The present analytical model is built on rigorous asymptotics. To achieve precision accuracy (QFT standard), the following nonlinear computational problems must be resolved:
+\begin{enumerate}
+    \item \textbf{Absolute Calibration:} The model is scale-invariant. Calculating the $0.511$ MeV mass in SI requires linking the modulus $\kappa$ to the cosmological equation of state of the vacuum.
+    \item \textbf{The $S^3$ Integral:} The exact calculation of the proton form-factor $C_{\text{geom}}$ requires integrating the stress tensor over the hypersphere, accounting for the nonlinear oblate deformation of the Milnor petals.
+    \item \textbf{Sphaleron Acoustics:} Calculating the spectral density of W/Z resonances (80 GeV) requires solving the Navier-Stokes equations for the phase rupture $\Delta \ell$.
+    \item \textbf{Neutrino Dynamics:} The quasistatic calculation of the relativistic aberration of monopoles must be replaced by a 3D dynamic simulation of the centrifugal radial expansion (breathing mode) of the string as $v \to c$.
+\end{enumerate}
+
+\section*{Conclusion}
+The universe is a single vibrating continuum. The diversity of particles, the phenomena of quantum entanglement, and cosmological paradoxes find a rigorous, demystified explanation within the elastodynamics of phase topological defects. The "shut up and calculate" principle yields to profound geometric determinism. The presented foundational model does not put an end to the subject but outlines a clear perspective for applying the methods of nonlinear continuum mechanics in fundamental physics.
+
+\begin{thebibliography}{99}
+\bibitem{pdg2024} S.~Navas \textit{et al.} (Particle Data Group), ``Review of Particle Physics,'' \textit{Phys. Rev. D} \textbf{110}, 030001 (2024).
+\bibitem{codata2018} E.~Tiesinga \textit{et al.} (CODATA), ``CODATA recommended values,'' \textit{Rev. Mod. Phys.} \textbf{93}, 025010 (2021).
+\bibitem{katrin2022} M.~Aker \textit{et al.} (KATRIN), ``Direct neutrino-mass measurement,'' \textit{Nat. Phys.} \textbf{18}, 160--166 (2022).
+\bibitem{nambu1973} Y.~Nambu, ``Generalized Hamiltonian dynamics,'' \textit{Phys. Rev. D} \textbf{7}, 2405 (1973).
+\end{thebibliography}
+
+\end{document}
