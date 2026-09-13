@@ -1,0 +1,24 @@
+name: Lean 4 Formal Verification
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build:
+    name: Verify TEV Graph in Lean 4
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install elan
+        uses: leanprover/elan-action@v2
+
+      - name: Get Mathlib cache
+        run: lake exe cache get
+
+      - name: Build and Verify Theorems
+        run: lake build
