@@ -10,9 +10,7 @@ jobs:
   build:
     name: Verify TEV Graph in Lean 4
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./tev_graph
+    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
