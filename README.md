@@ -5,6 +5,7 @@
 [![CAE Verification](https://img.shields.io/badge/CAE%20Scripts-24%20Verified-success.svg)](scripts/)
 [![Interactive Labs](https://img.shields.io/badge/WebGL%203D-Live%20Online-cyan.svg)](https://ainjohansen.github.io/-/html/)
 [![AME2020 Fit](https://img.shields.io/badge/AME2020%20Nuclear-R%C2%B2%20%3D%2094.7%25-brightgreen.svg)](scripts/11_weizsacker.py)
+[![Lean 4 Verified](https://github.com/ainjohansen/-/actions/workflows/lean.yml/badge.svg)](https://github.com/ainjohansen/-/actions/workflows/lean.yml)
 
 **[ RU ]** Единый упругий континуум. Отказ от пустоты, точечных сингулярностей и бинарного догматизма. Физическое пространство представляет собой квазинесжимаемую среду, в которой элементарные частицы, фундаментальные взаимодействия и сознание возникают как резонансные автоколебательные узлы (предельные циклы) разной степени добротности.  
 **[ EN ]** A unified elastic continuum. Rejecting the void, point-like singularities, and binary dogmatism. Physical space is an elastic quasi-incompressible medium where elementary particles, fundamental forces, and consciousness emerge as resonant limit-cycle nodes with varying degrees of Q-factor.
