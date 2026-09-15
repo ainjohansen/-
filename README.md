@@ -53,6 +53,11 @@
 * **Topological rupture ($d^* = 2\alpha R_e$):** Core contact cancels net topological twist ($\tau_{\text{sum}} = +2 - 2 = 0$). The topological barrier vanishes, breaking the closed Möbius waveguides.
 * **Transverse $2\gamma$ emission:** The trapped shear energy is radiated away as two counter-propagating solenoidal wave packets ($\pm \mathbf{e}_x$) with orthogonal circular polarizations, naturally conserving $\mathbf{P}_{\text{tot}} = 0$ and $\mathbf{S}_{\text{tot}} = 0$.
 
+**[Интерактивная 3D-модель: Дейтрон ($^2\mathrm{H}$) и изотопы гелия ($^3\mathrm{He}$, $^4\mathrm{He}$)](https://ainjohansen.github.io/-/html/nucleus_tev_3d-v1.html)**
+  * Натянутая экранирующая сфера электрона $S^2$ нейтрона ($\Delta M_{np} = \frac{3}{16}\alpha M_p$).
+  * Синхронная квадрупольная оболочка ($Q_d > 0$) и тетраэдрическая компенсация в альфа-частице ($Q \approx 0$).
+  * Расчёт профиля $NN$-потенциала $V(r)$, кавитационного ядра отталкивания $r^{-6}$ и контактного пятна склеивания.
+
 * 🚀 **[Твистроника](https://ainjohansen.github.io/-/html/twistronics_elastodynamics.html)** *(Файл в репозитории: [`html/twistronics_elastodynamics.html`](html/twistronics_elastodynamics.html))*
 3D-моделирование муарового континуума, BPS-баланса Губера–фон Мизеса и нефононной сверхпроводимости:
 * **Атомная реконструкция ($\theta_{\text{rec}} = 2.77^\circ$):** спонтанная конденсация гексагональной сети топологических солитонов сдвига шириной $w_{\text{DW}} = 0.810\text{ нм}$ и кавитационное сжатие узлов $AA$.
