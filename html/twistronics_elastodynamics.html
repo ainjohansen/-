@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Топологическая эластодинамика твистроники | Интерактивная 3D-модель</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+    body {
+      background-color: #020408;
+      color: #e2e8f0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "SF Pro Display", sans-serif;
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+    }
+    #webgl-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+
+    /* HUD Glassmorphism Panels */
+    .hud-panel {
+      position: absolute;
+      z-index: 10;
+      background: rgba(8, 14, 26, 0.82);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(0, 240, 255, 0.22);
+      border-radius: 8px;
+      padding: 14px 16px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7), inset 0 0 10px rgba(0, 240, 255, 0.05);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    /* Top Left: Header & Physical State */
+    #panel-header {
+      top: 14px;
+      left: 14px;
+      max-width: 440px;
+    }
+    h1 {
+      font-size: 15px;
+      font-weight: 700;
+      color: #00f0ff;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 3px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    h1::before {
+      content: "";
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background: #00f0ff;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #00f0ff;
+    }
+    .author-tag {
+      font-size: 11px;
+      color: #7dd3fc;
+      font-family: "SF Mono", Consolas, monospace;
+      margin-bottom: 8px;
+    }
+    .phase-badge {
+      display: inline-block;
+      padding: 4px 9px;
+      border-radius: 4px;
+      font-weight: 600;
+      font-size: 10.5px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      transition: all 0.3s ease;
+    }
+    .badge-rigid {
+      background: rgba(148, 163, 184, 0.15);
+      border: 1px solid #64748b;
+      color: #94a3b8;
+    }
+    .badge-reconstructed {
+      background: rgba(0, 240, 255, 0.15);
+      border: 1px solid #00f0ff;
+      color: #38bdf8;
+      box-shadow: 0 0 12px rgba(0, 240, 255, 0.2);
+    }
+    .badge-flatband {
+      background: rgba(250, 204, 21, 0.2);
+      border: 1px solid #facc15;
+      color: #fde047;
+      box-shadow: 0 0 16px rgba(250, 204, 21, 0.4);
+      animation: pulseGlow 1.6s infinite alternate;
+    }
+    @keyframes pulseGlow {
+      from { box-shadow: 0 0 8px rgba(250, 204, 21, 0.3); }
+      to { box-shadow: 0 0 20px rgba(250, 204, 21, 0.8); }
+    }
+    #narrative-text {
+      color: #cbd5e1;
+      font-size: 11.5px;
+      min-height: 48px;
+    }
+
+    /* Top Right: Telemetry */
+    #panel-telemetry {
+      top: 14px;
+      right: 14px;
+      min-width: 300px;
+      font-family: "SF Mono", Consolas, monospace;
+      font-size: 11px;
+    }
+    .tel-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 2.5px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .tel-label {
+      color: #94a3b8;
+    }
+    .tel-val {
+      font-weight: 600;
+      color: #00f0ff;
+    }
+    .tel-val.gold { color: #facc15; }
+    .tel-val.crimson { color: #ff3864; }
+
+    /* Bottom Left: Live 2D Graphs */
+    #panel-graphs {
+      bottom: 14px;
+      left: 14px;
+      width: 320px;
+    }
+    .graph-title {
+      font-size: 10.5px;
+      color: #94a3b8;
+      font-family: "SF Mono", Consolas, monospace;
+      margin-bottom: 4px;
+      display: flex;
+      justify-content: space-between;
+    }
+    canvas.graph-canvas {
+      width: 100%;
+      height: 90px;
+      background: rgba(3, 7, 14, 0.9);
+      border-radius: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    /* Bottom Right: Interactive Controls */
+    #panel-controls {
+      bottom: 14px;
+      right: 14px;
+      width: 320px;
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+    .slider-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .slider-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: #94a3b8;
+    }
+    .slider-header span.val {
+      font-family: "SF Mono", Consolas, monospace;
+      font-weight: 600;
+      color: #00f0ff;
+    }
+    input[type="range"] {
+      width: 100%;
+      accent-color: #00f0ff;
+      background: #1e293b;
+      height: 4px;
+      border-radius: 2px;
+      cursor: pointer;
+    }
+    .btn-group {
+      display: flex;
+      gap: 5px;
+    }
+    button {
+      flex: 1;
+      background: rgba(0, 240, 255, 0.12);
+      border: 1px solid rgba(0, 240, 255, 0.35);
+      color: #e0f2fe;
+      padding: 6px 10px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    button:hover {
+      background: rgba(0, 240, 255, 0.25);
+      border-color: #00f0ff;
+      box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+    }
+    button.active {
+      background: rgba(0, 240, 255, 0.35);
+      border-color: #00f0ff;
+      color: #ffffff;
+      box-shadow: 0 0 12px rgba(0, 240, 255, 0.4);
+    }
+    .toggles-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5px;
+      font-size: 10.5px;
+      color: #94a3b8;
+    }
+    .toggle-lbl {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+    }
+    .toggle-lbl input {
+      accent-color: #00f0ff;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="webgl-canvas"></canvas>
+
+  <!-- Panel: Header & Narrative Tracker -->
+  <div id="panel-header" class="hud-panel">
+    <h1>Топологическая эластодинамика</h1>
+    <div class="author-tag">Д. М. | Критерий текучести Губера–Мизеса</div>
+    <div id="phase-badge" class="phase-badge badge-rigid">Режим: Жесткая решетка (θ > 2.77°)</div>
+    <div id="narrative-text">
+      Упругая деформация слоев незначительна. Муаровый потенциал гармонический, узлы AA и домены AB/BA имеют геометрически равные площади.
+    </div>
+  </div>
+
+  <!-- Panel: Physics Telemetry -->
+  <div id="panel-telemetry" class="hud-panel">
+    <div class="tel-row">
+      <span class="tel-label">Число слоев N:</span>
+      <span id="tel-layers" class="tel-val">2 (TBG)</span>
+    </div>
+    <div class="tel-row">
+      <span class="tel-label">Магический угол Чебышёва θ_m:</span>
+      <span id="tel-thetam" class="tel-val gold">1.082°</span>
+    </div>
+    <div class="tel-row">
+      <span class="tel-label">Текущий угол закрутки θ:</span>
+      <span id="tel-theta" class="tel-val">1.082°</span>
+    </div>
+    <div class="tel-row">
+      <span class="tel-label">Скорость Ферми v_F* / v_F:</span>
+      <span id="tel-vf" class="tel-val gold">0.000 (Коллапс)</span>
+    </div>
+    <div class="tel-row">
+      <span class="tel-label">Эффективная масса m* / m₀:</span>
+      <span id="tel-mass" class="tel-val">∞ (Замерзание)</span>
+    </div>
+    <div class="tel-row">
+      <span class="tel-label">Ширина стенки сдвига w_DW:</span>
+      <span id="tel-wdw" class="tel-val">0.810 нм</span>
+    </div>
+    <div class="tel-row">
+      <span class="tel-label">Период муара L_M(θ):</span>
+      <span id="tel-lm" class="tel-val">13.04 нм</span>
+    </div>
+    <div class="tel-row">
+      <span class="tel-label">Ван Хов расщепление ΔE_vHS:</span>
+      <span id="tel-vhs" class="tel-val">0.0 мэВ</span>
+    </div>
+    <div class="tel-row">
+      <span class="tel-label">Сверхпроводимость T_c (Эшелби):</span>
+      <span id="tel-tc" class="tel-val gold">3.18 K (Максимум)</span>
+    </div>
+    <div class="tel-row">
+      <span class="tel-label">BPS-баланс 2J₂ / 3σ_m²:</span>
+      <span id="tel-bps" class="tel-val">1.000 (w₀/w₁ = 0.8165)</span>
+    </div>
+  </div>
+
+  <!-- Panel: Real-time Curves -->
+  <div id="panel-graphs" class="hud-panel">
+    <div class="graph-title">
+      <span>СКОРОСТЬ ФЕРМИ v_F*(θ) / v_F</span>
+      <span id="graph-vf-val">0.00</span>
+    </div>
+    <canvas id="canvas-vf" class="graph-canvas" width="300" height="90"></canvas>
+
+    <div class="graph-title">
+      <span>КУПОЛ СВЕРХПРОВОДИМОСТИ T_c(θ)</span>
+      <span id="graph-tc-val">3.18 K</span>
+    </div>
+    <canvas id="canvas-tc" class="graph-canvas" width="300" height="90"></canvas>
+  </div>
+
+  <!-- Panel: Controls Deck -->
+  <div id="panel-controls" class="hud-panel">
+    <!-- Slider: Angle theta -->
+    <div class="slider-wrap">
+      <div class="slider-header">
+        <span>Угол закрутки θ:</span>
+        <span id="slider-theta-val" class="val">1.082°</span>
+      </div>
+      <input type="range" id="slider-theta" min="0.50" max="3.50" step="0.005" value="1.082">
+    </div>
+
+    <!-- Quick Buttons -->
+    <div class="btn-group">
+      <button id="btn-magic">θ_m (Магический)</button>
+      <button id="btn-rec">θ_rec (2.77°)</button>
+      <button id="btn-rigid">θ = 3.20°</button>
+    </div>
+
+    <!-- Multilayer Mode Buttons -->
+    <div class="slider-header" style="margin-top:2px;">
+      <span>Число слоев (Спектр Чебышёва):</span>
+    </div>
+    <div class="btn-group">
+      <button id="btn-n2" class="active">N=2 (1.08°)</button>
+      <button id="btn-n3">N=3 (1.53°)</button>
+      <button id="btn-n4">N=4 (1.75°)</button>
+    </div>
+
+    <!-- Slider: Heterostrain -->
+    <div class="slider-wrap">
+      <div class="slider-header">
+        <span>Гетерострейн ε (Натяжение):</span>
+        <span id="slider-strain-val" class="val">0.000%</span>
+      </div>
+      <input type="range" id="slider-strain" min="0.000" max="0.300" step="0.005" value="0.000">
+    </div>
+
+    <!-- Display Toggles -->
+    <div class="toggles-grid">
+      <label class="toggle-lbl">
+        <input type="checkbox" id="chk-solitons" checked> Сеть солитонов w_DW
+      </label>
+      <label class="toggle-lbl">
+        <input type="checkbox" id="chk-eshelby" checked> Пары Эшелби (T_c)
+      </label>
+      <label class="toggle-lbl">
+        <input type="checkbox" id="chk-phase" checked> Фазовая волна Ферми
+      </label>
+      <label class="toggle-lbl">
+        <input type="checkbox" id="chk-wireframe"> Каркас решетки
+      </label>
+    </div>
+
+    <!-- Camera Presets -->
+    <div class="btn-group">
+      <button id="cam-iso">3D Изометрия</button>
+      <button id="cam-top">Сверху (XY)</button>
+      <button id="cam-profile">Профиль Z</button>
+    </div>
+  </div>
+
+  <!-- Three.js and OrbitControls via CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+  <script>
+    /* ==========================================================================
+       ФИЗИЧЕСКИЕ КОНСТАНТЫ И ИНВАРИАНТЫ ТЕОРИИ (МИХАЙЛЕНКО, 2026)
+       ========================================================================== */
+    const A_GRAPHENE = 0.2460;        // Постоянная решетки графена a = 0.246 нм
+    const THETA_M_TBG = 1.0822;       // Первый магический угол бислоя TBG (градусы)
+    const THETA_REC = 2.7688;         // Критический угол атомной реконструкции (2.77°)
+    const EPS_CRIT = 0.2013;          // Критический предел прочности гетерострейна (0.201%)
+    const W_DW_PHYS = 0.8102;         // Ширина доменной стенки скольжения (0.810 нм)
+    const A_VHS = 225.9;              // Коэффициент расщепления Ван Хова (мэВ/град)
+    const TC_MAX = 3.1798;            // Пиковая температура сверхпроводимости (3.18 K)
+
+    // Состояние модели
+    const state = {
+      theta: 1.0822,
+      N_layers: 2,
+      theta_m: THETA_M_TBG,
+      strain: 0.000,
+      showSolitons: true,
+      showEshelby: true,
+      showPhaseWave: true,
+      wireframe: false,
+      time: 0.0
+    };
+
+    /* ==========================================================================
+       СПЕКТРАЛЬНАЯ ТЕОРЕМА ЧЕБЫШЁВА ДЛЯ СЛОЕВ N = 2, 3, 4
+       ========================================================================== */
+    function getChebyshevMagicAngle(N) {
+      if (N === 2) return THETA_M_TBG;                                         // 1.0822°
+      if (N === 3) return Math.sqrt(2.0) * THETA_M_TBG;                        // 1.5304° (√2 * θ_m)
+      if (N === 4) return ((1.0 + Math.sqrt(5.0)) / 2.0) * THETA_M_TBG;        // 1.7510° (Золотое сечение Φ * θ_m)
+      return THETA_M_TBG;
+    }
+
+    /* ==========================================================================
+       ИНИЦИАЛИЗАЦИЯ ТРЕХМЕРНОЙ ГРАФИКИ THREE.JS
+       ========================================================================== */
+    const canvas = document.getElementById('webgl-canvas');
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: "high-performance" });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.3;
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x020408);
+    scene.fog = new THREE.FogExp2(0x020408, 0.032);
+
+    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
+    camera.position.set(0, -9.5, 11.5);
+
+    const controls = new THREE.OrbitControls(camera, canvas);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.06;
+    controls.maxDistance = 28;
+    controls.minDistance = 2;
+    controls.target.set(0, 0, 0);
+
+    // Фоновое освещение
+    const ambLight = new THREE.AmbientLight(0x0a1628, 1.8);
+    scene.add(ambLight);
+
+    const dirLight = new THREE.DirectionalLight(0x00f0ff, 1.2);
+    dirLight.position.set(5, 8, 10);
+    scene.add(dirLight);
+
+    const eshelbyGlowLight = new THREE.PointLight(0xfacc15, 0, 15);
+    scene.add(eshelbyGlowLight);
+
+    // Координатная сетка
+    const grid = new THREE.GridHelper(24, 32, 0x00f0ff, 0x0d223a);
+    grid.position.z = -1.6;
+    grid.rotation.x = Math.PI / 2;
+    grid.material.opacity = 0.25;
+    grid.material.transparent = true;
+    scene.add(grid);
+
+    /* ==========================================================================
+       КАСТОМНЫЙ GLSL-ШЕЙДЕР ДВУМЕРНОГО МУАРОВОГО КОНТИНУУМА
+       (Топологическая реконструкция + BPS-текучесть Губера-Мизеса)
+       ========================================================================== */
+    const moireUniforms = {
+      u_theta: { value: state.theta },
+      u_theta_m: { value: state.theta_m },
+      u_theta_rec: { value: THETA_REC },
+      u_strain: { value: state.strain },
+      u_time: { value: 0.0 },
+      u_show_solitons: { value: 1.0 },
+      u_show_eshelby: { value: 1.0 },
+      u_show_phase: { value: 1.0 }
+    };
+
+    const moireVertexShader = `
+      varying vec2 vUv;
+      varying vec3 vWorldPos;
+      varying float vPsi;
+      varying float vBuckle;
+
+      uniform float u_theta;
+      uniform float u_theta_rec;
+      uniform float u_strain;
+
+      void main() {
+        vUv = uv;
+        vec3 pos = position;
+
+        // Масштабированный радиус-вектор муарового кристалла
+        vec2 r = pos.xy * 2.8;
+
+        // Базовый волновой вектор муара k_theta = (4*pi / 3a) * theta
+        float k = (4.0 * 3.14159265 / (3.0 * 0.246)) * (u_theta * 3.14159265 / 180.0) * 0.12;
+
+        // Звезда трех векторов обратной решетки муара (симметрия C3)
+        // Учет гетерострейна: одноосная деформация растягивает звезду векторов
+        float eps = u_strain * 4.5;
+        vec2 q1 = vec2(0.0, -1.0 * (1.0 + eps)) * k;
+        vec2 q2 = vec2(0.866025 * (1.0 - eps * 0.5), 0.5 * (1.0 + eps)) * k;
+        vec2 q3 = vec2(-0.866025 * (1.0 - eps * 0.5), 0.5 * (1.0 + eps)) * k;
+
+        // Интерференционный потенциал муара (несмещенная гармоническая мода)
+        float psi_raw = (cos(dot(q1, r)) + cos(dot(q2, r)) + cos(dot(q3, r))) / 3.0;
+
+        // Нелинейная атомная реконструкция Франка-ван дер Мерве при theta < theta_rec (2.77°)
+        // Узлы AA сжимаются, стенки скольжения AB/BA обостряются
+        float rec_factor = clamp((u_theta_rec - u_theta) / 1.8, 0.0, 1.0);
+        float psi_rec = psi_raw;
+        if (rec_factor > 0.0) {
+          // Степенная нелинейность 6-го порядка кавитационного гамильтониана H_cav
+          float sign_p = sign(psi_raw);
+          psi_rec = mix(psi_raw, sign_p * pow(abs(psi_raw), 1.0 + 2.5 * rec_factor), rec_factor);
+        }
+
+        vPsi = psi_rec;
+
+        // Изгибное вспучивание узлов AA (гидростатическое давление кавитации sigma_m)
+        // Разность высот d_AA - d_AB = 0.025 нм отображается рельефом по оси Z
+        float aa_bump = smoothstep(0.35, 0.95, psi_rec);
+        float z_disp = aa_bump * 0.45 * (1.0 + rec_factor * 0.5);
+        pos.z += z_disp;
+        vBuckle = z_disp;
+
+        vWorldPos = (modelMatrix * vec4(pos, 1.0)).xyz;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
+      }
+    `;
+
+    const moireFragmentShader = `
+      varying vec2 vUv;
+      varying vec3 vWorldPos;
+      varying float vPsi;
+      varying float vBuckle;
+
+      uniform float u_theta;
+      uniform float u_theta_m;
+      uniform float u_theta_rec;
+      uniform float u_time;
+      uniform float u_show_solitons;
+      uniform float u_show_eshelby;
+      uniform float u_show_phase;
+
+      void main() {
+        // vPsi: +1.0 соответствует центру AA, -0.5 соответствует областям AB и BA
+        float psi = vPsi;
+
+        // Базовые цветовые палитры для фаз упаковки:
+        // AA (кавитационный узел): Янтарно-золотой / белый
+        // AB / BA (упаковка Бернала): Глубокий темно-синий
+        // Солитонная стенка сдвига w_DW: Лазурно-бирюзовый неон
+        vec3 col_AA = vec3(1.0, 0.55, 0.15);
+        vec3 col_AB = vec3(0.02, 0.05, 0.14);
+        vec3 col_DW = vec3(0.0, 0.95, 1.0);
+
+        // Интерполяция фона по локальной плотности энергии упаковки
+        float norm_psi = clamp((psi + 0.5) / 1.5, 0.0, 1.0);
+        vec3 color = mix(col_AB, col_AA, pow(norm_psi, 1.8));
+
+        // Выделение солитонных доменных стенок w_DW = 0.81 нм (линии раздела AB/BA)
+        // В окрестности границы psi близко к 0.0
+        float rec_active = clamp((u_theta_rec - u_theta) / 1.5, 0.0, 1.0);
+        if (u_show_solitons > 0.5 && rec_active > 0.05) {
+          float dw_mask = exp(-pow((psi + 0.12) / 0.18, 2.0));
+          color = mix(color, col_DW, dw_mask * 0.85 * rec_active);
+        }
+
+        // Визуализация фазовой волны электрона v_F*(theta)
+        // Групповая скорость падает до нуля при theta -> theta_m
+        float delta_theta = abs(u_theta - u_theta_m);
+        float vf_ratio = clamp(abs(1.0 - pow(u_theta_m / u_theta, 2.0)), 0.0, 1.0);
+
+        if (u_show_phase > 0.5) {
+          // Частота бегущей фазы пропорциональна v_F*
+          float wave_phase = dot(vWorldPos.xy, vec2(1.8, 1.2)) - u_time * vf_ratio * 7.0;
+          float phase_ripple = sin(wave_phase) * 0.5 + 0.5;
+          // При замерзании волна превращается в стационарную стоячую текстуру
+          color += vec3(0.08, 0.20, 0.35) * phase_ripple * (0.3 + 0.7 * (1.0 - vf_ratio));
+        }
+
+        // Вспышка нефононной сверхпроводимости включений Эшелби в узлах AA
+        // Активна в узком окне вокруг магического угла |theta - theta_m| < 0.12°
+        if (u_show_eshelby > 0.5) {
+          float tc_window = exp(-pow(delta_theta / 0.045, 2.0)); // Резонансный колокол
+          if (tc_window > 0.01) {
+            float aa_spot = smoothstep(0.45, 0.95, psi);
+            // Пульсирующее квантовое когерентное свечение куперовских пар
+            float pulse = 0.85 + 0.15 * sin(u_time * 6.0);
+            vec3 sc_gold = vec3(1.0, 0.92, 0.45) * 2.2 * pulse;
+            color = mix(color, sc_gold, aa_spot * tc_window * 0.92);
+          }
+        }
+
+        // Освещение от изгибного рельефа
+        color += vec3(0.12, 0.18, 0.25) * vBuckle;
+
+        gl_FragColor = vec4(color, 1.0);
+      }
+    `;
+
+    // Создание муаровой плоскости высокой детализации (256x256 полигонов)
+    const planeGeom = new THREE.PlaneGeometry(16, 16, 256, 256);
+    const planeMat = new THREE.ShaderMaterial({
+      vertexShader: moireVertexShader,
+      fragmentShader: moireFragmentShader,
+      uniforms: moireUniforms,
+      wireframe: state.wireframe
+    });
+    const moireMesh = new THREE.Mesh(planeGeom, planeMat);
+    scene.add(moireMesh);
+
+    // Дополнительные полупрозрачные плоскости для визуализации многослойных стопок (TTG, T4G)
+    const subLayerMat = new THREE.MeshBasicMaterial({
+      color: 0x00f0ff,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.15
+    });
+    const subLayerGeom = new THREE.PlaneGeometry(16, 16, 64, 64);
+    const subLayer1 = new THREE.Mesh(subLayerGeom, subLayerMat);
+    subLayer1.position.z = -0.55;
+    scene.add(subLayer1);
+
+    const subLayer2 = new THREE.Mesh(subLayerGeom, subLayerMat);
+    subLayer2.position.z = -1.10;
+    subLayer2.visible = false;
+    scene.add(subLayer2);
+
+    /* ==========================================================================
+       ОТРИСОВКА ЖИВЫХ ГРАФИКОВ (CANVAS 2D HUD)
+       ========================================================================== */
+    const canvasVf = document.getElementById('canvas-vf');
+    const ctxVf = canvasVf.getContext('2d');
+    const canvasTc = document.getElementById('canvas-tc');
+    const ctxTc = canvasTc.getContext('2d');
+
+    function drawGraphs() {
+      // 1. График скорости Ферми v_F*(theta)
+      const w1 = canvasVf.width, h1 = canvasVf.height;
+      ctxVf.clearRect(0, 0, w1, h1);
+
+      // Сетка
+      ctxVf.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+      ctxVf.lineWidth = 1;
+      ctxVf.beginPath();
+      for (let x = 0; x < w1; x += 40) { ctxVf.moveTo(x, 0); ctxVf.lineTo(x, h1); }
+      for (let y = 0; y < h1; y += 22) { ctxVf.moveTo(0, y); ctxVf.lineTo(w1, y); }
+      ctxVf.stroke();
+
+      // Кривая v_F*(theta) / v_F = |1 - (theta_m / theta)^2|
+      ctxVf.strokeStyle = '#00f0ff';
+      ctxVf.lineWidth = 2;
+      ctxVf.beginPath();
+
+      const tMin = 0.5, tMax = 3.5;
+      for (let px = 0; px < w1; px++) {
+        const th = tMin + (px / w1) * (tMax - tMin);
+        const vf = Math.min(1.0, Math.abs(1.0 - Math.pow(state.theta_m / th, 2.0)));
+        const py = h1 - 6 - vf * (h1 - 12);
+        if (px === 0) ctxVf.moveTo(px, py);
+        else ctxVf.lineTo(px, py);
+      }
+      ctxVf.stroke();
+
+      // Маркер магического угла (вертикаль)
+      const pxMagic = ((state.theta_m - tMin) / (tMax - tMin)) * w1;
+      ctxVf.strokeStyle = '#facc15';
+      ctxVf.setLineDash([2, 2]);
+      ctxVf.beginPath();
+      ctxVf.moveTo(pxMagic, 0);
+      ctxVf.lineTo(pxMagic, h1);
+      ctxVf.stroke();
+      ctxVf.setLineDash([]);
+
+      // Текущая точка theta
+      const pxCur = ((state.theta - tMin) / (tMax - tMin)) * w1;
+      const curVf = Math.min(1.0, Math.abs(1.0 - Math.pow(state.theta_m / state.theta, 2.0)));
+      const pyCur = h1 - 6 - curVf * (h1 - 12);
+
+      ctxVf.fillStyle = '#ffffff';
+      ctxVf.beginPath();
+      ctxVf.arc(pxCur, pyCur, 4, 0, Math.PI * 2);
+      ctxVf.fill();
+
+      document.getElementById('graph-vf-val').innerText = curVf.toFixed(3);
+
+      // 2. График температуры сверхпроводимости T_c(theta)
+      const w2 = canvasTc.width, h2 = canvasTc.height;
+      ctxTc.clearRect(0, 0, w2, h2);
+
+      ctxTc.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+      ctxTc.beginPath();
+      for (let x = 0; x < w2; x += 40) { ctxTc.moveTo(x, 0); ctxTc.lineTo(x, h2); }
+      for (let y = 0; y < h2; y += 22) { ctxTc.moveTo(0, y); ctxTc.lineTo(w2, y); }
+      ctxTc.stroke();
+
+      // Купол сверхпроводимости
+      ctxTc.strokeStyle = '#facc15';
+      ctxTc.lineWidth = 2;
+      ctxTc.beginPath();
+
+      for (let px = 0; px < w2; px++) {
+        const th = tMin + (px / w2) * (tMax - tMin);
+        const dth = Math.abs(th - state.theta_m);
+        const tc = TC_MAX * Math.exp(-Math.pow(dth / 0.045, 2.0));
+        const py = h2 - 6 - (tc / 3.5) * (h2 - 12);
+        if (px === 0) ctxTc.moveTo(px, py);
+        else ctxTc.lineTo(px, py);
+      }
+      ctxTc.stroke();
+
+      // Текущая точка T_c
+      const curTc = TC_MAX * Math.exp(-Math.pow(Math.abs(state.theta - state.theta_m) / 0.045, 2.0));
+      const pyCurTc = h2 - 6 - (curTc / 3.5) * (h2 - 12);
+
+      ctxTc.fillStyle = '#facc15';
+      ctxTc.beginPath();
+      ctxTc.arc(pxCur, pyCurTc, 4.5, 0, Math.PI * 2);
+      ctxTc.fill();
+
+      document.getElementById('graph-tc-val').innerText = curTc.toFixed(2) + " K";
+    }
+
+    /* ==========================================================================
+       ОБНОВЛЕНИЕ ТЕЛЕМЕТРИИ И ФИЗИЧЕСКИХ ПАРАМЕТРОВ
+       ========================================================================== */
+    function updatePhysicsAndUI() {
+      // Эффективный магический угол с учетом гетерострейна:
+      // theta_m(eps) = theta_m(0) * sqrt(1 - eps / eps_crit)
+      const strainFactor = Math.max(0.01, 1.0 - (state.strain / EPS_CRIT));
+      const effectiveMagic = getChebyshevMagicAngle(state.N_layers) * Math.sqrt(strainFactor);
+      state.theta_m = effectiveMagic;
+
+      moireUniforms.u_theta.value = state.theta;
+      moireUniforms.u_theta_m.value = state.theta_m;
+      moireUniforms.u_strain.value = state.strain;
+      moireUniforms.u_show_solitons.value = state.showSolitons ? 1.0 : 0.0;
+      moireUniforms.u_show_eshelby.value = state.showEshelby ? 1.0 : 0.0;
+      moireUniforms.u_show_phase.value = state.showPhaseWave ? 1.0 : 0.0;
+
+      // Кинематика квазичастиц плоской зоны
+      const dTheta = Math.abs(state.theta - state.theta_m);
+      const vf_ratio = Math.min(1.0, Math.abs(1.0 - Math.pow(state.theta_m / state.theta, 2.0)));
+      const effMass = (dTheta < 0.002) ? "∞ (Замерзание)" : (1.0 / vf_ratio).toFixed(1) + " m₀";
+
+      // Геометрия муара
+      const thetaRad = (state.theta * Math.PI) / 180.0;
+      const L_M = A_GRAPHENE / (2.0 * Math.sin(thetaRad / 2.0));
+      const deltaE_vHS = A_VHS * dTheta;
+      const curTc = TC_MAX * Math.exp(-Math.pow(dTheta / 0.045, 2.0));
+
+      // Обновление числовых значений HUD
+      document.getElementById('tel-layers').innerText = `${state.N_layers} (${state.N_layers === 2 ? 'TBG' : state.N_layers === 3 ? 'TTG' : 'T4G'})`;
+      document.getElementById('tel-thetam').innerText = `${state.theta_m.toFixed(3)}°`;
+      document.getElementById('tel-theta').innerText = `${state.theta.toFixed(3)}°`;
+      document.getElementById('tel-vf').innerText = `${vf_ratio.toFixed(3)} ${vf_ratio < 0.01 ? '(Коллапс)' : ''}`;
+      document.getElementById('tel-mass').innerText = effMass;
+      document.getElementById('tel-wdw').innerText = `${W_DW_PHYS.toFixed(3)} нм`;
+      document.getElementById('tel-lm').innerText = `${L_M.toFixed(2)} нм`;
+      document.getElementById('tel-vhs').innerText = `${deltaE_vHS.toFixed(1)} мэВ`;
+      document.getElementById('tel-tc').innerText = `${curTc.toFixed(2)} K ${curTc > 2.8 ? '(Максимум)' : ''}`;
+
+      // Динамический бейдж и физическое описание состояния
+      const badge = document.getElementById('phase-badge');
+      const narrative = document.getElementById('narrative-text');
+
+      if (state.strain >= EPS_CRIT) {
+        badge.className = 'phase-badge badge-rigid';
+        badge.innerText = 'Предел текучести превышен (ε > 0.20%)';
+        narrative.innerText = 'Внешнее натяжение разрушило BPS-баланс Губера-фон Мизеса. Муаровая решетка пластически деформирована, плоская зона уничтожена.';
+      } else if (dTheta <= 0.015) {
+        badge.className = 'phase-badge badge-flatband';
+        badge.innerText = 'Плоская зона: BPS-резонанс Губера–Мизеса';
+        narrative.innerText = `Достигнут критический угол θ_m = ${state.theta_m.toFixed(3)}°. Фазовая скорость v_F* -> 0 (коллапс). Спонтанное упругое спаривание квадрупольных включений Эшелби зажигает сверхпроводимость T_c = 3.18 K.`;
+        eshelbyGlowLight.intensity = 3.5;
+        eshelbyGlowLight.position.set(0, 0, 1.5);
+      } else if (state.theta <= THETA_REC) {
+        badge.className = 'phase-badge badge-reconstructed';
+        badge.innerText = 'Атомная реконструкция (θ < 2.77°)';
+        narrative.innerText = `Решетка преодолела порог текучести Франка-ван дер Мерве. Домены AB/BA расширены, узлы AA сжаты в кавитационные вихри, сформирована сеть солитонных стенок шириной 0.81 нм.`;
+        eshelbyGlowLight.intensity = 0.2;
+      } else {
+        badge.className = 'phase-badge badge-rigid';
+        badge.innerText = 'Жесткая решетка (θ > 2.77°)';
+        narrative.innerText = 'Упругие смещения малы по сравнению с несоразмерностью. Решетка жесткая, муаровый потенциал гармонический, узлы AA и домены AB/BA имеют одинаковую площадь.';
+        eshelbyGlowLight.intensity = 0.0;
+      }
+
+      // Управление дополнительными слоями для визуализации стопки
+      subLayer1.visible = (state.N_layers >= 3);
+      subLayer2.visible = (state.N_layers >= 4);
+
+      drawGraphs();
+    }
+
+    /* ==========================================================================
+       ОБРАБОТЧИКИ СОБЫТИЙ ИНТЕРФЕЙСА
+       ========================================================================== */
+    const sliderTheta = document.getElementById('slider-theta');
+    sliderTheta.addEventListener('input', (e) => {
+      state.theta = parseFloat(e.target.value);
+      document.getElementById('slider-theta-val').innerText = `${state.theta.toFixed(3)}°`;
+      updatePhysicsAndUI();
+    });
+
+    const sliderStrain = document.getElementById('slider-strain');
+    sliderStrain.addEventListener('input', (e) => {
+      state.strain = parseFloat(e.target.value);
+      document.getElementById('slider-strain-val').innerText = `${state.strain.toFixed(3)}%`;
+      updatePhysicsAndUI();
+    });
+
+    // Быстрые переходы по углам
+    document.getElementById('btn-magic').addEventListener('click', () => {
+      state.theta = state.theta_m;
+      sliderTheta.value = state.theta;
+      document.getElementById('slider-theta-val').innerText = `${state.theta.toFixed(3)}°`;
+      updatePhysicsAndUI();
+    });
+    document.getElementById('btn-rec').addEventListener('click', () => {
+      state.theta = THETA_REC;
+      sliderTheta.value = state.theta;
+      document.getElementById('slider-theta-val').innerText = `${state.theta.toFixed(3)}°`;
+      updatePhysicsAndUI();
+    });
+    document.getElementById('btn-rigid').addEventListener('click', () => {
+      state.theta = 3.20;
+      sliderTheta.value = state.theta;
+      document.getElementById('slider-theta-val').innerText = `${state.theta.toFixed(3)}°`;
+      updatePhysicsAndUI();
+    });
+
+    // Переключение слоев Чебышёва
+    function setLayerMode(n, btnId) {
+      state.N_layers = n;
+      ['btn-n2', 'btn-n3', 'btn-n4'].forEach(id => document.getElementById(id).classList.remove('active'));
+      document.getElementById(btnId).classList.add('active');
+      state.theta_m = getChebyshevMagicAngle(n);
+      state.theta = state.theta_m; // автоматический скачок на магический угол выбранного N
+      sliderTheta.value = state.theta;
+      document.getElementById('slider-theta-val').innerText = `${state.theta.toFixed(3)}°`;
+      updatePhysicsAndUI();
+    }
+
+    document.getElementById('btn-n2').addEventListener('click', () => setLayerMode(2, 'btn-n2'));
+    document.getElementById('btn-n3').addEventListener('click', () => setLayerMode(3, 'btn-n3'));
+    document.getElementById('btn-n4').addEventListener('click', () => setLayerMode(4, 'btn-n4'));
+
+    // Чекбоксы слоев визуализации
+    document.getElementById('chk-solitons').addEventListener('change', (e) => { state.showSolitons = e.target.checked; updatePhysicsAndUI(); });
+    document.getElementById('chk-eshelby').addEventListener('change', (e) => { state.showEshelby = e.target.checked; updatePhysicsAndUI(); });
+    document.getElementById('chk-phase').addEventListener('change', (e) => { state.showPhaseWave = e.target.checked; updatePhysicsAndUI(); });
+    document.getElementById('chk-wireframe').addEventListener('change', (e) => { planeMat.wireframe = e.target.checked; });
+
+    // Пресеты камеры
+    document.getElementById('cam-iso').addEventListener('click', () => {
+      camera.position.set(0, -9.5, 11.5);
+      controls.target.set(0, 0, 0);
+    });
+    document.getElementById('cam-top').addEventListener('click', () => {
+      camera.position.set(0, 0, 15.0);
+      controls.target.set(0, 0, 0);
+    });
+    document.getElementById('cam-profile').addEventListener('click', () => {
+      camera.position.set(0, -14.0, 1.8);
+      controls.target.set(0, 0, 0);
+    });
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    /* ==========================================================================
+       ГЛАВНЫЙ АНИМАЦИОННЫЙ ЦИКЛ RENDER
+       ========================================================================== */
+    const clock = new THREE.Clock();
+
+    function animate() {
+      requestAnimationFrame(animate);
+      const delta = clock.getDelta();
+      state.time += delta;
+      moireUniforms.u_time.value = state.time;
+
+      controls.update();
+      renderer.render(scene, camera);
+    }
+
+    // Инициализация при старте
+    updatePhysicsAndUI();
+    animate();
+  </script>
+</body>
+</html>
