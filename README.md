@@ -52,7 +52,19 @@
 * **Triaxial spin-locking:** Anti-phase synchronized 3-axis rotation ($\Omega_u, \Omega_v, \Omega_n$) with $4\pi$ Möbius boundary conditions, providing smooth kinematic meshing without shear jamming.
 * **Topological rupture ($d^* = 2\alpha R_e$):** Core contact cancels net topological twist ($\tau_{\text{sum}} = +2 - 2 = 0$). The topological barrier vanishes, breaking the closed Möbius waveguides.
 * **Transverse $2\gamma$ emission:** The trapped shear energy is radiated away as two counter-propagating solenoidal wave packets ($\pm \mathbf{e}_x$) with orthogonal circular polarizations, naturally conserving $\mathbf{P}_{\text{tot}} = 0$ and $\mathbf{S}_{\text{tot}} = 0$.
-  
+
+* 🚀 **[Твистроника](https://ainjohansen.github.io/-/html/twistronics_elastodynamics.html)** *(Файл в репозитории: [`html/twistronics_elastodynamics.html`](html/twistronics_elastodynamics.html))*
+3D-моделирование муарового континуума, BPS-баланса Губера–фон Мизеса и нефононной сверхпроводимости:
+* **Атомная реконструкция ($\theta_{\text{rec}} = 2.77^\circ$):** спонтанная конденсация гексагональной сети топологических солитонов сдвига шириной $w_{\text{DW}} = 0.810\text{ нм}$ и кавитационное сжатие узлов $AA$.
+* **BPS-критерий текучести Губера–фон Мизеса ($2J_2 = 3\sigma_m^2$):** аналитический вывод отношения потенциалов $w_0/w_1 = \sqrt{2/3} \approx 0.8165$ и первого магического угла бислоя $\theta_m^{(2)} = 1.082^\circ$.
+* **Коллапс скорости Ферми ($v_F^* \to 0$):** визуализация фазового «замерзания» электронов проводимости и расходимости эффективной массы $m^*(\theta) \to \infty$.
+* **Спектральная теорема Чебышёва для $N$-слоев:** квантование мультиплетов магических углов для трислоя TTG ($\theta_m^{(3)} = \sqrt{2}\theta_m = 1.530^\circ$) и 4-слоя T4G через золотое сечение ($\theta_m^{(4,1)} = \Phi \theta_m = 1.751^\circ$).
+* **Нефононная сверхпроводимость включений Эшелби:** локализация куперовского конденсата в гидростатических кавитационных полостях $AA$ с пиком $T_c^{\text{max}} = 3.18\text{ K}$.
+* **Критический порог гетерострейна ($\epsilon_{\text{crit}} = 0.201\%$):** разрушение плоской зоны и срыв BPS-резонанса внешним одноосным натяжением.
+* **Pre-contact Coulomb tail interference:** Destructive overlap of chiral strain deviators ($\Delta\mathcal{W}_{\text{gap}} < 0$) generating attractive stress long before core contact.
+* **Triaxial spin-locking:** Anti-phase 3-axis meshing $(\Omega_u, \Omega_v, \Omega_n)$ under $4\pi$ Möbius boundary conditions.
+* **Core reconnection threshold ($d^* = 2\alpha R_e$):** Cancellation of net topological winding ($\tau_{\text{sum}} = 0$) breaking closed soliton loops.
+* **Transverse $2\gamma$ emission:** Conversion of trapped stationary modes into two solenoidal wavepackets ($\pm \mathbf{e}_x$) with orthogonal circular polarizations.
 *   📁 **[Корневой каталог визуализаций](https://ainjohansen.github.io/-/html/)**
 
 ---
