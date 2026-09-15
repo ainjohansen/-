@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Электрон-позитронная аннигиляция e⁺e⁻ → 2γ | ТЭВ Солитоны</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+    body {
+      background-color: #030508;
+      color: #e0e6ed;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+    }
+    #webgl-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+
+    /* HUD Elements */
+    .hud-panel {
+      position: absolute;
+      z-index: 10;
+      background: rgba(6, 12, 22, 0.78);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(0, 229, 255, 0.22);
+      border-radius: 8px;
+      padding: 14px 18px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), inset 0 0 12px rgba(0, 229, 255, 0.05);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    /* Top Left: Header & Mode */
+    #panel-header {
+      top: 16px;
+      left: 16px;
+      max-width: 440px;
+    }
+    h1 {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      color: #00f0ff;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    h1::before {
+      content: "";
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background: #00f0ff;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #00f0ff;
+    }
+    .subtitle {
+      font-size: 11px;
+      color: #7d9bb8;
+      font-family: "SF Mono", Consolas, monospace;
+      margin-bottom: 10px;
+    }
+    .phase-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-weight: 600;
+      font-size: 11px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      transition: all 0.3s ease;
+    }
+    .phase-1 {
+      background: rgba(0, 150, 255, 0.15);
+      border: 1px solid #0099ff;
+      color: #38bdf8;
+    }
+    .phase-2 {
+      background: rgba(255, 255, 255, 0.25);
+      border: 1px solid #ffffff;
+      color: #ffffff;
+      box-shadow: 0 0 15px #ffffff;
+    }
+    .phase-3 {
+      background: rgba(255, 0, 128, 0.15);
+      border: 1px solid #ff007f;
+      color: #ff3399;
+    }
+    #phase-desc {
+      color: #cbd5e1;
+      font-size: 12px;
+      min-height: 36px;
+    }
+
+    /* Top Right: Real-time Telemetry */
+    #panel-telemetry {
+      top: 16px;
+      right: 16px;
+      min-width: 280px;
+      font-family: "SF Mono", Consolas, monospace;
+      font-size: 11px;
+    }
+    .telemetry-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 3px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .telemetry-label {
+      color: #8fa3b8;
+    }
+    .telemetry-val {
+      font-weight: 600;
+      color: #00f0ff;
+    }
+    .telemetry-val.warn {
+      color: #ff3864;
+    }
+
+    /* Bottom Left: Potential Well Plot */
+    #panel-plot {
+      bottom: 16px;
+      left: 16px;
+      width: 320px;
+    }
+    .plot-title {
+      font-size: 11px;
+      color: #8fa3b8;
+      font-family: "SF Mono", Consolas, monospace;
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+    }
+    #plot-canvas {
+      width: 100%;
+      height: 120px;
+      background: rgba(3, 7, 14, 0.85);
+      border-radius: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      display: block;
+    }
+
+    /* Bottom Right: Controls */
+    #panel-controls {
+      bottom: 16px;
+      right: 16px;
+      width: 300px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .btn-group {
+      display: flex;
+      gap: 6px;
+    }
+    button {
+      flex: 1;
+      background: rgba(0, 229, 255, 0.12);
+      border: 1px solid rgba(0, 229, 255, 0.35);
+      color: #e0f2fe;
+      padding: 7px 12px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    button:hover {
+      background: rgba(0, 229, 255, 0.25);
+      border-color: #00f0ff;
+      box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+    }
+    button:active {
+      transform: scale(0.97);
+    }
+    .slider-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 11px;
+      color: #94a3b8;
+    }
+    input[type="range"] {
+      flex: 1;
+      accent-color: #00f0ff;
+      background: #1e293b;
+      height: 4px;
+      border-radius: 2px;
+    }
+    .toggles-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      font-size: 11px;
+      color: #94a3b8;
+    }
+    .toggle-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+    }
+    .toggle-label input {
+      accent-color: #00f0ff;
+      cursor: pointer;
+    }
+
+    /* Legend */
+    .legend-box {
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      gap: 12px;
+      font-size: 11px;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="webgl-canvas"></canvas>
+
+  <!-- Panel: Header & Narrative Tracker -->
+  <div id="panel-header" class="hud-panel">
+    <h1>ТЭВ: Аннигиляция e⁺e⁻ → 2γ</h1>
+    <div class="subtitle">ТОПОЛОГИЧЕСКИЙ РЕЗОНАНС МЁБИУСНЫХ ТОРОИДОВ T(1,1)</div>
+    <div id="phase-badge" class="phase-badge phase-1">Фаза I: Интерференция хвостов</div>
+    <div id="phase-desc">
+      Кулоновские девиаторы противоположной киральности вычитаются в зазоре. Плотность энергии среды падает, стягивая пару задолго до контакта кернов.
+    </div>
+    <div class="legend-box">
+      <div class="legend-item"><span class="legend-dot" style="background:#00e5ff; box-shadow:0 0 6px #00e5ff;"></span> e⁻ (χ = +1)</div>
+      <div class="legend-item"><span class="legend-dot" style="background:#ff3864; box-shadow:0 0 6px #ff3864;"></span> e⁺ (χ = -1)</div>
+      <div class="legend-item"><span class="legend-dot" style="background:#0055ff; box-shadow:0 0 6px #0055ff;"></span> Зазор (ΔW &lt; 0)</div>
+      <div class="legend-item"><span class="legend-dot" style="background:#ffffff; box-shadow:0 0 6px #ffffff;"></span> Фотоны 2γ</div>
+    </div>
+  </div>
+
+  <!-- Panel: Physics Telemetry -->
+  <div id="panel-telemetry" class="hud-panel">
+    <div class="telemetry-row">
+      <span class="telemetry-label">Дистанция d / R_e:</span>
+      <span id="tel-d" class="telemetry-val">4.00</span>
+    </div>
+    <div class="telemetry-row">
+      <span class="telemetry-label">Скорость v / c:</span>
+      <span id="tel-v" class="telemetry-val">-0.40</span>
+    </div>
+    <div class="telemetry-row">
+      <span class="telemetry-label">Потенциал V_int (ТЭВ):</span>
+      <span id="tel-vint" class="telemetry-val">-0.015 mc²</span>
+    </div>
+    <div class="telemetry-row">
+      <span class="telemetry-label">Энергия связи зазора ΔW:</span>
+      <span id="tel-wgap" class="telemetry-val">-0.008 G₀</span>
+    </div>
+    <div class="telemetry-row">
+      <span class="telemetry-label">Напряжение в керне σ_eq:</span>
+      <span id="tel-sigma" class="telemetry-val">0.42 αG₀</span>
+    </div>
+    <div class="telemetry-row">
+      <span class="telemetry-label">Суммарный спин S_z:</span>
+      <span id="tel-spin" class="telemetry-val">0.00 ℏ (консервация)</span>
+    </div>
+    <div class="telemetry-row">
+      <span class="telemetry-label">Импульс системы P_tot:</span>
+      <span id="tel-ptot" class="telemetry-val">(0.0, 0.0, 0.0)</span>
+    </div>
+  </div>
+
+  <!-- Panel: Potential Well Curve Plot -->
+  <div id="panel-plot" class="hud-panel">
+    <div class="plot-title">
+      <span>ПОТЕНЦИАЛ ВЗАИМОДЕЙСТВИЯ V(d)</span>
+      <span id="plot-coords">d=4.00</span>
+    </div>
+    <canvas id="plot-canvas" width="300" height="120"></canvas>
+  </div>
+
+  <!-- Panel: Interactive Controls -->
+  <div id="panel-controls" class="hud-panel">
+    <div class="btn-group">
+      <button id="btn-play">ПАУЗА</button>
+      <button id="btn-step">ШАГ &gt;</button>
+      <button id="btn-reset">СБРОС</button>
+    </div>
+
+    <div class="slider-container">
+      <span>Скорость симуляции:</span>
+      <input type="range" id="slider-speed" min="0.1" max="2.5" step="0.1" value="1.0">
+      <span id="speed-val">1.0x</span>
+    </div>
+
+    <div class="toggles-grid">
+      <label class="toggle-label">
+        <input type="checkbox" id="chk-tails" checked> Кулоновские хвосты
+      </label>
+      <label class="toggle-label">
+        <input type="checkbox" id="chk-lens" checked> Линза зазора (ΔW)
+      </label>
+      <label class="toggle-label">
+        <input type="checkbox" id="chk-ribbon" checked> Лента Мёбиуса
+      </label>
+      <label class="toggle-label">
+        <input type="checkbox" id="chk-vectors" checked> Векторы E/B фотонов
+      </label>
+    </div>
+
+    <div class="btn-group">
+      <button id="cam-iso">Изометрия</button>
+      <button id="cam-top">Вид сверху (XY)</button>
+      <button id="cam-side">Профиль (XZ)</button>
+    </div>
+  </div>
+
+  <!-- Three.js and OrbitControls -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+  <script>
+    /* ==========================================================================
+       КОНСТАНТЫ И МАСШТАБЫ МОДЕЛИ ТЭВ (§1, §3', §6')
+       ========================================================================== */
+    const ALPHA = 1.0 / 137.036;   // Постоянная тонкой структуры
+    const Re = 1.15;                // Комптон-радиус солитона R_e (экранный масштаб)
+    const r0 = 0.22;                // Радиус керна r_0 (увеличен для видимости)
+    const d_contact = 2.0 * r0;     // Критический порог пересоединения d* = 2 r0
+    const d_init = 4.8;             // Начальное расстояние разведения
+
+    // Физическое состояние симуляции
+    const state = {
+      phase: 1,           // 1: Сближение/хвосты, 2: Вспышка/коллапс, 3: Фотоны
+      t: 0.0,
+      dt: 0.016,
+      timeScale: 1.0,
+      paused: false,
+      d: d_init,          // Текущее расстояние между солитонами вдоль оси Z
+      v: -0.35,           // Относительная скорость (сближение < 0)
+      flashProgress: 0.0,
+      photonDist: 0.0,
+
+      // Углы трёхосного вращения торов
+      rotE: new THREE.Quaternion(),
+      rotP: new THREE.Quaternion(),
+
+      // Видимость элементов
+      showTails: true,
+      showLens: true,
+      showRibbon: true,
+      showVectors: true
+    };
+
+    /* ==========================================================================
+       УРАВНЕНИЯ ДВИЖЕНИЯ И ПОТЕНЦИАЛ ВЗАИМОДЕЙСТВИЯ (§3')
+       ========================================================================== */
+    function evalF(x) {
+      // f(x) = 1 + (1/pi)*arctan(x-1) - 0.5*exp(-x^2)
+      return 1.0 + (1.0 / Math.PI) * Math.atan(x - 1.0) - 0.5 * Math.exp(-x * x);
+    }
+
+    function evalFprime(x) {
+      return (1.0 / Math.PI) / (1.0 + (x - 1.0) * (x - 1.0)) + x * Math.exp(-x * x);
+    }
+
+    // Эффективный потенциал взаимодействия V_int(d) = -2*alpha/d * f(d/Re)
+    function computeVint(d) {
+      const x = d / Re;
+      return -(2.0 * ALPHA * 15.0 / d) * evalF(x); // Масштабирующий множитель 15 для наглядности динамики
+    }
+
+    // Сила притяжения F = -dV/dd
+    function computeForce(d) {
+      const x = d / Re;
+      const f = evalF(x);
+      const f_pr = evalFprime(x);
+      const dV_dd = (2.0 * ALPHA * 15.0 / (d * d)) * f - (2.0 * ALPHA * 15.0 / (d * Re)) * f_pr;
+      return -dV_dd; // Направлена на сближение (отрицательная)
+    }
+
+    // Эффективная масса двух солитонов с присоединенной средой
+    function computeMuEff(d) {
+      const m0 = 1.0;
+      return 2.0 * m0 * (1.0 + 1.5 * ALPHA / Math.PI) + (0.35 / (d + 0.1)) * Math.log(Math.max(1.05, d / r0));
+    }
+
+    /* ==========================================================================
+       ИНИЦИАЛИЗАЦИЯ ТРЕХМЕРНОЙ СЦЕНЫ THREE.JS
+       ========================================================================== */
+    const canvas = document.getElementById('webgl-canvas');
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false, powerPreference: "high-performance" });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.25;
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x020408);
+    scene.fog = new THREE.FogExp2(0x020408, 0.035);
+
+    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
+    camera.position.set(6.5, 4.2, 7.5);
+
+    const controls = new THREE.OrbitControls(camera, canvas);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+    controls.maxDistance = 25;
+    controls.minDistance = 1.5;
+
+    // Освещение
+    const ambientLight = new THREE.AmbientLight(0x182438, 1.2);
+    scene.add(ambientLight);
+
+    const lightE = new THREE.PointLight(0x00e5ff, 2.5, 12);
+    scene.add(lightE);
+
+    const lightP = new THREE.PointLight(0xff3864, 2.5, 12);
+    scene.add(lightP);
+
+    const centerFlashLight = new THREE.PointLight(0xffffff, 0, 15);
+    centerFlashLight.position.set(0, 0, 0);
+    scene.add(centerFlashLight);
+
+    // Координатная сетка
+    const gridHelper = new THREE.GridHelper(16, 32, 0x00e5ff, 0x112233);
+    gridHelper.position.y = -2.5;
+    gridHelper.material.opacity = 0.35;
+    gridHelper.material.transparent = true;
+    scene.add(gridHelper);
+
+    /* ==========================================================================
+       ГЕОМЕТРИЯ СОЛИТОНА: МЁБИУСНАЯ СТРУКТУРА T(1,1) И КЕРН
+       ========================================================================== */
+    function createMobiusRibbonGeometry(R, width, segU, segV) {
+      const geom = new THREE.BufferGeometry();
+      const pos = [];
+      const colors = [];
+      const indices = [];
+
+      for (let i = 0; i <= segU; i++) {
+        const u = (i / segU) * 2 * Math.PI;
+        // Мёбиусов поворот на u/2 вдоль обхода большого круга
+        const twist = u / 2.0;
+
+        const cu = Math.cos(u), su = Math.sin(u);
+        const center = new THREE.Vector3(R * cu, R * su, 0);
+        const normal = new THREE.Vector3(cu, su, 0); // радиальный вектор в плоскости тора
+        const binormal = new THREE.Vector3(0, 0, 1); // нормаль к плоскости тора
+
+        for (let j = 0; j <= segV; j++) {
+          const w = ((j / segV) - 0.5) * width;
+          // Поперечный Мёбиусов вектор
+          const offset = new THREE.Vector3()
+            .addScaledVector(normal, Math.cos(twist) * w)
+            .addScaledVector(binormal, Math.sin(twist) * w);
+
+          const vertex = new THREE.Vector3().addVectors(center, offset);
+          pos.push(vertex.x, vertex.y, vertex.z);
+
+          // Цветовой градиент вдоль фазового угла Мёбиуса
+          const phaseFrac = (twist % Math.PI) / Math.PI;
+          colors.push(0.2 + 0.8 * phaseFrac, 0.4 + 0.6 * (1 - phaseFrac), 1.0);
+        }
+      }
+
+      for (let i = 0; i < segU; i++) {
+        for (let j = 0; j < segV; j++) {
+          const a = i * (segV + 1) + j;
+          const b = (i + 1) * (segV + 1) + j;
+          const c = (i + 1) * (segV + 1) + (j + 1);
+          const d = i * (segV + 1) + (j + 1);
+          indices.push(a, b, d);
+          indices.push(b, c, d);
+        }
+      }
+
+      geom.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+      geom.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+      geom.setIndex(indices);
+      geom.computeVertexNormals();
+      return geom;
+    }
+
+    // Солитон Электрона (e⁻, киральность +1)
+    const electronGroup = new THREE.Group();
+    const ribbonGeomE = createMobiusRibbonGeometry(Re, r0 * 1.8, 128, 6);
+    const ribbonMatE = new THREE.MeshStandardMaterial({
+      color: 0x00f0ff,
+      emissive: 0x003366,
+      roughness: 0.25,
+      metalness: 0.8,
+      side: THREE.DoubleSide,
+      vertexColors: false,
+      transparent: true,
+      opacity: 0.95
+    });
+    const ribbonMeshE = new THREE.Mesh(ribbonGeomE, ribbonMatE);
+    electronGroup.add(ribbonMeshE);
+
+    // Центральная трубка керна
+    const coreGeomE = new THREE.TorusGeometry(Re, r0 * 0.4, 32, 100);
+    const coreMatE = new THREE.MeshBasicMaterial({ color: 0xcceeff });
+    const coreMeshE = new THREE.Mesh(coreGeomE, coreMatE);
+    electronGroup.add(coreMeshE);
+
+    // Ореол кулоновского хвоста
+    const haloGeomE = new THREE.TorusGeometry(Re, r0 * 1.6, 16, 64);
+    const haloMatE = new THREE.MeshBasicMaterial({
+      color: 0x0099ff,
+      transparent: true,
+      opacity: 0.18,
+      blending: THREE.AdditiveBlending,
+      side: THREE.BackSide
+    });
+    const haloMeshE = new THREE.Mesh(haloGeomE, haloMatE);
+    electronGroup.add(haloMeshE);
+
+    scene.add(electronGroup);
+
+    // Солитон Позитрона (e⁺, киральность -1, противоположная навивка)
+    const positronGroup = new THREE.Group();
+    const ribbonGeomP = createMobiusRibbonGeometry(Re, r0 * 1.8, 128, 6);
+    const ribbonMatP = new THREE.MeshStandardMaterial({
+      color: 0xff2855,
+      emissive: 0x660022,
+      roughness: 0.25,
+      metalness: 0.8,
+      side: THREE.DoubleSide,
+      transparent: true,
+      opacity: 0.95
+    });
+    const ribbonMeshP = new THREE.Mesh(ribbonGeomP, ribbonMatP);
+    positronGroup.add(ribbonMeshP);
+
+    const coreGeomP = new THREE.TorusGeometry(Re, r0 * 0.4, 32, 100);
+    const coreMatP = new THREE.MeshBasicMaterial({ color: 0xffd0dc });
+    const coreMeshP = new THREE.Mesh(coreGeomP, coreMatP);
+    positronGroup.add(coreMeshP);
+
+    const haloGeomP = new THREE.TorusGeometry(Re, r0 * 1.6, 16, 64);
+    const haloMatP = new THREE.MeshBasicMaterial({
+      color: 0xff0044,
+      transparent: true,
+      opacity: 0.18,
+      blending: THREE.AdditiveBlending,
+      side: THREE.BackSide
+    });
+    const haloMeshP = new THREE.Mesh(haloGeomP, haloMatP);
+    positronGroup.add(haloMeshP);
+
+    scene.add(positronGroup);
+
+    /* ==========================================================================
+       КУЛОНОВСКИЕ СИЛОВЫЕ ЛИНИИ И ИНТЕРФЕРЕНЦИОННАЯ ЛИНЗА ЗАЗОРА
+       (Демонстрация начала взаимодействия до соприкосновения кернов)
+       ========================================================================== */
+    // Динамические стримлайны (силовые трубки натяжения среды)
+    const NUM_LINES = 28;
+    const tailLines = [];
+    const tailLineGeoms = [];
+
+    for (let i = 0; i < NUM_LINES; i++) {
+      const geom = new THREE.BufferGeometry();
+      const points = new Float32Array(24 * 3); // 24 сегмента на линию
+      geom.setAttribute('position', new THREE.BufferAttribute(points, 3));
+      tailLineGeoms.push(geom);
+
+      const mat = new THREE.LineBasicMaterial({
+        color: 0x00c8ff,
+        transparent: true,
+        opacity: 0.5,
+        blending: THREE.AdditiveBlending,
+        linewidth: 1.5
+      });
+      const line = new THREE.Line(geom, mat);
+      scene.add(line);
+      tailLines.push(line);
+    }
+
+    // Линза отрицательной энергии зазора (Интерференционный девиаторный диск)
+    const lensGeom = new THREE.CylinderGeometry(Re * 1.6, Re * 1.6, 0.08, 48, 1, false);
+    const lensMat = new THREE.MeshBasicMaterial({
+      color: 0x0033ff,
+      transparent: true,
+      opacity: 0.0,
+      blending: THREE.AdditiveBlending,
+      side: THREE.DoubleSide
+    });
+    const gapLens = new THREE.Mesh(lensGeom, lensMat);
+    gapLens.rotation.x = Math.PI / 2;
+    scene.add(gapLens);
+
+    // Вспышка аннигиляции (Фаза II)
+    const flashGeom = new THREE.SphereGeometry(1.0, 32, 32);
+    const flashMat = new THREE.MeshBasicMaterial({
+      color: 0xffffff,
+      transparent: true,
+      opacity: 0.0,
+      blending: THREE.AdditiveBlending
+    });
+    const flashSphere = new THREE.Mesh(flashGeom, flashMat);
+    scene.add(flashSphere);
+
+    // Ударное кольцо топологического срыва
+    const shockGeom = new THREE.RingGeometry(0.1, 0.3, 64);
+    const shockMat = new THREE.MeshBasicMaterial({
+      color: 0x88e5ff,
+      transparent: true,
+      opacity: 0.0,
+      side: THREE.DoubleSide,
+      blending: THREE.AdditiveBlending
+    });
+    const shockRing = new THREE.Mesh(shockGeom, shockMat);
+    shockRing.rotation.x = Math.PI / 2;
+    scene.add(shockRing);
+
+    /* ==========================================================================
+       ГЕОМЕТРИЯ РОЖДЕНИЯ ДВУХ ФОТОННЫХ ВОЛНОВЫХ ПАКЕТОВ 2γ (§5', §6')
+       ========================================================================== */
+    const photonGroup = new THREE.Group();
+    photonGroup.visible = false;
+    scene.add(photonGroup);
+
+    // Создание спирального волнового пакета фотона
+    function createPhotonPacket(isRightCircular) {
+      const group = new THREE.Group();
+      const numPts = 240;
+      const length = 5.0;
+      const sigma = 0.9;
+      const k = (2.0 * Math.PI) / 0.85;
+
+      const curvePoints = [];
+      const colors = [];
+
+      for (let i = 0; i < numPts; i++) {
+        const x = (i / (numPts - 1) - 0.5) * length;
+        const envelope = Math.exp(-(x * x) / (2 * sigma * sigma));
+        const phase = k * x;
+        const sign = isRightCircular ? 1.0 : -1.0;
+
+        const y = envelope * 0.45 * Math.cos(phase);
+        const z = envelope * 0.45 * Math.sin(phase) * sign;
+
+        curvePoints.push(new THREE.Vector3(x, y, z));
+
+        if (isRightCircular) {
+          colors.push(0.0, 0.95, 0.85); // Лазурно-изумрудный для правой спиральности
+        } else {
+          colors.push(1.0, 0.15, 0.65); // Пурпурно-малиновый для левой спиральности
+        }
+      }
+
+      const geom = new THREE.BufferGeometry().setFromPoints(curvePoints);
+      geom.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+
+      const lineMat = new THREE.LineBasicMaterial({
+        vertexColors: true,
+        transparent: true,
+        opacity: 0.95,
+        blending: THREE.AdditiveBlending,
+        linewidth: 2.5
+      });
+      const spiralLine = new THREE.Line(geom, lineMat);
+      group.add(spiralLine);
+
+      // Огибающий световой эллипсоид Гаусса
+      const envGeom = new THREE.SphereGeometry(1.0, 24, 16);
+      envGeom.scale(1.8, 0.6, 0.6);
+      const envMat = new THREE.MeshBasicMaterial({
+        color: isRightCircular ? 0x00ffd5 : 0xff1493,
+        transparent: true,
+        opacity: 0.12,
+        blending: THREE.AdditiveBlending,
+        wireframe: false
+      });
+      const envMesh = new THREE.Mesh(envGeom, envMat);
+      envMesh.rotation.z = Math.PI / 2;
+      group.add(envMesh);
+
+      // Векторы напряженности поля E и B вдоль оси фотона
+      const vectorGroup = new THREE.Group();
+      const numArrows = 14;
+      for (let a = 0; a < numArrows; a++) {
+        const ax = (a / (numArrows - 1) - 0.5) * 3.2;
+        const dir = new THREE.Vector3(0, 1, 0);
+        const arrow = new THREE.ArrowHelper(dir, new THREE.Vector3(ax, 0, 0), 0.5, isRightCircular ? 0x00ffff : 0xff3888, 0.1, 0.06);
+        vectorGroup.add(arrow);
+      }
+      group.add(vectorGroup);
+
+      return { group, spiralLine, vectorGroup, isRightCircular, basePoints: curvePoints };
+    }
+
+    const photon1 = createPhotonPacket(true);   // γ₁ вдоль +X (правая спиральность)
+    const photon2 = createPhotonPacket(false);  // γ₂ вдоль -X (левая спиральность)
+    photonGroup.add(photon1.group);
+    photonGroup.add(photon2.group);
+
+    /* ==========================================================================
+       ДВУМЕРНЫЙ ГРАФИК ПОТЕНЦИАЛА V_int(d) (CANVAS HUD)
+       ========================================================================== */
+    const plotCanvas = document.getElementById('plot-canvas');
+    const plotCtx = plotCanvas.getContext('2d');
+
+    function drawPlot() {
+      const w = plotCanvas.width;
+      const h = plotCanvas.height;
+      plotCtx.clearRect(0, 0, w, h);
+
+      // Сетка графика
+      plotCtx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+      plotCtx.lineWidth = 1;
+      plotCtx.beginPath();
+      for (let x = 0; x < w; x += 40) { plotCtx.moveTo(x, 0); plotCtx.lineTo(x, h); }
+      for (let y = 0; y < h; y += 30) { plotCtx.moveTo(0, y); plotCtx.lineTo(w, y); }
+      plotCtx.stroke();
+
+      // Нулевая линия энергии
+      const yZero = 25;
+      plotCtx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
+      plotCtx.beginPath();
+      plotCtx.moveTo(0, yZero);
+      plotCtx.lineTo(w, yZero);
+      plotCtx.stroke();
+
+      // Кривая ТЭВ потенциала V_int(d)
+      plotCtx.strokeStyle = '#00f0ff';
+      plotCtx.lineWidth = 2;
+      plotCtx.beginPath();
+
+      const dMin = 0.3;
+      const dMax = 5.2;
+
+      for (let px = 0; px < w; px++) {
+        const dVal = dMin + (px / w) * (dMax - dMin);
+        const vVal = computeVint(dVal);
+        // Масштабирование по Y
+        const py = yZero - vVal * 180;
+        if (px === 0) plotCtx.moveTo(px, Math.min(h - 2, Math.max(2, py)));
+        else plotCtx.lineTo(px, Math.min(h - 2, Math.max(2, py)));
+      }
+      plotCtx.stroke();
+
+      // Линия точки аннигиляционного контакта кернов d*
+      const pxContact = ((d_contact - dMin) / (dMax - dMin)) * w;
+      plotCtx.strokeStyle = '#ff3864';
+      plotCtx.setLineDash([3, 3]);
+      plotCtx.beginPath();
+      plotCtx.moveTo(pxContact, 0);
+      plotCtx.lineTo(pxContact, h);
+      plotCtx.stroke();
+      plotCtx.setLineDash([]);
+
+      plotCtx.fillStyle = '#ff3864';
+      plotCtx.font = '9px monospace';
+      plotCtx.fillText('d* контакт', pxContact + 4, h - 8);
+
+      // Текущая рабочая точка (маркер d(t))
+      if (state.phase === 1) {
+        const curD = Math.max(dMin, Math.min(dMax, state.d));
+        const curX = ((curD - dMin) / (dMax - dMin)) * w;
+        const curV = computeVint(curD);
+        const curY = Math.min(h - 4, Math.max(4, yZero - curV * 180));
+
+        plotCtx.fillStyle = '#ffffff';
+        plotCtx.beginPath();
+        plotCtx.arc(curX, curY, 4.5, 0, Math.PI * 2);
+        plotCtx.fill();
+        plotCtx.shadowColor = '#00f0ff';
+        plotCtx.shadowBlur = 8;
+        plotCtx.stroke();
+        plotCtx.shadowBlur = 0;
+
+        document.getElementById('plot-coords').innerText = `d = ${state.d.toFixed(2)} R_e`;
+      } else {
+        document.getElementById('plot-coords').innerText = `КОЛЛАПС d <= d*`;
+      }
+    }
+
+    /* ==========================================================================
+       ФИЗИЧЕСКИЙ ЦИКЛ ОБНОВЛЕНИЯ СИМУЛЯЦИИ (ИНТЕГРАЦИЯ RK4 И КИНЕМАТИКА)
+       ========================================================================== */
+    function updatePhysics(delta) {
+      if (state.paused) return;
+
+      const dt = Math.min(delta, 0.04) * state.timeScale;
+      state.t += dt;
+
+      // ==========================================
+      // ФАЗА I: Сближение и интерференция хвостов
+      // ==========================================
+      if (state.phase === 1) {
+        // Численное интегрирование уравнений движения (Runge-Kutta 4 для d и v)
+        function getDerivs(d_val, v_val) {
+          const force = computeForce(d_val);
+          const mu = computeMuEff(d_val);
+          return { dd: v_val, dv: force / mu };
+        }
+
+        const k1 = getDerivs(state.d, state.v);
+        const k2 = getDerivs(state.d + 0.5 * dt * k1.dd, state.v + 0.5 * dt * k1.dv);
+        const k3 = getDerivs(state.d + 0.5 * dt * k2.dd, state.v + 0.5 * dt * k2.dv);
+        const k4 = getDerivs(state.d + dt * k3.dd, state.v + dt * k3.dv);
+
+        state.d += (dt / 6.0) * (k1.dd + 2.0 * k2.dd + 2.0 * k3.dd + k4.dd);
+        state.v += (dt / 6.0) * (k1.dv + 2.0 * k2.dv + 2.0 * k3.dv + k4.dv);
+
+        // Позиции солитонов вдоль оси Z
+        const zPos = state.d / 2.0;
+        electronGroup.position.set(0, 0, -zPos);
+        positronGroup.position.set(0, 0, +zPos);
+
+        lightE.position.copy(electronGroup.position);
+        lightP.position.copy(positronGroup.position);
+
+        // Трёхосное противофазное вращение тороидов (§2', шестеренчатый захват)
+        // Топологические частоты ТЭВ
+        const omega_u = 2.4;   // Орбитальный поворот тора
+        const omega_v = 8.5;   // Высокочастотный полоидальный спин керна (α⁻¹ аналог)
+        const omega_n = 4.2;   // Мёбиусова нормальная прецессия
+
+        const dRotE = new THREE.Quaternion().setFromEuler(new THREE.Euler(
+          omega_u * dt,
+          -omega_v * dt,
+          omega_n * dt,
+          'XYZ'
+        ));
+        const dRotP = new THREE.Quaternion().setFromEuler(new THREE.Euler(
+          -omega_u * dt,
+          omega_v * dt,
+          -omega_n * dt,
+          'XYZ'
+        ));
+
+        state.rotE.multiply(dRotE);
+        state.rotP.multiply(dRotP);
+        electronGroup.quaternion.copy(state.rotE);
+        positronGroup.quaternion.copy(state.rotP);
+
+        // Динамическая деформация кулоновских силовых линий в зазоре
+        const tailSpan = state.d;
+        for (let i = 0; i < NUM_LINES; i++) {
+          const angle = (i / NUM_LINES) * 2 * Math.PI + state.t * 1.5;
+          const posAttr = tailLineGeoms[i].attributes.position;
+          const arr = posAttr.array;
+
+          // Радиальное сжатие линий в зазоре при росте взаимного притяжения
+          const pinch = Math.max(0.2, (state.d / d_init));
+          const rBase = Re * (0.8 + 0.6 * Math.sin(angle * 2.0 + state.t));
+
+          for (let p = 0; p < 24; p++) {
+            const frac = p / 23.0; // от -zPos (электрон) до +zPos (позитрон)
+            const z = -zPos + frac * tailSpan;
+            // Параболическое стягивание струн к центру зазора (девиаторное натяжение)
+            const midShape = 1.0 - 4.0 * Math.pow(frac - 0.5, 2);
+            const curR = rBase * (1.0 - 0.45 * midShape * (1.0 / (pinch + 0.1)));
+
+            arr[p * 3] = curR * Math.cos(angle + frac * 0.8);
+            arr[p * 3 + 1] = curR * Math.sin(angle + frac * 0.8);
+            arr[p * 3 + 2] = z;
+          }
+          posAttr.needsUpdate = true;
+          tailLines[i].visible = state.showTails;
+          tailLines[i].material.opacity = Math.min(0.85, 0.25 + 0.6 / (state.d + 0.1));
+        }
+
+        // Интерференционная линза отрицательной энергии в зазоре
+        if (state.showLens) {
+          gapLens.visible = true;
+          // Интенсивность свечения растет обратно пропорционально d
+          const gapStress = Math.min(0.9, 0.1 + 1.2 / (state.d + 0.4));
+          gapLens.material.opacity = gapStress;
+          const scaleR = Math.max(0.3, (Re * 1.4) * (state.d / d_init));
+          gapLens.scale.set(scaleR, scaleR, 1.0);
+        } else {
+          gapLens.visible = false;
+        }
+
+        // Обновление телеметрии HUD
+        const v_int = computeVint(state.d);
+        const w_gap = -Math.abs(v_int) * 0.65;
+        const sigma_core = (0.2 + (1.2 / (state.d + 0.1)) * ALPHA * 15.0);
+
+        document.getElementById('tel-d').innerText = state.d.toFixed(3);
+        document.getElementById('tel-v').innerText = (state.v).toFixed(3);
+        document.getElementById('tel-vint').innerText = (v_int).toFixed(4) + " mc²";
+        document.getElementById('tel-wgap').innerText = (w_gap).toFixed(4) + " G₀";
+        document.getElementById('tel-sigma').innerText = (sigma_core).toFixed(3) + " αG₀";
+
+        // Проверка условия достижения порога контакта кернов d* = 2 r0
+        if (state.d <= d_contact) {
+          state.phase = 2;
+          state.flashProgress = 0.0;
+
+          // Переключение бейджа фазы
+          const badge = document.getElementById('phase-badge');
+          badge.className = 'phase-badge phase-2';
+          badge.innerText = 'Фаза II: Контакт и разрыв Мёбиуса';
+          document.getElementById('phase-desc').innerText =
+            'Керны соприкоснулись (d = 2r₀). Топологический заряд аннулирован (τₑ + τₚ = 0). Мёбиусова скрутка рвется, высвобождая две фотонные моды.';
+        }
+      }
+
+      // ==========================================
+      // ФАЗА II: Аннигиляционная вспышка и топологический срыв
+      // ==========================================
+      else if (state.phase === 2) {
+        state.flashProgress += dt * 3.5;
+
+        // Плавное скрытие кулоновских линий и торов
+        for (let i = 0; i < NUM_LINES; i++) tailLines[i].visible = false;
+        gapLens.visible = false;
+
+        const collapseScale = Math.max(0.01, 1.0 - state.flashProgress * 1.3);
+        electronGroup.scale.setScalar(collapseScale);
+        positronGroup.scale.setScalar(collapseScale);
+
+        // Световой импульс и ударная волна в зазоре
+        const flashIntensity = Math.sin(state.flashProgress * Math.PI);
+        flashSphere.scale.setScalar(0.4 + state.flashProgress * 3.8);
+        flashMat.opacity = Math.max(0.0, flashIntensity * 0.95);
+        centerFlashLight.intensity = flashIntensity * 12.0;
+
+        shockRing.scale.setScalar(0.2 + state.flashProgress * 7.0);
+        shockMat.opacity = Math.max(0.0, (1.0 - state.flashProgress) * 0.85);
+
+        if (state.flashProgress >= 1.0) {
+          state.phase = 3;
+          state.photonDist = 0.0;
+          electronGroup.visible = false;
+          positronGroup.visible = false;
+          flashSphere.visible = false;
+          shockRing.visible = false;
+          photonGroup.visible = true;
+
+          const badge = document.getElementById('phase-badge');
+          badge.className = 'phase-badge phase-3';
+          badge.innerText = 'Фаза III: Разлёт 2γ фотонов';
+          document.getElementById('phase-desc').innerText =
+            'Два поперечных волновых пакета разлетаются вдоль оси X с противоположной круговой поляризацией. Момент импульса и энергия строго сохранены.';
+        }
+      }
+
+      // ==========================================
+      // ФАЗА III: Разлёт фотонных пакетов 2γ (§5')
+      // ==========================================
+      else if (state.phase === 3) {
+        const c_screen = 2.8; // Скорость света на экране
+        state.photonDist += c_screen * dt;
+
+        // Движение пакетов в противоположные стороны вдоль оси X
+        photon1.group.position.set(+state.photonDist, 0, 0);
+        photon2.group.position.set(-state.photonDist, 0, 0);
+
+        // Вращение векторов E и B (поляризация круговой спирали)
+        const omega_gamma = 12.0;
+        const rotAngle = omega_gamma * state.t;
+
+        photon1.group.rotation.x = rotAngle;   // Правая спиральность (+1)
+        photon2.group.rotation.x = -rotAngle;  // Левая спиральность (-1)
+
+        // Видимость векторов E/B
+        photon1.vectorGroup.visible = state.showVectors;
+        photon2.vectorGroup.visible = state.showVectors;
+
+        document.getElementById('tel-d').innerText = "РАЗЛЁТ (2γ)";
+        document.getElementById('tel-v').innerText = "c (1.00)";
+        document.getElementById('tel-vint').innerText = "0.0000";
+        document.getElementById('tel-wgap').innerText = "2 × 0.511 МэВ";
+        document.getElementById('tel-sigma').innerText = "0.00 (вакуум)";
+
+        // Автозацикливание симуляции при уходе фотонов за пределы экрана
+        if (state.photonDist > 9.5) {
+          resetSimulation();
+        }
+      }
+
+      // Обновление отображения ленты Мёбиуса
+      ribbonMeshE.visible = state.showRibbon;
+      ribbonMeshP.visible = state.showRibbon;
+    }
+
+    /* ==========================================================================
+       УПРАВЛЕНИЕ СИМУЛЯЦИЕЙ И ИНТЕРФЕЙСОМ
+       ========================================================================== */
+    function resetSimulation() {
+      state.phase = 1;
+      state.t = 0.0;
+      state.d = d_init;
+      state.v = -0.35;
+      state.flashProgress = 0.0;
+      state.photonDist = 0.0;
+      state.rotE.identity();
+      state.rotP.identity();
+
+      electronGroup.visible = true;
+      positronGroup.visible = true;
+      electronGroup.scale.setScalar(1.0);
+      positronGroup.scale.setScalar(1.0);
+
+      photonGroup.visible = false;
+      flashSphere.visible = true;
+      shockRing.visible = true;
+      flashMat.opacity = 0.0;
+      shockMat.opacity = 0.0;
+      centerFlashLight.intensity = 0.0;
+
+      const badge = document.getElementById('phase-badge');
+      badge.className = 'phase-badge phase-1';
+      badge.innerText = 'Фаза I: Интерференция хвостов';
+      document.getElementById('phase-desc').innerText =
+        'Кулоновские девиаторы противоположной киральности вычитаются в зазоре. Плотность энергии среды падает, стягивая пару задолго до контакта кернов.';
+    }
+
+    // Слушатели кнопок управления
+    const btnPlay = document.getElementById('btn-play');
+    btnPlay.addEventListener('click', () => {
+      state.paused = !state.paused;
+      btnPlay.innerText = state.paused ? 'ПУСК' : 'ПАУЗА';
+    });
+
+    document.getElementById('btn-step').addEventListener('click', () => {
+      if (!state.paused) {
+        state.paused = true;
+        btnPlay.innerText = 'ПУСК';
+      }
+      updatePhysics(0.035);
+      drawPlot();
+    });
+
+    document.getElementById('btn-reset').addEventListener('click', () => {
+      resetSimulation();
+      drawPlot();
+    });
+
+    // Ползунок скорости
+    const sliderSpeed = document.getElementById('slider-speed');
+    const speedVal = document.getElementById('speed-val');
+    sliderSpeed.addEventListener('input', (e) => {
+      state.timeScale = parseFloat(e.target.value);
+      speedVal.innerText = state.timeScale.toFixed(1) + 'x';
+    });
+
+    // Чекбоксы слоев
+    document.getElementById('chk-tails').addEventListener('change', (e) => { state.showTails = e.target.checked; });
+    document.getElementById('chk-lens').addEventListener('change', (e) => { state.showLens = e.target.checked; });
+    document.getElementById('chk-ribbon').addEventListener('change', (e) => { state.showRibbon = e.target.checked; });
+    document.getElementById('chk-vectors').addEventListener('change', (e) => { state.showVectors = e.target.checked; });
+
+    // Пресеты камеры
+    document.getElementById('cam-iso').addEventListener('click', () => {
+      camera.position.set(6.5, 4.2, 7.5);
+      controls.target.set(0, 0, 0);
+    });
+    document.getElementById('cam-top').addEventListener('click', () => {
+      camera.position.set(0.01, 10.5, 0.01);
+      controls.target.set(0, 0, 0);
+    });
+    document.getElementById('cam-side').addEventListener('click', () => {
+      camera.position.set(0.01, 0.01, 10.0);
+      controls.target.set(0, 0, 0);
+    });
+
+    // Ресайз окна
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    /* ==========================================================================
+       ГЛАВНЫЙ АНИМАЦИОННЫЙ ЦИКЛ RENDER
+       ========================================================================== */
+    const clock = new THREE.Clock();
+
+    function animate() {
+      requestAnimationFrame(animate);
+      const delta = clock.getDelta();
+
+      updatePhysics(delta);
+      controls.update();
+      drawPlot();
+      renderer.render(scene, camera);
+    }
+
+    // Старт симуляции
+    animate();
+  </script>
+</body>
+</html>
