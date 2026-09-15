@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ТЭВ v5.2: Дейтрон и Изотопы Гелия (³He, ⁴He)</title>
+  <style>
+    :root {
+      --bg: #040711;
+      --panel-bg: rgba(9, 15, 30, 0.86);
+      --border: rgba(56, 189, 248, 0.32);
+      --accent-cyan: #38bdf8;
+      --accent-gold: #f59e0b;
+      --accent-red: #ef4444;
+      --accent-green: #10b981;
+      --accent-violet: #818cf8;
+      --text: #e2e8f0;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    #webgl-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+
+    header {
+      position: absolute;
+      top: 14px;
+      left: 20px;
+      z-index: 10;
+      pointer-events: none;
+      text-shadow: 0 2px 12px rgba(0, 0, 0, 0.9);
+    }
+    header h1 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    header h1 span {
+      background: linear-gradient(90deg, var(--accent-gold), var(--accent-cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    header p {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 3px;
+    }
+
+    .glass-panel {
+      position: absolute;
+      z-index: 10;
+      background: var(--panel-bg);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+    }
+
+    /* Левая панель */
+    #controls-panel {
+      top: 85px;
+      left: 20px;
+      width: 320px;
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+    }
+
+    .panel-section-title {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      color: var(--accent-cyan);
+      margin-bottom: 2px;
+      font-weight: 700;
+    }
+
+    .isotope-selector {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+
+    .iso-btn {
+      background: #1e293b;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: var(--text);
+      padding: 8px 4px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+    }
+    .iso-btn:hover {
+      background: #334155;
+      border-color: var(--accent-cyan);
+    }
+    .iso-btn.active {
+      background: rgba(56, 189, 248, 0.25);
+      border-color: var(--accent-cyan);
+      color: #38bdf8;
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .control-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+    }
+    .control-label .val {
+      font-family: 'Courier New', monospace;
+      color: var(--accent-cyan);
+      font-weight: 700;
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      background: #1e293b;
+      border-radius: 3px;
+      outline: none;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--accent-cyan);
+      cursor: pointer;
+      box-shadow: 0 0 10px var(--accent-cyan);
+    }
+
+    .btn-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+
+    button {
+      background: #1e293b;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: var(--text);
+      padding: 6px 8px;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    button:hover {
+      background: #334155;
+      border-color: var(--accent-cyan);
+      color: #fff;
+    }
+    button.active {
+      background: rgba(56, 189, 248, 0.22);
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+    }
+
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.77rem;
+      cursor: pointer;
+    }
+    .checkbox-row input {
+      accent-color: var(--accent-cyan);
+      cursor: pointer;
+    }
+
+    /* Правая панель */
+    #metrics-panel {
+      top: 85px;
+      right: 20px;
+      width: 310px;
+    }
+
+    .metric-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 5px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 0.8rem;
+    }
+    .metric-name {
+      color: var(--text-muted);
+    }
+    .metric-val {
+      font-family: 'Courier New', monospace;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .status-badge {
+      display: inline-block;
+      width: 100%;
+      text-align: center;
+      padding: 6px;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      margin-top: 8px;
+      text-transform: uppercase;
+      transition: 0.3s;
+    }
+    .status-repulsive {
+      background: rgba(239, 68, 68, 0.25);
+      color: #fca5a5;
+      border: 1px solid var(--accent-red);
+    }
+    .status-bound {
+      background: rgba(16, 185, 129, 0.25);
+      color: #6ee7b7;
+      border: 1px solid var(--accent-green);
+    }
+    .status-pion {
+      background: rgba(56, 189, 248, 0.22);
+      color: #7dd3fc;
+      border: 1px solid var(--accent-cyan);
+    }
+
+    /* Нижний 2D-график */
+    #graph-panel {
+      bottom: 20px;
+      right: 20px;
+      width: 380px;
+    }
+    #plot-canvas {
+      width: 100%;
+      height: 150px;
+      background: rgba(4, 7, 17, 0.78);
+      border-radius: 6px;
+      margin-top: 6px;
+      cursor: crosshair;
+    }
+
+    /* Инфо-легенда */
+    #legend-panel {
+      bottom: 20px;
+      left: 20px;
+      max-width: 530px;
+      font-size: 0.74rem;
+      line-height: 1.45;
+      color: var(--text-muted);
+    }
+    #legend-panel b {
+      color: #fff;
+    }
+    .legend-dots {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px 12px;
+      margin-top: 8px;
+    }
+    .legend-dot {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    @media (max-width: 920px) {
+      #controls-panel, #metrics-panel, #graph-panel, #legend-panel {
+        transform: scale(0.85);
+        transform-origin: top left;
+      }
+      #metrics-panel, #graph-panel {
+        transform-origin: top right;
+      }
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+
+  <div id="webgl-container"></div>
+
+  <header>
+    <h1><span>ТОПОЛОГИЧЕСКАЯ ЭЛАСТОДИНАМИКА</span> &bull; ЯДЕРНЫЙ КЛАСТЕР</h1>
+    <p>Толстые гладкие узлы $T(3,2)$, натянутая сфера $S^2$ нейтрона и синхронная квадрупольная оболочка дейтрона и изотопов гелия</p>
+  </header>
+
+  <!-- Панель управления -->
+  <div class="glass-panel" id="controls-panel">
+    <div class="panel-section-title">Выбор изотопа ядра</div>
+    <div class="isotope-selector">
+      <div class="iso-btn active" id="btn-iso-h2">²H Дейтрон<br><span style="font-size:0.65rem;opacity:0.8;">(p + n)</span></div>
+      <div class="iso-btn" id="btn-iso-he3">³He Гелий-3<br><span style="font-size:0.65rem;opacity:0.8;">(2p + n)</span></div>
+      <div class="iso-btn" id="btn-iso-he4">⁴He Альфа<br><span style="font-size:0.65rem;opacity:0.8;">(2p + 2n)</span></div>
+    </div>
+
+    <div class="panel-section-title" style="margin-top: 4px;">Межнуклонный масштаб</div>
+    <div class="control-group">
+      <div class="control-label">
+        <span>Дистанция $r$:</span>
+        <span class="val" id="val-r">1.08 фм</span>
+      </div>
+      <input type="range" id="slider-r" min="0.40" max="2.60" step="0.01" value="1.08" />
+    </div>
+
+    <div class="btn-row">
+      <button id="btn-core">Керн (0.55 фм)</button>
+      <button id="btn-bound" class="active">Яма (1.08 фм)</button>
+      <button id="btn-pion">Пион (2.00 фм)</button>
+    </div>
+
+    <div class="btn-row" style="grid-template-columns: 1fr 1fr;">
+      <button id="btn-relax">Релаксация в минимум</button>
+      <button id="btn-dwave-toggle">Квадруполь $P_D$ (&times;3)</button>
+    </div>
+
+    <div class="panel-section-title" style="margin-top: 6px;">Слои среды ТЭВ</div>
+    <label class="checkbox-row">
+      <input type="checkbox" id="chk-quad" checked />
+      <span>Квадрупольная оболочка ($Q_d > 0$)</span>
+    </label>
+    <label class="checkbox-row">
+      <input type="checkbox" id="chk-neutronshell" checked />
+      <span>Натянутая сфера электрона $S^2$ ($\Delta M_{np}$)</span>
+    </label>
+    <label class="checkbox-row">
+      <input type="checkbox" id="chk-adhesion" checked />
+      <span>Контактное пятно экранирования девиаторов</span>
+    </label>
+    <label class="checkbox-row">
+      <input type="checkbox" id="chk-pion" checked />
+      <span>Пионный фазовый обмен ($M_\pi = 140\text{ МэВ}$)</span>
+    </label>
+  </div>
+
+  <!-- Панель физических метрик -->
+  <div class="glass-panel" id="metrics-panel">
+    <div class="panel-section-title" id="iso-title">Параметры дейтрона (²H)</div>
+
+    <div class="metric-item">
+      <span class="metric-name">Полная энергия связи $E_b$:</span>
+      <span class="metric-val" id="m-eb" style="color: #34d399;">2.2246 МэВ</span>
+    </div>
+    <div class="metric-item">
+      <span class="metric-name">Энергия на нуклон $E_b/A$:</span>
+      <span class="metric-val" id="m-eb-a" style="color: #6ee7b7;">1.1123 МэВ/нукл</span>
+    </div>
+    <div class="metric-item">
+      <span class="metric-name">Локальный потенциал $V(r)$:</span>
+      <span class="metric-val" id="m-vr">-31.84 МэВ</span>
+    </div>
+    <div class="metric-item">
+      <span class="metric-name">Квадрупольный момент $Q$:</span>
+      <span class="metric-val" id="m-qd">+0.2859 э&middot;фм&sup2;</span>
+    </div>
+    <div class="metric-item">
+      <span class="metric-name">Доля $D$-волны $P_D$:</span>
+      <span class="metric-val" id="m-pd" style="color: #f59e0b;">3/52 (5.769%)</span>
+    </div>
+    <div class="metric-item">
+      <span class="metric-name">Натяжение сферы $S^2$:</span>
+      <span class="metric-val" style="color: #38bdf8;">1.2868 МэВ</span>
+    </div>
+
+    <div class="status-badge status-bound" id="status-badge">
+      Равновесная яма связи ($V_0 \approx -32.5$ МэВ)
+    </div>
+  </div>
+
+  <!-- Нижний график V(r) -->
+  <div class="glass-panel" id="graph-panel">
+    <div class="panel-section-title">Профиль потенциала связывания $V(r)$</div>
+    <canvas id="plot-canvas" width="380" height="150"></canvas>
+  </div>
+
+  <!-- Легенда -->
+  <div class="glass-panel" id="legend-panel">
+    <b>Онтология непрерывной среды:</b> Протон несёт открытый голый узел сдвига ($+1e$). В нейтроне узел $T(3,2)$ <i>полностью заперт</i> внутри натянутой сферы электрона $S^2$, которая полностью экранирует заряд снаружи ($Q_{\text{ext}} = 0$). Квадрупольная оболочка среды жёстко охватывает всё ядро и вращается синхронно с ним. В альфа-частице ($^4\mathrm{He}$) тетраэдрическая симметрия взаимно гасит квадруполь ($Q \approx 0$).
+    <div class="legend-dots">
+      <div class="legend-dot"><div class="dot" style="background: #f59e0b;"></div><span>Протон (голый толстый узел, $+1e$)</span></div>
+      <div class="legend-dot"><div class="dot" style="background: #38bdf8; box-shadow: 0 0 6px #38bdf8;"></div><span>Сфера электрона $S^2$ (протон внутри)</span></div>
+      <div class="legend-dot"><div class="dot" style="background: #818cf8;"></div><span>Квадрупольная оболочка</span></div>
+      <div class="legend-dot"><div class="dot" style="background: #10b981;"></div><span>Контактное экранирование девиаторов</span></div>
+    </div>
+  </div>
+
+  <script>
+    /* =========================================================================
+       1. КОНСТАНТЫ И ИЗОТОПЫ ТЭВ (РАЗДЕЛ 8 МАНИФЕСТА v5.2)
+       ========================================================================= */
+    const ISOTOPES = {
+      h2: {
+        name: 'Параметры дейтрона (²H)',
+        A: 2, Z: 1, N: 1,
+        protons: 1, neutrons: 1,
+        Eb: 2.2246,
+        Eb_A: 1.1123,
+        Q: '+0.2859 э·фм²',
+        PD_str: '3/52 (5.769%)',
+        PD_val: 3 / 52,
+        r_eq: 1.08,
+        V0: -32.5,
+        quadScale: { x: 1.35, y: 1.35, z: 1.85 } // выраженная пролатная дыня
+      },
+      he3: {
+        name: 'Параметры гелия-3 (³He)',
+        A: 3, Z: 2, N: 1,
+        protons: 2, neutrons: 1,
+        Eb: 7.718,
+        Eb_A: 2.5727,
+        Q: '-0.0450 э·фм²',
+        PD_str: '~1.5% (сжатие)',
+        PD_val: 0.015,
+        r_eq: 1.05,
+        V0: -48.0,
+        quadScale: { x: 1.65, y: 1.55, z: 1.35 }
+      },
+      he4: {
+        name: 'Параметры альфа-частицы (⁴He)',
+        A: 4, Z: 2, N: 2,
+        protons: 2, neutrons: 2,
+        Eb: 28.296,
+        Eb_A: 7.074,
+        Q: '0.0000 э·фм² (Сфера)',
+        PD_str: '0.0% (Дважды магич.)',
+        PD_val: 0.0,
+        r_eq: 0.98,
+        V0: -92.0,
+        quadScale: { x: 1.60, y: 1.60, z: 1.60 } // идеальная сферическая оболочка
+      }
+    };
+
+    let activeIsoKey = 'h2';
+
+    function calcV_NN(r) {
+      const iso = ISOTOPES[activeIsoKey];
+      const V_core = 32.0 * Math.pow(0.55 / r, 6);
+      const V_sigma = iso.V0 * Math.exp(-Math.pow((r - iso.r_eq) / 0.40, 2));
+      const x = r / 1.41;
+      const V_pion = -14.0 * (Math.exp(-x) / x) * (1 - Math.exp(-Math.pow(r / 0.8, 3)));
+      return V_core + V_sigma + V_pion;
+    }
+
+    function calcForce_NN(r) {
+      const dr = 0.005;
+      return -(calcV_NN(r + dr) - calcV_NN(r - dr)) / (2 * dr);
+    }
+
+    /* =========================================================================
+       2. THREE.JS СЦЕНА И ЕДИНАЯ СИСТЕМА КООРДИНАТ ЯДРА
+       ========================================================================= */
+    const container = document.getElementById('webgl-container');
+    const scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(0x040711, 0.035);
+
+    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
+    camera.position.set(0, 4.0, 9.5);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.25;
+    container.appendChild(renderer.domElement);
+
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.06;
+    controls.maxDistance = 22;
+    controls.minDistance = 3.2;
+
+    const ambientLight = new THREE.AmbientLight(0x1e293b, 1.8);
+    scene.add(ambientLight);
+
+    const dirLight1 = new THREE.DirectionalLight(0xffffff, 2.0);
+    dirLight1.position.set(7, 11, 8);
+    scene.add(dirLight1);
+
+    const dirLight2 = new THREE.DirectionalLight(0x38bdf8, 1.4);
+    dirLight2.position.set(-8, -4, -6);
+    scene.add(dirLight2);
+
+    // Главная группа ядра: всё вращается строго синхронно с ней
+    const nucleusGroup = new THREE.Group();
+    scene.add(nucleusGroup);
+
+    /* =========================================================================
+       3. ТОЛСТЫЕ ГЛАДКИЕ УЗЛЫ T(3,2) БЕЗ ИЗЛОМОВ И БЕЗ БЕЛЫХ ТОЧЕК
+       ========================================================================= */
+    class SmoothTrefoilCurve extends THREE.Curve {
+      constructor(scale = 0.31) {
+        super();
+        this.scale = scale;
+      }
+      getPoint(t, optionalTarget = new THREE.Vector3()) {
+        const phi = t * Math.PI * 2;
+        // Канонический гладкий трилистник C^oo
+        const x = (Math.sin(phi) + 2.0 * Math.sin(2.0 * phi)) * this.scale;
+        const y = (Math.cos(phi) - 2.0 * Math.cos(2.0 * phi)) * this.scale;
+        const z = (-Math.sin(3.0 * phi)) * this.scale * 1.1;
+        return optionalTarget.set(x, y, z);
+      }
+    }
+
+    const trefoilCurve = new SmoothTrefoilCurve(0.31);
+    // Делаем трубки существенно толще: радиус 0.096 вместо 0.058
+    const trefoilGeo = new THREE.TubeGeometry(trefoilCurve, 240, 0.096, 24, true);
+
+    // Генерация текстуры бегущей поперечной волны Комптона (3 периода стоячей волны)
+    function createMöbiusWaveTexture(isProton) {
+      const cv = document.createElement('canvas');
+      cv.width = 1024;
+      cv.height = 64;
+      const ctx = cv.getContext('2d');
+
+      const bgCol = isProton ? '#9a3412' : '#0284c7';
+      ctx.fillStyle = bgCol;
+      ctx.fillRect(0, 0, cv.width, cv.height);
+
+      for (let x = 0; x < cv.width; x++) {
+        const u = x / cv.width;
+        // 3 периода стоячей волны Комптона
+        const wave = Math.pow(Math.sin(u * Math.PI * 6), 2);
+        ctx.fillStyle = isProton
+          ? `rgba(254, 240, 138, ${0.15 + wave * 0.85})`
+          : `rgba(224, 242, 254, ${0.15 + wave * 0.85})`;
+        ctx.fillRect(x, 0, 1, cv.height);
+      }
+
+      const tex = new THREE.CanvasTexture(cv);
+      tex.wrapS = THREE.RepeatWrapping;
+      tex.wrapT = THREE.RepeatWrapping;
+      return tex;
+    }
+
+    const protonTex = createMöbiusWaveTexture(true);
+    const neutronTex = createMöbiusWaveTexture(false);
+
+    const protonMat = new THREE.MeshStandardMaterial({
+      map: protonTex,
+      color: 0xf59e0b,
+      emissive: 0xd97706,
+      emissiveIntensity: 0.6,
+      roughness: 0.22,
+      metalness: 0.8
+    });
+
+    const neutronMat = new THREE.MeshStandardMaterial({
+      map: neutronTex,
+      color: 0x38bdf8,
+      emissive: 0x0284c7,
+      emissiveIntensity: 0.5,
+      roughness: 0.22,
+      metalness: 0.8
+    });
+
+    /* =========================================================================
+       4. КОНСТРУКТОР НУКЛОНОВ: ПРОТОН И НЕЙТРОН СО СФЕРОЙ S^2
+       ========================================================================= */
+    // Радиус сферы электрона S^2 выбран равным 1.35, гарантируя,
+    // что трилистник (макс. радиус 0.93 + 0.096 = 1.026) полностью заперт внутри!
+    const SHELL_RADIUS = 1.35;
+
+    function buildNeutronShell() {
+      const g = new THREE.Group();
+
+      // Внутренняя светящаяся диэлектрическая оболочка
+      const innerGeo = new THREE.SphereGeometry(SHELL_RADIUS, 44, 32);
+      const innerMat = new THREE.MeshPhysicalMaterial({
+        color: 0x0284c7,
+        emissive: 0x0369a1,
+        emissiveIntensity: 0.35,
+        transparent: true,
+        opacity: 0.28,
+        roughness: 0.1,
+        metalness: 0.1,
+        transmission: 0.75,
+        side: THREE.DoubleSide,
+        depthWrite: false
+      });
+      const innerMesh = new THREE.Mesh(innerGeo, innerMat);
+      g.add(innerMesh);
+
+      // Внешняя решетка поверхностного натяжения вакуума
+      const gridGeo = new THREE.SphereGeometry(SHELL_RADIUS * 1.005, 24, 16);
+      const gridMat = new THREE.MeshBasicMaterial({
+        color: 0x38bdf8,
+        wireframe: true,
+        transparent: true,
+        opacity: 0.45
+      });
+      const gridMesh = new THREE.Mesh(gridGeo, gridMat);
+      g.add(gridMesh);
+
+      // Экваториальное и меридиональное кольца натяжения (delta M_np = 1.287 МэВ)
+      const ringGeo = new THREE.TorusGeometry(SHELL_RADIUS, 0.016, 16, 64);
+      const ringMat = new THREE.MeshBasicMaterial({ color: 0x7dd3fc });
+      const ring1 = new THREE.Mesh(ringGeo, ringMat);
+      const ring2 = new THREE.Mesh(ringGeo, ringMat);
+      ring2.rotation.y = Math.PI / 2;
+      g.add(ring1);
+      g.add(ring2);
+
+      return g;
+    }
+
+    // Создаем пул нуклонов (максимум для 4He: 2 протона и 2 нейтрона)
+    const protonMeshes = [
+      new THREE.Mesh(trefoilGeo, protonMat),
+      new THREE.Mesh(trefoilGeo, protonMat)
+    ];
+
+    const neutronMeshes = [
+      new THREE.Mesh(trefoilGeo, neutronMat),
+      new THREE.Mesh(trefoilGeo, neutronMat)
+    ];
+
+    const neutronShells = [
+      buildNeutronShell(),
+      buildNeutronShell()
+    ];
+
+    // Группы для каждого нуклона
+    const protonNodes = [new THREE.Group(), new THREE.Group()];
+    const neutronNodes = [new THREE.Group(), new THREE.Group()];
+
+    protonNodes[0].add(protonMeshes[0]);
+    protonNodes[1].add(protonMeshes[1]);
+
+    neutronNodes[0].add(neutronMeshes[0]);
+    neutronNodes[0].add(neutronShells[0]);
+
+    neutronNodes[1].add(neutronMeshes[1]);
+    neutronNodes[1].add(neutronShells[1]);
+
+    protonNodes.forEach(node => nucleusGroup.add(node));
+    neutronNodes.forEach(node => nucleusGroup.add(node));
+
+    /* =========================================================================
+       5. КВАДРУПОЛЬНАЯ ОБОЛОЧКА: ВРАЩАЕТСЯ СИНХРОННО С ЯДРОМ В NUCLEUSGROUP
+       ========================================================================= */
+    const quadGeo = new THREE.SphereGeometry(1, 48, 36);
+    const quadMat = new THREE.MeshStandardMaterial({
+      color: 0x818cf8,
+      emissive: 0x4338ca,
+      emissiveIntensity: 0.28,
+      transparent: true,
+      opacity: 0.24,
+      wireframe: true
+    });
+    const quadMesh = new THREE.Mesh(quadGeo, quadMat);
+    // Добавляем дыню прямо внутрь nucleusGroup, чтобы она была механически зафиксирована на ядре!
+    nucleusGroup.add(quadMesh);
+
+    // Контактный диск притяжения между нуклонами
+    const contactDiskGeo = new THREE.CylinderGeometry(0.65, 0.65, 0.08, 32, 1, false);
+    contactDiskGeo.rotateX(Math.PI / 2);
+    const contactDiskMat = new THREE.MeshBasicMaterial({
+      color: 0x10b981,
+      transparent: true,
+      opacity: 0.0,
+      wireframe: true
+    });
+    const contactDisk = new THREE.Mesh(contactDiskGeo, contactDiskMat);
+    nucleusGroup.add(contactDisk);
+
+    // Ударные кольца отталкивающего керна (r < 0.6)
+    const coreRings = new THREE.Group();
+    for (let i = 0; i < 4; i++) {
+      const rGeo = new THREE.RingGeometry(0.22 + i * 0.22, 0.25 + i * 0.22, 36);
+      const rMat = new THREE.MeshBasicMaterial({
+        color: 0xef4444,
+        side: THREE.DoubleSide,
+        transparent: true,
+        opacity: 0.0
+      });
+      const ring = new THREE.Mesh(rGeo, rMat);
+      ring.rotation.x = Math.PI / 2;
+      coreRings.add(ring);
+    }
+    nucleusGroup.add(coreRings);
+
+    // Частицы пионного обмена
+    const PION_COUNT = 20;
+    const pionGeo = new THREE.SphereGeometry(0.045, 12, 12);
+    const pionMat = new THREE.MeshBasicMaterial({ color: 0xec4899 });
+    const pionPool = [];
+    for (let i = 0; i < PION_COUNT; i++) {
+      const p = new THREE.Mesh(pionGeo, pionMat);
+      p.userData = {
+        progress: Math.random(),
+        speed: 0.008 + Math.random() * 0.006,
+        direction: Math.random() > 0.5 ? 1 : -1,
+        offsetPhase: Math.random() * Math.PI * 2
+      };
+      nucleusGroup.add(p);
+      pionPool.push(p);
+    }
+
+    /* =========================================================================
+       6. РАСПОЛОЖЕНИЕ НУКЛОНОВ ДЛЯ РАЗНЫХ ИЗОТОПОВ
+       ========================================================================= */
+    function updateClusterGeometry(rDist) {
+      const scaleDist = 2.4;
+      const d = (rDist * scaleDist) / 2;
+
+      if (activeIsoKey === 'h2') {
+        // Дейтрон: протон на -d, нейтрон на +d вдоль оси Z
+        protonNodes[0].visible = true;
+        protonNodes[0].position.set(0, 0, -d);
+
+        protonNodes[1].visible = false;
+
+        neutronNodes[0].visible = true;
+        neutronNodes[0].position.set(0, 0, d);
+
+        neutronNodes[1].visible = false;
+
+      } else if (activeIsoKey === 'he3') {
+        // Гелий-3: 2 протона и 1 нейтрон в равностороннем треугольнике в плоскости XZ
+        const dTri = d * 1.05;
+        protonNodes[0].visible = true;
+        protonNodes[0].position.set(dTri * Math.cos(0), 0, dTri * Math.sin(0));
+
+        protonNodes[1].visible = true;
+        protonNodes[1].position.set(dTri * Math.cos(2 * Math.PI / 3), 0, dTri * Math.sin(2 * Math.PI / 3));
+
+        neutronNodes[0].visible = true;
+        neutronNodes[0].position.set(dTri * Math.cos(4 * Math.PI / 3), 0, dTri * Math.sin(4 * Math.PI / 3));
+
+        neutronNodes[1].visible = false;
+
+      } else if (activeIsoKey === 'he4') {
+        // Гелий-4 (Альфа-частица): тетраэдрический сверхплотный кластер (2p + 2n)
+        const dTetra = d * 0.85;
+        const norm = 1 / Math.sqrt(3);
+
+        protonNodes[0].visible = true;
+        protonNodes[0].position.set(dTetra * norm, dTetra * norm, dTetra * norm);
+
+        protonNodes[1].visible = true;
+        protonNodes[1].position.set(-dTetra * norm, -dTetra * norm, dTetra * norm);
+
+        neutronNodes[0].visible = true;
+        neutronNodes[0].position.set(dTetra * norm, -dTetra * norm, -dTetra * norm);
+
+        neutronNodes[1].visible = true;
+        neutronNodes[1].position.set(-dTetra * norm, dTetra * norm, -dTetra * norm);
+      }
+    }
+
+    /* =========================================================================
+       7. ИНТЕРФЕЙС И СОБЫТИЯ
+       ========================================================================= */
+    let currentR = 1.08;
+    let targetR = 1.08;
+    let isRelaxing = false;
+    let dWaveAmp = 1.0;
+
+    const sliderR = document.getElementById('slider-r');
+    const valR = document.getElementById('val-r');
+    const mVr = document.getElementById('m-vr');
+    const mEb = document.getElementById('m-eb');
+    const mEbA = document.getElementById('m-eb-a');
+    const mQd = document.getElementById('m-qd');
+    const mPd = document.getElementById('m-pd');
+    const isoTitle = document.getElementById('iso-title');
+    const statusBadge = document.getElementById('status-badge');
+
+    const chkQuad = document.getElementById('chk-quad');
+    const chkNeutronShell = document.getElementById('chk-neutronshell');
+    const chkAdhesion = document.getElementById('chk-adhesion');
+    const chkPion = document.getElementById('chk-pion');
+    const btnDWave = document.getElementById('btn-dwave-toggle');
+    const btnRelax = document.getElementById('btn-relax');
+
+    function setGaugeIsotope(key) {
+      activeIsoKey = key;
+      const iso = ISOTOPES[key];
+      isoTitle.textContent = iso.name;
+      mEb.textContent = iso.Eb.toFixed(2) + ' МэВ';
+      mEbA.textContent = iso.Eb_A.toFixed(2) + ' МэВ/нукл';
+      mQd.textContent = iso.Q;
+      mPd.textContent = iso.PD_str;
+      targetR = iso.r_eq;
+      isRelaxing = false;
+
+      document.querySelectorAll('.iso-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('btn-iso-' + key).classList.add('active');
+    }
+
+    document.getElementById('btn-iso-h2').addEventListener('click', () => setGaugeIsotope('h2'));
+    document.getElementById('btn-iso-he3').addEventListener('click', () => setGaugeIsotope('he3'));
+    document.getElementById('btn-iso-he4').addEventListener('click', () => setGaugeIsotope('he4'));
+
+    sliderR.addEventListener('input', (e) => {
+      isRelaxing = false;
+      targetR = parseFloat(e.target.value);
+    });
+
+    document.getElementById('btn-core').addEventListener('click', () => { isRelaxing = false; targetR = 0.55; });
+    document.getElementById('btn-bound').addEventListener('click', () => { isRelaxing = false; targetR = ISOTOPES[activeIsoKey].r_eq; });
+    document.getElementById('btn-pion').addEventListener('click', () => { isRelaxing = false; targetR = 2.00; });
+
+    btnRelax.addEventListener('click', () => { isRelaxing = true; });
+
+    btnDWave.addEventListener('click', () => {
+      if (dWaveAmp === 1.0) {
+        dWaveAmp = 3.2;
+        btnDWave.textContent = 'Квадруполь PD (x3 Активен)';
+        btnDWave.classList.add('active');
+      } else {
+        dWaveAmp = 1.0;
+        btnDWave.textContent = 'Квадруполь PD (Норма)';
+        btnDWave.classList.remove('active');
+      }
+    });
+
+    /* =========================================================================
+       8. ГРАФИК NN-ПОТЕНЦИАЛА (CANVAS)
+       ========================================================================= */
+    const canvas = document.getElementById('plot-canvas');
+    const ctx = canvas.getContext('2d');
+
+    function drawPotentialPlot() {
+      const w = canvas.width;
+      const h = canvas.height;
+      ctx.clearRect(0, 0, w, h);
+
+      const rMin = 0.35, rMax = 2.6;
+      const vMin = -55, vMax = 45;
+
+      const toX = (r) => ((r - rMin) / (rMax - rMin)) * w;
+      const toY = (v) => h - ((v - vMin) / (vMax - vMin)) * h;
+
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      const y0 = toY(0);
+      ctx.moveTo(0, y0);
+      ctx.lineTo(w, y0);
+      ctx.stroke();
+
+      const iso = ISOTOPES[activeIsoKey];
+      const yEb = toY(-iso.Eb);
+      ctx.strokeStyle = 'rgba(52, 211, 153, 0.7)';
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath();
+      ctx.moveTo(0, yEb);
+      ctx.lineTo(w, yEb);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      ctx.fillStyle = '#34d399';
+      ctx.font = '10px monospace';
+      ctx.fillText(`Eb = -${iso.Eb.toFixed(1)} МэВ`, toX(1.6), Math.max(12, yEb - 4));
+
+      ctx.lineWidth = 2.2;
+      ctx.strokeStyle = '#38bdf8';
+      ctx.beginPath();
+      for (let px = 0; px <= w; px += 2) {
+        const rVal = rMin + (px / w) * (rMax - rMin);
+        const vVal = Math.min(Math.max(calcV_NN(rVal), vMin), vMax);
+        const py = toY(vVal);
+        if (px === 0) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+      }
+      ctx.stroke();
+
+      const curV = Math.min(Math.max(calcV_NN(currentR), vMin), vMax);
+      const curX = toX(currentR);
+      const curY = toY(curV);
+
+      ctx.fillStyle = '#f59e0b';
+      ctx.beginPath();
+      ctx.arc(curX, curY, 5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    }
+
+    canvas.addEventListener('click', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const ratio = (e.clientX - rect.left) / rect.width;
+      targetR = 0.35 + ratio * (2.6 - 0.35);
+      isRelaxing = false;
+    });
+
+    /* =========================================================================
+       9. ГЛАВНЫЙ АНИМАЦИОННЫЙ ЦИКЛ (СИНХРОННОЕ ВРАЩЕНИЕ И ВОЛНА МЁБИУСА)
+       ========================================================================= */
+    const clock = new THREE.Clock();
+
+    function animate() {
+      requestAnimationFrame(animate);
+
+      const delta = clock.getDelta();
+      const time = clock.getElapsedTime();
+
+      // Авторелаксация в минимум потенциала
+      if (isRelaxing) {
+        const force = calcForce_NN(currentR);
+        targetR += force * 0.0016;
+        const req = ISOTOPES[activeIsoKey].r_eq;
+        if (Math.abs(force) < 0.06 && Math.abs(currentR - req) < 0.012) {
+          targetR = req;
+          isRelaxing = false;
+        }
+      }
+
+      currentR += (targetR - currentR) * 0.12;
+
+      // Обновление UI
+      valR.textContent = currentR.toFixed(2) + ' фм';
+      sliderR.value = currentR.toFixed(2);
+      const vVal = calcV_NN(currentR);
+      mVr.textContent = vVal.toFixed(2) + ' МэВ';
+
+      if (currentR < 0.72) {
+        statusBadge.className = 'status-badge status-repulsive';
+        statusBadge.textContent = 'Отталкивающий кавитационный кор (r^-6)';
+      } else if (currentR >= 0.72 && currentR <= 1.45) {
+        statusBadge.className = 'status-badge status-bound';
+        statusBadge.textContent = 'Склеивание нуклонов: яма притяжения';
+      } else {
+        statusBadge.className = 'status-badge status-pion';
+        statusBadge.textContent = 'Однопионный хвост (r > 1.5 фм)';
+      }
+
+      // Обновляем пространственную геометрию кластера
+      updateClusterGeometry(currentR);
+
+      // 1. СИНХРОННОЕ ВРАЩЕНИЕ ВСЕГО ЯДРА И КВАДРУПОЛЬНОЙ ДЫНИ
+      // Поворот nucleusGroup автоматически вращает все нуклоны и квадрупольную дыню вместе!
+      nucleusGroup.rotation.y = time * 0.45;
+      nucleusGroup.rotation.x = Math.sin(time * 0.3) * 0.14;
+
+      // 2. ВНУТРЕННЯЯ ПРЕЦЕССИЯ УЗЛОВ ВОКРУГ СВОИХ ОСЕЙ
+      const precSpeed = 1.3;
+      protonMeshes.forEach(m => {
+        m.rotation.z = time * precSpeed;
+        m.rotation.y = time * 0.55;
+      });
+      neutronMeshes.forEach(m => {
+        m.rotation.z = -time * precSpeed;
+        m.rotation.y = -time * 0.55;
+      });
+
+      // 3. БЕГУЩИЙ ПОПЕРЕЧНЫЙ ИМПУЛЬС ПО МЁБИУСНОЙ ТРАЕКТОРИИ (БЕЗ БЕЛЫХ ТОЧЕК)
+      const pulseSpeed = 0.5;
+      protonTex.offset.x = (time * pulseSpeed) % 1.0;
+      neutronTex.offset.x = (-time * pulseSpeed) % 1.0;
+
+      // 4. УПРАВЛЕНИЕ И ДЕФОРМАЦИЯ СФЕРЫ ЭЛЕКТРОНА НЕЙТРОНА S^2
+      neutronShells.forEach(shell => {
+        shell.visible = chkNeutronShell.checked;
+        if (chkNeutronShell.checked) {
+          const breath = 1.0 + 0.02 * Math.sin(time * 3.5);
+          shell.scale.set(breath, breath, breath);
+        }
+      });
+
+      // 5. КВАДРУПОЛЬНАЯ ОБОЛОЧКА: МАСШТАБИРОВАНИЕ В СИСТЕМЕ КООРДИНАТ ЯДРА
+      quadMesh.visible = chkQuad.checked;
+      if (chkQuad.checked) {
+        const iso = ISOTOPES[activeIsoKey];
+        const pdRatio = iso.PD_val * dWaveAmp;
+        const scaleDist = 2.4;
+        const d = (currentR * scaleDist) / 2;
+
+        if (activeIsoKey === 'h2') {
+          // Классическая вытянутая оболочка дейтрона вдоль оси Z
+          const semiZ = (d + 1.25) * (1.0 + pdRatio * 1.5);
+          const semiXY = 1.45 * (1.0 - pdRatio * 0.65);
+          quadMesh.scale.set(semiXY, semiXY, semiZ);
+        } else if (activeIsoKey === 'he3') {
+          // Сплюснутая треугольная форма гелия-3
+          quadMesh.scale.set(d + 1.45, 1.40, d + 1.45);
+        } else {
+          // Альфа-частица 4He: сферически симметричная оболочка (Q = 0)
+          const rad4 = d * 1.1 + 1.35;
+          quadMesh.scale.set(rad4, rad4, rad4);
+        }
+      }
+
+      // 6. КОНТАКТНОЕ ПЯТНО СКЛЕИВАНИЯ
+      const showAdhesion = chkAdhesion.checked && currentR >= 0.70 && currentR <= 1.55;
+      if (showAdhesion) {
+        const wellIntensity = Math.exp(-Math.pow((currentR - ISOTOPES[activeIsoKey].r_eq) / 0.32, 2));
+        contactDisk.visible = true;
+        contactDiskMat.opacity = wellIntensity * 0.75;
+      } else {
+        contactDisk.visible = false;
+      }
+
+      // 7. УДАРНЫЙ КОР ОТТАЛКИВАНИЯ (r < 0.72)
+      if (currentR < 0.72) {
+        const intensity = Math.pow((0.72 - currentR) / 0.32, 2);
+        coreRings.children.forEach((ring, idx) => {
+          ring.material.opacity = Math.min(intensity * (1.0 - idx * 0.2), 0.9);
+          ring.scale.setScalar(1.0 + (time * 2.6 + idx * 0.3) % 1.4);
+        });
+      } else {
+        coreRings.children.forEach(ring => ring.material.opacity = 0);
+      }
+
+      // 8. ПИОННЫЙ ОБМЕН
+      const showPions = chkPion.checked && currentR > 1.15;
+      pionPool.forEach((p) => {
+        p.visible = showPions;
+        if (!showPions) return;
+
+        p.userData.progress += p.userData.speed;
+        if (p.userData.progress > 1.0) p.userData.progress = 0.0;
+
+        const t = p.userData.progress;
+        const scaleDist = 2.4;
+        const d = (currentR * scaleDist) / 2;
+        const zStart = -d;
+        const zEnd = d;
+        const curZ = p.userData.direction > 0
+          ? THREE.MathUtils.lerp(zStart, zEnd, t)
+          : THREE.MathUtils.lerp(zEnd, zStart, t);
+
+        const helicalRadius = 0.28 * Math.sin(t * Math.PI);
+        const hAngle = t * Math.PI * 6 + p.userData.offsetPhase;
+        p.position.set(Math.cos(hAngle) * helicalRadius, Math.sin(hAngle) * helicalRadius, curZ);
+      });
+
+      drawPotentialPlot();
+      controls.update();
+      renderer.render(scene, camera);
+    }
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    animate();
+  </script>
+</body>
+</html>
