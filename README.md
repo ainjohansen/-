@@ -33,7 +33,29 @@
 
 *   📐 **[3D-Компаратор Элементарных Частиц (particle_comparator_3d.html)](https://ainjohansen.github.io/-/html/particle_comparator_3d.html)**  
     *Сравнительная анатомия фундаментальных дефектов в едином масштабе: базовый тороид электрона $T(1,1)$, обертоны намотки мюона ($N_2=6$) и тау-лептона ($N_3=15$), барионный узел-трилистник протона $T(3,2)$ на торе Клиффорда и разомкнутая нейтральная нить нейтрино. Прямая геометрическая демонстрация проекций девиатора Хейга--Вестергарда и инварианта Коидэ $Q = 2/3$.*
+### 🌐 Интерактивная 3D-визуализация: Аннигиляция $e^+e^- \to 2\gamma$
 
+> 🚀 **[Визуализация анигиляции](https://ainjohansen.github.io/-/html/annihilation_tev.html)**  
+> *(Исходный автономный код: [`html/annihilation_tev.html`](html/annihilation_tev.html))*
+
+Численное 3D-моделирование топологического фазового перехода пары солитонов $T(1,1)$ в среде упругого вакуума (Three.js / RK4-интегратор) без привлечения точечной феноменологии Стандартной Модели:
+
+* **Интерференция кулоновских хвостов (дальнодействие до контакта):**  
+  Солитоны противоположной киральности ($\chi_e = +1, \chi_p = -1$) индуцируют противоположные по знаку поля статических сдвиговых деформаций. В зазоре девиаторы вычитаются ($\mathbf{s}_{\text{tot}} \to 0$), вызывая локальную разгрузку упругой энергии среды ($\Delta\mathcal{W}_{\text{gap}} < 0$). Градиент внешнего давления среды стягивает пару по потенциалу $V_{\text{int}}(d)$ задолго до геометрического контакта кернов.
+* **Трёхосный кинематический замок (Spin Lock):**  
+  Противофазное согласованное вращение тороидов по трем степеням свободы ($\Omega_u, \Omega_v, \Omega_n$) с мёбиусовой $4\pi$-периодичностью («зацепление шестерней»), предотвращающее возникновение паразитных турбулентных напряжений при сближении.
+* **Топологический коллапс ($d^* = 2\alpha R_e$):**  
+  При контакте нелинейных кернов суммарная топологическая скрутка обнуляется ($\tau_{\text{sum}} = \tau_e + \tau_p = 0$). Исчезновение топологической защиты приводит к разрыву замкнутых лент Мёбиуса в двух диаметрально противоположных точках.
+* **Рождение поперечных мод $2\gamma$:**  
+  Энергия локализованной стоячей волны солитонов ($2m_e c^2$) высвобождается в виде двух разлетающихся вдоль оси $\pm X$ соленоидальных волновых пакетов с противоположной круговой поляризацией (правая и левая спиральность) со строгим сохранением нулевых суммарных импульса и спина ($\mathbf{P}_{\text{tot}} = 0$, $\mathbf{S}_{\text{tot}} = 0$).
+
+  Numerical 3D simulation of a topological phase transition of $T(1,1)$ soliton pairs in an elastic continuum (Three.js / RK4 numerical solver) without point-particle SM phenomenology:
+
+* **Pre-contact Coulomb tail interference:** Chiral deviatoric strain fields ($\chi_e = +1, \chi_p = -1$) interfere destructively in the intervening gap ($\mathbf{s}_{\text{tot}} \to 0$). The resulting strain energy drop ($\Delta\mathcal{W}_{\text{gap}} < 0$) establishes an attractive stress gradient long before core contact.
+* **Triaxial spin-locking:** Anti-phase synchronized 3-axis rotation ($\Omega_u, \Omega_v, \Omega_n$) with $4\pi$ Möbius boundary conditions, providing smooth kinematic meshing without shear jamming.
+* **Topological rupture ($d^* = 2\alpha R_e$):** Core contact cancels net topological twist ($\tau_{\text{sum}} = +2 - 2 = 0$). The topological barrier vanishes, breaking the closed Möbius waveguides.
+* **Transverse $2\gamma$ emission:** The trapped shear energy is radiated away as two counter-propagating solenoidal wave packets ($\pm \mathbf{e}_x$) with orthogonal circular polarizations, naturally conserving $\mathbf{P}_{\text{tot}} = 0$ and $\mathbf{S}_{\text{tot}} = 0$.
+  
 *   📁 **[Корневой каталог визуализаций](https://ainjohansen.github.io/-/html/)**
 
 ---
