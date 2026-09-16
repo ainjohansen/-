@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ТЭВ v5.2: Квантовая Запутанность, Расслоение Хопфа и Предел Цирельсона</title>
+    <style>
+        :root {
+            --bg: #010307;
+            --panel-bg: rgba(2, 8, 20, 0.92);
+            --border: rgba(56, 189, 248, 0.3);
+            --cyan: #38bdf8;
+            --emerald: #10b981;
+            --rose: #f43f5e;
+            --amber: #f59e0b;
+            --violet: #a855f7;
+            --text: #e2e8f0;
+            --muted: #94a3b8;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+        body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden; width: 100vw; height: 100vh; }
+        #canvas-container { width: 100vw; height: 100vh; display: block; }
+
+        /* Левый HUD */
+        #hud {
+            position: absolute; top: 15px; left: 15px; background: var(--panel-bg);
+            padding: 14px 18px; border-radius: 12px; border: 1px solid var(--border);
+            max-width: 440px; box-shadow: 0 10px 35px rgba(0,0,0,0.85); backdrop-filter: blur(10px);
+            z-index: 10;
+        }
+        h1 { margin: 0 0 5px 0; font-size: 14px; color: var(--cyan); text-transform: uppercase; letter-spacing: 1.2px; }
+        p { margin: 4px 0; font-size: 11px; line-height: 1.4; color: var(--muted); }
+
+        .badge { padding: 6px 9px; margin: 5px 0; border-radius: 4px; font-size: 10.5px; line-height: 1.35; }
+        .badge-tsirelson { background: rgba(168, 85, 247, 0.15); border-left: 3px solid var(--violet); color: #e9d5ff; }
+        .badge-nosignal { background: rgba(16, 185, 129, 0.15); border-left: 3px solid var(--emerald); color: #a7f3d0; }
+        .badge-qfactor { background: rgba(56, 189, 248, 0.15); border-left: 3px solid var(--cyan); color: #bae6fd; }
+
+        .tags { margin-top: 6px; display: flex; flex-wrap: wrap; gap: 4px; }
+        .tag { padding: 2px 6px; border-radius: 4px; font-size: 9.5px; font-weight: bold; }
+        .tag-a { background: #0284c7; color: white; }
+        .tag-b { background: #059669; color: white; }
+        .tag-q { background: #7e22ce; color: white; }
+        .tag-mises { background: #e11d48; color: white; }
+
+        /* Нижняя панель CHSH / Коррелятора */
+        #chsh-panel {
+            position: absolute; bottom: 75px; left: 15px; background: var(--panel-bg);
+            padding: 12px 16px; border-radius: 10px; border: 1px solid var(--violet);
+            max-width: 480px; font-size: 10.5px; box-shadow: 0 8px 30px rgba(0,0,0,0.85);
+            backdrop-filter: blur(8px); z-index: 10;
+        }
+        #chsh-panel h3 { margin: 0 0 6px 0; font-size: 11.5px; color: #d8b4fe; text-transform: uppercase; display: flex; justify-content: space-between; }
+        .grid-chsh { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; margin: 6px 0; }
+        .box-chsh { background: rgba(15, 23, 42, 0.8); padding: 5px 6px; border-radius: 5px; border: 1px solid #334155; text-align: center; }
+        .box-chsh .label { font-size: 9px; color: var(--muted); }
+        .box-chsh .val { font-family: monospace; font-size: 11px; font-weight: bold; color: var(--cyan); }
+
+        .chsh-meter {
+            margin-top: 8px; background: #0f172a; border-radius: 4px; height: 14px; position: relative;
+            border: 1px solid #334155; overflow: hidden;
+        }
+        .chsh-fill { height: 100%; background: linear-gradient(90deg, #3b82f6, #a855f7, #ec4899); width: 0%; transition: width 0.15s; }
+        .chsh-marks { display: flex; justify-content: space-between; font-size: 9px; color: var(--muted); margin-top: 2px; }
+        .bell-limit { color: #f59e0b; font-weight: bold; }
+        .tsir-limit { color: #ec4899; font-weight: bold; }
+
+        /* Правая панель настроек */
+        #controls-box {
+            position: absolute; top: 15px; right: 15px; background: var(--panel-bg);
+            padding: 14px 16px; border-radius: 12px; border: 1px solid var(--border);
+            width: 310px; box-shadow: 0 10px 35px rgba(0,0,0,0.85); backdrop-filter: blur(10px);
+            z-index: 10;
+        }
+        #controls-box h2 { margin: 0 0 8px 0; font-size: 11.5px; color: var(--cyan); text-transform: uppercase; border-bottom: 1px solid #1e3a5f; padding-bottom: 5px; }
+        .row-ctrl { display: flex; justify-content: space-between; align-items: center; margin: 7px 0; font-size: 10.5px; }
+        .row-ctrl span.name { color: #cbd5e1; }
+        .row-ctrl span.val { font-family: monospace; color: var(--cyan); font-weight: bold; }
+        input[type=range] { width: 130px; accent-color: var(--cyan); cursor: pointer; }
+
+        .preset-row { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin: 8px 0; }
+        button.btn-preset {
+            background: #091a2d; border: 1px solid #1e4976; color: #93c5fd; padding: 5px 6px;
+            border-radius: 6px; font-size: 9.5px; cursor: pointer; transition: all 0.2s;
+        }
+        button.btn-preset:hover { background: #163d66; color: white; border-color: var(--cyan); }
+        button.btn-preset.active { background: #0284c7; color: white; border-color: var(--cyan); font-weight: bold; }
+
+        .check-row { display: flex; align-items: center; gap: 7px; font-size: 10.5px; margin: 5px 0; cursor: pointer; color: #cbd5e1; }
+        .check-row input { cursor: pointer; accent-color: var(--cyan); }
+
+        /* Нижнее меню */
+        #nav {
+            position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%);
+            background: var(--panel-bg); padding: 7px 16px; border-radius: 30px;
+            border: 1px solid var(--border); display: flex; gap: 6px; align-items: center;
+            box-shadow: 0 6px 30px rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 10;
+        }
+        button.nav-btn {
+            background: #091a2d; border: 1px solid #1e4976; color: #93c5fd;
+            padding: 6px 12px; border-radius: 18px; font-size: 10.5px; cursor: pointer;
+            transition: all 0.2s;
+        }
+        button.nav-btn:hover { background: #163d66; color: white; border-color: var(--cyan); }
+        button.nav-btn.active { background: #0284c7; color: white; border-color: var(--cyan); font-weight: bold; }
+        .divider { width: 1px; height: 18px; background: #1e3a5f; margin: 0 3px; }
+
+        /* Телеметрия детекторов Алисы и Боба */
+        #clicks-panel {
+            position: absolute; bottom: 15px; right: 15px; background: rgba(2, 8, 20, 0.92);
+            padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border);
+            font-family: monospace; font-size: 9.5px; color: var(--muted); line-height: 1.45;
+            z-index: 10; width: 230px;
+        }
+        .click-indicator { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 4px; }
+        .click-up { background: #10b981; box-shadow: 0 0 6px #10b981; }
+        .click-down { background: #ef4444; box-shadow: 0 0 6px #ef4444; }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+    <div id="canvas-container"></div>
+
+    <!-- Левый HUD -->
+    <div id="hud">
+        <h1>ЭПР-Пара и Предел Цирельсона — ТЭВ v5.2</h1>
+
+        <div class="badge badge-nosignal">
+            <b>ПРИЧИННОСТЬ БЕЗ МИСТИКИ (NO-SIGNALING):</b> Солитоны разнесены и летят АВТОНОМНО. Между ними НЕТ соединительного жгута или квантового телеграфа!
+        </div>
+
+        <div class="badge badge-qfactor">
+            <b>ПАМЯТЬ НАЧАЛЬНЫХ УСЛОВИЙ ($Q \sim 10^{122}$):</b> В точке распада $\mathbf{J}_{\text{tot}}=0$. Замороженная противофаза в слое $S^3$ сохраняется сквозь миллиарды километров благодаря отсутствию диссипации в продольный канал ($10^{-122}$).
+        </div>
+
+        <div class="badge badge-tsirelson">
+            <b>РАССЛОЕНИЕ ХОПФА $S^3 \to S^2$:</b> Спин непрерывно кувыркается по всем осям. Прибор проецирует фазовый слой, формируя строгий гладкий косинус $E = -\cos\theta_{ab}$ и достигая максимума $2\sqrt{2} \approx 2.8284$.
+        </div>
+
+        <div class="tags">
+            <span class="tag tag-a">Алиса: Угол a</span>
+            <span class="tag tag-b">Боб: Угол b</span>
+            <span class="tag tag-q">Hopf S¹ ↪ S³ → S²</span>
+            <span class="tag tag-mises">Срыв Мизеса</span>
+        </div>
+    </div>
+
+    <!-- Нижняя панель CHSH -->
+    <div id="chsh-panel">
+        <h3>
+            <span>Коррелятор Белла и Неравенство CHSH</span>
+            <span id="chsh-total-val" style="color: #ec4899; font-family: monospace;">S = 2.8284</span>
+        </h3>
+        <div class="grid-chsh">
+            <div class="box-chsh">
+                <div class="label">E(a, b)</div>
+                <div class="val" id="val-e-ab">-0.707</div>
+            </div>
+            <div class="box-chsh">
+                <div class="label">E(a, b')</div>
+                <div class="val" id="val-e-ab2">+0.707</div>
+            </div>
+            <div class="box-chsh">
+                <div class="label">E(a', b)</div>
+                <div class="val" id="val-e-a2b">-0.707</div>
+            </div>
+            <div class="box-chsh">
+                <div class="label">E(a', b')</div>
+                <div class="val" id="val-e-a2b2">-0.707</div>
+            </div>
+        </div>
+
+        <div class="chsh-meter">
+            <div class="chsh-fill" id="chsh-bar"></div>
+        </div>
+        <div class="chsh-marks">
+            <span>0.0</span>
+            <span class="bell-limit">|S| ≤ 2.0 (Классика Белла)</span>
+            <span class="tsir-limit">2√2 ≈ 2.828 (Цирельсон ТЭВ)</span>
+            <span>4.0</span>
+        </div>
+    </div>
+
+    <!-- Панель управления справа -->
+    <div id="controls-box">
+        <h2>Ориентация Детекторов</h2>
+
+        <div class="row-ctrl">
+            <span class="name">Угол Алисы (θ_a):</span>
+            <span class="val" id="deg-a">0.0°</span>
+        </div>
+        <input type="range" id="sl-theta-a" min="0" max="360" step="0.5" value="0">
+
+        <div class="row-ctrl">
+            <span class="name">Угол Боба (θ_b):</span>
+            <span class="val" id="deg-b">45.0°</span>
+        </div>
+        <input type="range" id="sl-theta-b" min="0" max="360" step="0.5" value="45">
+
+        <div class="row-ctrl" style="margin-top: 6px;">
+            <span class="name">Разность фаз Δθ:</span>
+            <span class="val" id="deg-delta">45.0°</span>
+        </div>
+
+        <div class="preset-row">
+            <button class="btn-preset active" onclick="setPreset('tsirelson')">Макс. Цирельсона (2√2)</button>
+            <button class="btn-preset" onclick="setPreset('bell_classic')">Классика (Δθ = 0°)</button>
+            <button class="btn-preset" onclick="setPreset('orthogonal')">Ортогонально (90°)</button>
+            <button class="btn-preset" onclick="setPreset('antiparallel')">Антипараллельно (180°)</button>
+        </div>
+
+        <h2 style="margin-top: 10px;">Слои Визуализации</h2>
+
+        <label class="check-row">
+            <input type="checkbox" id="chk-bloch" checked onchange="toggleLayer('bloch')">
+            <span>Сферы Хопфа $S^2$ (Вектор Блоха)</span>
+        </label>
+        <label class="check-row">
+            <input type="checkbox" id="chk-detectors" checked onchange="toggleLayer('detectors')">
+            <span>Рамки детекторов срыва Мизеса</span>
+        </label>
+        <label class="check-row">
+            <input type="checkbox" id="chk-trails" checked onchange="toggleLayer('trails')">
+            <span>Шлейфы прецессии на $S^3$</span>
+        </label>
+        <label class="check-row">
+            <input type="checkbox" id="chk-substrate" checked onchange="toggleLayer('substrate')">
+            <span>Упругая матрица вакуума</span>
+        </label>
+
+        <div class="row-ctrl" style="margin-top: 8px;">
+            <span class="name">Скорость прецессии:</span>
+            <input id="sl-speed" type="range" min="0.1" max="3.0" step="0.1" value="1.0">
+        </div>
+    </div>
+
+    <!-- Нижняя навигация -->
+    <div id="nav">
+        <button class="nav-btn active" onclick="focusView('all')">Общий Вид (Пара)</button>
+        <button class="nav-btn" onclick="focusView('alice')">Алиса (Детектор A)</button>
+        <button class="nav-btn" onclick="focusView('source')">Источник (Барицентр)</button>
+        <button class="nav-btn" onclick="focusView('bob')">Боб (Детектор B)</button>
+        <div class="divider"></div>
+        <button class="nav-btn" id="btn-pause" onclick="togglePause()">⏸ Пауза</button>
+    </div>
+
+    <!-- Телеметрия детектора -->
+    <div id="clicks-panel">
+        <b>Триггер Мизеса (Клики):</b><br>
+        Алиса: <span id="click-a" class="click-indicator click-up"></span><span id="txt-click-a">+1</span> |
+        Боб: <span id="click-b" class="click-indicator click-down"></span><span id="txt-click-b">-1</span><br>
+        Совпадений: <span id="stat-match" style="color:var(--cyan);">0</span> / <span id="stat-total">0</span><br>
+        Эксперим. E: <span id="stat-corr" style="color:#d8b4fe; font-weight:bold;">-0.707</span>
+    </div>
+
+    <script>
+        // =====================================================================
+        // 1. ИНИЦИАЛИЗАЦИЯ СЦЕНЫ THREE.JS
+        // =====================================================================
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0x010307, 0.012);
+
+        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 7.5, 22);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        container.appendChild(renderer.domElement);
+
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+
+        scene.add(new THREE.AmbientLight(0x0f172a, 2.2));
+        const dirLight = new THREE.DirectionalLight(0x38bdf8, 2.0);
+        dirLight.position.set(10, 20, 15);
+        scene.add(dirLight);
+
+        let isPaused = false;
+        let isTransitioning = false;
+        let targetCam = new THREE.Vector3();
+        let targetLook = new THREE.Vector3();
+
+        controls.addEventListener('start', () => { isTransitioning = false; });
+
+        // =====================================================================
+        // 2. ИСТОЧНИК ПАРЫ В ЦЕНТРЕ (J_total = 0)
+        // =====================================================================
+        const sourceGroup = new THREE.Group();
+        scene.add(sourceGroup);
+
+        const sourceCore = new THREE.Mesh(
+            new THREE.SphereGeometry(0.22, 24, 24),
+            new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true })
+        );
+        sourceGroup.add(sourceCore);
+
+        const sourceGlow = new THREE.Mesh(
+            new THREE.SphereGeometry(0.55, 16, 16),
+            new THREE.MeshBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.25, blending: THREE.AdditiveBlending })
+        );
+        sourceGroup.add(sourceGlow);
+
+        function makeSprite(text, bgCol) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 180; canvas.height = 64;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = bgCol;
+            ctx.beginPath(); ctx.roundRect(8, 8, 164, 48, 10); ctx.fill();
+            ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 2; ctx.stroke();
+            ctx.fillStyle = '#ffffff'; ctx.font = 'bold 22px Segoe UI, Arial';
+            ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+            ctx.fillText(text, 90, 32);
+            const tex = new THREE.CanvasTexture(canvas);
+            const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, depthTest: false }));
+            sp.scale.set(0.65, 0.25, 1);
+            return sp;
+        }
+
+        const spSource = makeSprite("Источник: J=0", "#334155");
+        spSource.position.set(0, 0.8, 0);
+        sourceGroup.add(spSource);
+
+        // =====================================================================
+        // 3. АВТОНОМНЫЕ СОЛИТОНЫ АЛИСЫ И БОБА (T(1,1))
+        // =====================================================================
+        const DIST_X = 8.5;
+
+        // --- Узел Алисы (слева, -X) ---
+        const aliceGroup = new THREE.Group();
+        aliceGroup.position.set(-DIST_X, 0, 0);
+        scene.add(aliceGroup);
+
+        const aliceTumble = new THREE.Group();
+        aliceGroup.add(aliceTumble);
+
+        const torusGeo = new THREE.TorusGeometry(0.65, 0.12, 18, 64);
+        const aliceMat = new THREE.MeshStandardMaterial({
+            color: 0x38bdf8, emissive: 0x0284c7, emissiveIntensity: 0.7, roughness: 0.2, metalness: 0.8
+        });
+        const aliceMesh = new THREE.Mesh(torusGeo, aliceMat);
+        aliceTumble.add(aliceMesh);
+
+        const spAlice = makeSprite("Солитон A (Алиса)", "#0284c7");
+        spAlice.position.set(0, 1.3, 0);
+        aliceGroup.add(spAlice);
+
+        // --- Узел Боба (справа, +X) ---
+        const bobGroup = new THREE.Group();
+        bobGroup.position.set(DIST_X, 0, 0);
+        scene.add(bobGroup);
+
+        const bobTumble = new THREE.Group();
+        bobGroup.add(bobTumble);
+
+        const bobMat = new THREE.MeshStandardMaterial({
+            color: 0x10b981, emissive: 0x047857, emissiveIntensity: 0.7, roughness: 0.2, metalness: 0.8
+        });
+        const bobMesh = new THREE.Mesh(torusGeo, bobMat);
+        bobTumble.add(bobMesh);
+
+        const spBob = makeSprite("Солитон B (Боб)", "#059669");
+        spBob.position.set(0, 1.3, 0);
+        bobGroup.add(spBob);
+
+        // =====================================================================
+        // 4. МИНИ-СФЕРЫ ХОПФА S² (ВЕКТОРЫ БЛОХА n_A И n_B)
+        // =====================================================================
+        const blochRadius = 1.1;
+        const blochGeo = new THREE.SphereGeometry(blochRadius, 24, 24);
+        const blochMat = new THREE.MeshBasicMaterial({
+            color: 0xa855f7, wireframe: true, transparent: true, opacity: 0.25
+        });
+
+        // Сфера Алисы
+        const blochAlice = new THREE.Mesh(blochGeo, blochMat);
+        blochAlice.position.set(0, -2.4, 0);
+        aliceGroup.add(blochAlice);
+
+        const arrowA = new THREE.ArrowHelper(new THREE.Vector3(0, 1, 0), new THREE.Vector3(0, 0, 0), blochRadius, 0x38bdf8, 0.25, 0.15);
+        blochAlice.add(arrowA);
+
+        const spBlochA = makeSprite("Hopf S² (n_A)", "#6b21a8");
+        spBlochA.position.set(0, -1.3, 0);
+        blochAlice.add(spBlochA);
+
+        // Сфера Боба
+        const blochBob = new THREE.Mesh(blochGeo, blochMat);
+        blochBob.position.set(0, -2.4, 0);
+        bobGroup.add(blochBob);
+
+        const arrowB = new THREE.ArrowHelper(new THREE.Vector3(0, -1, 0), new THREE.Vector3(0, 0, 0), blochRadius, 0x10b981, 0.25, 0.15);
+        blochBob.add(arrowB);
+
+        const spBlochB = makeSprite("Hopf S² (n_B = -n_A)", "#6b21a8");
+        spBlochB.position.set(0, -1.3, 0);
+        blochBob.add(spBlochB);
+
+        // =====================================================================
+        // 5. ДЕТЕКТОРЫ СРЫВА МИЗЕСА АЛИСЫ И БОБА (УГЛЫ a И b)
+        // =====================================================================
+        const detectorsGroup = new THREE.Group();
+        scene.add(detectorsGroup);
+
+        function makeDetectorFrame(colHex, labelText) {
+            const grp = new THREE.Group();
+            // Кольцо детектора
+            const ring = new THREE.Mesh(
+                new THREE.TorusGeometry(1.6, 0.04, 16, 64),
+                new THREE.MeshStandardMaterial({ color: colHex, emissive: colHex, emissiveIntensity: 0.4, roughness: 0.3 })
+            );
+            grp.add(ring);
+
+            // Стрелка оси измерения
+            const arr = new THREE.ArrowHelper(new THREE.Vector3(0, 1, 0), new THREE.Vector3(0, 0, 0), 1.8, colHex, 0.35, 0.2);
+            grp.add(arr);
+
+            const sp = makeSprite(labelText, colHex === 0x0284c7 ? "#0284c7" : "#059669");
+            sp.position.set(0, 2.2, 0);
+            grp.add(sp);
+
+            return { group: grp, arrow: arr };
+        }
+
+        const detAlice = makeDetectorFrame(0x0284c7, "Детектор a (Алиса)");
+        detAlice.group.position.set(-DIST_X, 0, 0);
+        detectorsGroup.add(detAlice.group);
+
+        const detBob = makeDetectorFrame(0x059669, "Детектор b (Боб)");
+        detBob.group.position.set(DIST_X, 0, 0);
+        detectorsGroup.add(detBob.group);
+
+        // =====================================================================
+        // 6. ШЛЕЙФЫ ПРЕЦЕССИИ (ЭРГОДИЧЕСКИЙ КУВЫРОК НА S³)
+        // =====================================================================
+        const TRAIL_N = 120;
+        function makeTrail(colHex) {
+            const geo = new THREE.BufferGeometry();
+            const pos = new Float32Array(TRAIL_N * 3);
+            const col = new Float32Array(TRAIL_N * 3);
+            geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+            geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+            const mat = new THREE.LineBasicMaterial({ vertexColors: true, transparent: true, opacity: 0.75, blending: THREE.AdditiveBlending });
+            return { line: new THREE.Line(geo, mat), history: [] };
+        }
+
+        const trailA = makeTrail(0x38bdf8);
+        scene.add(trailA.line);
+        const trailB = makeTrail(0x10b981);
+        scene.add(trailB.line);
+
+        // =====================================================================
+        // 7. УПРУГАЯ МАТРИЦА ВАКУУМА (ФОНОВАЯ МЕМБРАНА)
+        // =====================================================================
+        const membGeo = new THREE.PlaneGeometry(32, 16, 48, 24);
+        membGeo.rotateX(-Math.PI / 2);
+        const membMat = new THREE.MeshBasicMaterial({
+            color: 0x1e293b, wireframe: true, transparent: true, opacity: 0.28
+        });
+        const membraneMesh = new THREE.Mesh(membGeo, membMat);
+        membraneMesh.position.y = -3.8;
+        scene.add(membraneMesh);
+
+        // =====================================================================
+        // 8. ИНТЕРАКТИВНЫЕ УГЛЫ И РАСЧЕТ CHSH
+        // =====================================================================
+        let thetaA = 0.0;
+        let thetaB = 45.0;
+
+        const slA = document.getElementById('sl-theta-a');
+        const slB = document.getElementById('sl-theta-b');
+        const degA = document.getElementById('deg-a');
+        const degB = document.getElementById('deg-b');
+        const degDelta = document.getElementById('deg-delta');
+
+        function updateAngles() {
+            thetaA = parseFloat(slA.value);
+            thetaB = parseFloat(slB.value);
+
+            degA.textContent = thetaA.toFixed(1) + '°';
+            degB.textContent = thetaB.toFixed(1) + '°';
+
+            let dTheta = Math.abs(thetaA - thetaB) % 360;
+            if (dTheta > 180) dTheta = 360 - dTheta;
+            degDelta.textContent = dTheta.toFixed(1) + '°';
+
+            // Поворот рамок детекторов вокруг оси Z
+            detAlice.group.rotation.z = (thetaA * Math.PI) / 180;
+            detBob.group.rotation.z = (thetaB * Math.PI) / 180;
+
+            calculateCHSH();
+        }
+
+        slA.addEventListener('input', updateAngles);
+        slB.addEventListener('input', updateAngles);
+
+        function setPreset(p) {
+            document.querySelectorAll('.btn-preset').forEach(b => b.classList.remove('active'));
+            if (p === 'tsirelson') {
+                slA.value = 0; slB.value = 45;
+            } else if (p === 'bell_classic') {
+                slA.value = 0; slB.value = 0;
+            } else if (p === 'orthogonal') {
+                slA.value = 0; slB.value = 90;
+            } else if (p === 'antiparallel') {
+                slA.value = 0; slB.value = 180;
+            }
+            event.target.classList.add('active');
+            updateAngles();
+        }
+
+        function calculateCHSH() {
+            // Аналитический коррелятор ТЭВ: E(a, b) = -cos(theta_a - theta_b)
+            const rad = Math.PI / 180;
+            const a = thetaA * rad;
+            const b = thetaB * rad;
+            const a2 = (thetaA + 90) * rad;
+            const b2 = (thetaB + 90) * rad;
+
+            const E_ab = -Math.cos(a - b);
+            const E_ab2 = -Math.cos(a - b2);
+            const E_a2b = -Math.cos(a2 - b);
+            const E_a2b2 = -Math.cos(a2 - b2);
+
+            // Неравенство CHSH: S = |E(a,b) - E(a,b') + E(a',b) + E(a',b')|
+            const S = Math.abs(E_ab - E_ab2 + E_a2b + E_a2b2);
+
+            document.getElementById('val-e-ab').textContent = (E_ab >= 0 ? '+' : '') + E_ab.toFixed(3);
+            document.getElementById('val-e-ab2').textContent = (E_ab2 >= 0 ? '+' : '') + E_ab2.toFixed(3);
+            document.getElementById('val-e-a2b').textContent = (E_a2b >= 0 ? '+' : '') + E_a2b.toFixed(3);
+            document.getElementById('val-e-a2b2').textContent = (E_a2b2 >= 0 ? '+' : '') + E_a2b2.toFixed(3);
+
+            document.getElementById('chsh-total-val').textContent = 'S = ' + S.toFixed(4);
+
+            // Индикатор заполнения шкалы (0 to 4.0)
+            const pct = Math.min(100, Math.max(0, (S / 4.0) * 100));
+            document.getElementById('chsh-bar').style.width = pct.toFixed(1) + '%';
+        }
+
+        // =====================================================================
+        // 9. СТАТИСТИКА КЛИКОВ МИЗЕСА (ИСПЫТАНИЯ)
+        // =====================================================================
+        let totalTrials = 0;
+        let matchTrials = 0;
+
+        function runMeasurementTrial(nA, nB) {
+            totalTrials++;
+            const rad = Math.PI / 180;
+            const uA = new THREE.Vector3(Math.sin(thetaA * rad), Math.cos(thetaA * rad), 0);
+            const uB = new THREE.Vector3(Math.sin(thetaB * rad), Math.cos(thetaB * rad), 0);
+
+            // Локальный срыв Мизеса: проекция кувыркающегося спинора на ось прибора
+            const projA = nA.dot(uA);
+            const projB = nB.dot(uB);
+
+            // Квантовый триггер срыва: вероятность P(+) = (1 + proj)/2
+            const resA = (Math.random() < (1.0 + projA) / 2.0) ? 1 : -1;
+            const resB = (Math.random() < (1.0 + projB) / 2.0) ? 1 : -1;
+
+            if (resA === resB) matchTrials++;
+
+            document.getElementById('txt-click-a').textContent = (resA > 0 ? '+1' : '-1');
+            document.getElementById('txt-click-b').textContent = (resB > 0 ? '+1' : '-1');
+
+            const indA = document.getElementById('click-a');
+            const indB = document.getElementById('click-b');
+            indA.className = 'click-indicator ' + (resA > 0 ? 'click-up' : 'click-down');
+            indB.className = 'click-indicator ' + (resB > 0 ? 'click-up' : 'click-down');
+
+            document.getElementById('stat-total').textContent = totalTrials;
+            document.getElementById('stat-match').textContent = matchTrials;
+
+            // Экспериментальный коррелятор: E = (N_same - N_diff) / N_total
+            const diff = totalTrials - matchTrials;
+            const expCorr = (matchTrials - diff) / totalTrials;
+            document.getElementById('stat-corr').textContent = (expCorr >= 0 ? '+' : '') + expCorr.toFixed(3);
+        }
+
+        // =====================================================================
+        // 10. УПРАВЛЕНИЕ ВИДАМИ И СЛОЯМИ
+        // =====================================================================
+        function toggleLayer(layer) {
+            if (layer === 'bloch') {
+                blochAlice.visible = document.getElementById('chk-bloch').checked;
+                blochBob.visible = document.getElementById('chk-bloch').checked;
+            }
+            if (layer === 'detectors') detectorsGroup.visible = document.getElementById('chk-detectors').checked;
+            if (layer === 'trails') {
+                trailA.line.visible = document.getElementById('chk-trails').checked;
+                trailB.line.visible = document.getElementById('chk-trails').checked;
+            }
+            if (layer === 'substrate') membraneMesh.visible = document.getElementById('chk-substrate').checked;
+        }
+
+        function focusView(view) {
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+
+            if (view === 'all') {
+                targetCam.set(0, 7.5, 22); targetLook.set(0, 0, 0);
+            } else if (view === 'alice') {
+                targetCam.set(-DIST_X, 2.5, 7.5); targetLook.set(-DIST_X, 0, 0);
+            } else if (view === 'bob') {
+                targetCam.set(DIST_X, 2.5, 7.5); targetLook.set(DIST_X, 0, 0);
+            } else if (view === 'source') {
+                targetCam.set(0, 1.8, 5.0); targetLook.set(0, 0, 0);
+            }
+            isTransitioning = true;
+        }
+
+        function togglePause() {
+            isPaused = !isPaused;
+            document.getElementById('btn-pause').textContent = isPaused ? '▶ Пуск' : '⏸ Пауза';
+        }
+
+        // =====================================================================
+        // 11. АНИМАЦИОННЫЙ ЦИКЛ (ПРЕЦЕССИЯ И РАСПРЕДЕЛЕНИЕ ХОПФА)
+        // =====================================================================
+        let clock = 0;
+        const vecNA = new THREE.Vector3();
+        const vecNB = new THREE.Vector3();
+        let trialCounter = 0;
+
+        updateAngles();
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            if (isTransitioning) {
+                camera.position.lerp(targetCam, 0.06);
+                controls.target.lerp(targetLook, 0.06);
+                if (camera.position.distanceTo(targetCam) < 0.05) isTransitioning = false;
+            }
+            controls.update();
+
+            const speedUser = parseFloat(document.getElementById('sl-speed').value);
+            if (!isPaused) {
+                clock += 0.02 * speedUser;
+            }
+
+            // 1. Эргодическая прецессия узла Алисы (кувырок по всем осям)
+            aliceTumble.rotation.x = clock * 1.8;
+            aliceTumble.rotation.y = clock * 2.4;
+            aliceTumble.rotation.z = clock * 1.3;
+
+            // 2. Узел Боба кувыркается в СТРОГОЙ НАЧАЛЬНОЙ ПРОТИВОФАЗЕ (J_total = 0)
+            bobTumble.rotation.x = -clock * 1.8 + Math.PI;
+            bobTumble.rotation.y = -clock * 2.4;
+            bobTumble.rotation.z = -clock * 1.3 + Math.PI;
+
+            // 3. Вычисление вектора Хопфа n_A на сфере S²
+            // Фазовый кувырок переводит прецессию в координаты 2-сферы
+            const phiA = clock * 2.4;
+            const thetaT = Math.sin(clock * 1.5) * 0.9 + Math.PI / 2;
+
+            vecNA.set(
+                Math.sin(thetaT) * Math.sin(phiA),
+                Math.cos(thetaT),
+                Math.sin(thetaT) * Math.cos(phiA)
+            ).normalize();
+
+            // Вектор Боба на сфере S²: строго зеркальный в силу связки J_tot = 0
+            vecNB.copy(vecNA).negate();
+
+            arrowA.setDirection(vecNA);
+            arrowB.setDirection(vecNB);
+
+            // 4. Обновление шлейфов прецессии солитонов
+            const topPtA = new THREE.Vector3(0, 0.65, 0).applyEuler(aliceTumble.rotation).add(aliceGroup.position);
+            const topPtB = new THREE.Vector3(0, 0.65, 0).applyEuler(bobTumble.rotation).add(bobGroup.position);
+
+            trailA.history.push(topPtA);
+            if (trailA.history.length > TRAIL_N) trailA.history.shift();
+
+            trailB.history.push(topPtB);
+            if (trailB.history.length > TRAIL_N) trailB.history.shift();
+
+            function updateTrailBuffer(tr, baseCol) {
+                const posArr = tr.line.geometry.attributes.position.array;
+                const colArr = tr.line.geometry.attributes.color.array;
+                for (let i = 0; i < TRAIL_N; i++) {
+                    if (i < tr.history.length) {
+                        const pt = tr.history[i];
+                        posArr[i*3+0] = pt.x; posArr[i*3+1] = pt.y; posArr[i*3+2] = pt.z;
+                        const a = i / tr.history.length;
+                        colArr[i*3+0] = baseCol.r * a;
+                        colArr[i*3+1] = baseCol.g * a;
+                        colArr[i*3+2] = baseCol.b * a;
+                    }
+                }
+                tr.line.geometry.attributes.position.needsUpdate = true;
+                tr.line.geometry.attributes.color.needsUpdate = true;
+            }
+
+            if (trailA.line.visible) {
+                updateTrailBuffer(trailA, new THREE.Color(0x38bdf8));
+                updateTrailBuffer(trailB, new THREE.Color(0x10b981));
+            }
+
+            // 5. Запуск испытаний измерений (кликов Мизеса)
+            if (!isPaused) {
+                trialCounter++;
+                if (trialCounter % 12 === 0) {
+                    runMeasurementTrial(vecNA, vecNB);
+                }
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        animate();
+    </script>
+</body>
+</html>
