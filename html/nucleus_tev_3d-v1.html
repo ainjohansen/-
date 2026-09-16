@@ -52,7 +52,7 @@
       text-shadow: 0 2px 12px rgba(0, 0, 0, 0.9);
     }
     header h1 {
-      font-size: 1.25rem;
+      font-size: 1.2rem;
       font-weight: 700;
       letter-spacing: 0.05em;
       color: #fff;
@@ -66,7 +66,7 @@
       -webkit-text-fill-color: transparent;
     }
     header p {
-      font-size: 0.78rem;
+      font-size: 0.76rem;
       color: var(--text-muted);
       margin-top: 3px;
     }
@@ -79,18 +79,18 @@
       -webkit-backdrop-filter: blur(14px);
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 14px 16px;
+      padding: 13px 15px;
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
     }
 
     /* Левая панель */
     #controls-panel {
-      top: 85px;
+      top: 80px;
       left: 20px;
       width: 320px;
       display: flex;
       flex-direction: column;
-      gap: 11px;
+      gap: 10px;
     }
 
     .panel-section-title {
@@ -209,7 +209,7 @@
 
     /* Правая панель */
     #metrics-panel {
-      top: 85px;
+      top: 80px;
       right: 20px;
       width: 310px;
     }
@@ -220,7 +220,7 @@
       align-items: center;
       padding: 5px 0;
       border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-      font-size: 0.8rem;
+      font-size: 0.78rem;
     }
     .metric-name {
       color: var(--text-muted);
@@ -264,11 +264,11 @@
     #graph-panel {
       bottom: 20px;
       right: 20px;
-      width: 380px;
+      width: 360px;
     }
     #plot-canvas {
       width: 100%;
-      height: 150px;
+      height: 140px;
       background: rgba(4, 7, 17, 0.78);
       border-radius: 6px;
       margin-top: 6px;
@@ -280,7 +280,7 @@
       bottom: 20px;
       left: 20px;
       max-width: 530px;
-      font-size: 0.74rem;
+      font-size: 0.73rem;
       line-height: 1.45;
       color: var(--text-muted);
     }
@@ -324,7 +324,7 @@
 
   <header>
     <h1><span>ТОПОЛОГИЧЕСКАЯ ЭЛАСТОДИНАМИКА</span> &bull; ЯДЕРНЫЙ КЛАСТЕР</h1>
-    <p>Толстые гладкие узлы $T(3,2)$, натянутая сфера $S^2$ нейтрона и синхронная квадрупольная оболочка дейтрона и изотопов гелия</p>
+    <p>Толстые гладкие узлы <i>T</i>(3,2), сфера <i>S</i>² нейтрона и квадрупольная оболочка дейтрона и гелия</p>
   </header>
 
   <!-- Панель управления -->
@@ -339,7 +339,7 @@
     <div class="panel-section-title" style="margin-top: 4px;">Межнуклонный масштаб</div>
     <div class="control-group">
       <div class="control-label">
-        <span>Дистанция $r$:</span>
+        <span>Дистанция <i>r</i>:</span>
         <span class="val" id="val-r">1.08 фм</span>
       </div>
       <input type="range" id="slider-r" min="0.40" max="2.60" step="0.01" value="1.08" />
@@ -353,17 +353,17 @@
 
     <div class="btn-row" style="grid-template-columns: 1fr 1fr;">
       <button id="btn-relax">Релаксация в минимум</button>
-      <button id="btn-dwave-toggle">Квадруполь $P_D$ (&times;3)</button>
+      <button id="btn-dwave-toggle">Квадруполь <i>P<sub>D</sub></i> (&times;3)</button>
     </div>
 
     <div class="panel-section-title" style="margin-top: 6px;">Слои среды ТЭВ</div>
     <label class="checkbox-row">
       <input type="checkbox" id="chk-quad" checked />
-      <span>Квадрупольная оболочка ($Q_d > 0$)</span>
+      <span>Квадрупольная оболочка (<i>Q<sub>d</sub></i> &gt; 0)</span>
     </label>
     <label class="checkbox-row">
       <input type="checkbox" id="chk-neutronshell" checked />
-      <span>Натянутая сфера электрона $S^2$ ($\Delta M_{np}$)</span>
+      <span>Натянутая сфера электрона <i>S</i>² (&Delta;<i>M<sub>np</sub></i>)</span>
     </label>
     <label class="checkbox-row">
       <input type="checkbox" id="chk-adhesion" checked />
@@ -371,7 +371,7 @@
     </label>
     <label class="checkbox-row">
       <input type="checkbox" id="chk-pion" checked />
-      <span>Пионный фазовый обмен ($M_\pi = 140\text{ МэВ}$)</span>
+      <span>Пионный фазовый обмен (<i>M<sub>&pi;</sub></i> = 140 МэВ)</span>
     </label>
   </div>
 
@@ -380,47 +380,47 @@
     <div class="panel-section-title" id="iso-title">Параметры дейтрона (²H)</div>
 
     <div class="metric-item">
-      <span class="metric-name">Полная энергия связи $E_b$:</span>
+      <span class="metric-name">Полная энергия связи <i>E<sub>b</sub></i>:</span>
       <span class="metric-val" id="m-eb" style="color: #34d399;">2.2246 МэВ</span>
     </div>
     <div class="metric-item">
-      <span class="metric-name">Энергия на нуклон $E_b/A$:</span>
+      <span class="metric-name">Энергия на нуклон <i>E<sub>b</sub>/A</i>:</span>
       <span class="metric-val" id="m-eb-a" style="color: #6ee7b7;">1.1123 МэВ/нукл</span>
     </div>
     <div class="metric-item">
-      <span class="metric-name">Локальный потенциал $V(r)$:</span>
+      <span class="metric-name">Локальный потенциал <i>V</i>(<i>r</i>):</span>
       <span class="metric-val" id="m-vr">-31.84 МэВ</span>
     </div>
     <div class="metric-item">
-      <span class="metric-name">Квадрупольный момент $Q$:</span>
+      <span class="metric-name">Квадрупольный момент <i>Q</i>:</span>
       <span class="metric-val" id="m-qd">+0.2859 э&middot;фм&sup2;</span>
     </div>
     <div class="metric-item">
-      <span class="metric-name">Доля $D$-волны $P_D$:</span>
+      <span class="metric-name">Доля <i>D</i>-волны <i>P<sub>D</sub></i>:</span>
       <span class="metric-val" id="m-pd" style="color: #f59e0b;">3/52 (5.769%)</span>
     </div>
     <div class="metric-item">
-      <span class="metric-name">Натяжение сферы $S^2$:</span>
+      <span class="metric-name">Натяжение сферы <i>S</i>²:</span>
       <span class="metric-val" style="color: #38bdf8;">1.2868 МэВ</span>
     </div>
 
     <div class="status-badge status-bound" id="status-badge">
-      Равновесная яма связи ($V_0 \approx -32.5$ МэВ)
+      Равновесная яма связи (<i>V</i>₀ &approx; -32.5 МэВ)
     </div>
   </div>
 
-  <!-- Нижний график V(r) -->
+  <!-- Нижний 2D-график -->
   <div class="glass-panel" id="graph-panel">
-    <div class="panel-section-title">Профиль потенциала связывания $V(r)$</div>
-    <canvas id="plot-canvas" width="380" height="150"></canvas>
+    <div class="panel-section-title">Профиль потенциала связывания <i>V</i>(<i>r</i>)</div>
+    <canvas id="plot-canvas" width="360" height="140"></canvas>
   </div>
 
   <!-- Легенда -->
   <div class="glass-panel" id="legend-panel">
-    <b>Онтология непрерывной среды:</b> Протон несёт открытый голый узел сдвига ($+1e$). В нейтроне узел $T(3,2)$ <i>полностью заперт</i> внутри натянутой сферы электрона $S^2$, которая полностью экранирует заряд снаружи ($Q_{\text{ext}} = 0$). Квадрупольная оболочка среды жёстко охватывает всё ядро и вращается синхронно с ним. В альфа-частице ($^4\mathrm{He}$) тетраэдрическая симметрия взаимно гасит квадруполь ($Q \approx 0$).
+    <b>Онтология непрерывной среды:</b> Протон несёт открытый узел сдвига (+1<i>e</i>). В нейтроне узел <i>T</i>(3,2) <i>полностью заперт</i> внутри натянутой сферы электрона <i>S</i>², экранирующей заряд снаружи (<i>Q</i><sub>ext</sub> = 0). Квадрупольная оболочка среды жёстко охватывает ядро и вращается синхронно. В альфа-частице (⁴He) тетраэдрическая симметрия взаимно гасит квадруполь (<i>Q</i> &approx; 0).
     <div class="legend-dots">
-      <div class="legend-dot"><div class="dot" style="background: #f59e0b;"></div><span>Протон (голый толстый узел, $+1e$)</span></div>
-      <div class="legend-dot"><div class="dot" style="background: #38bdf8; box-shadow: 0 0 6px #38bdf8;"></div><span>Сфера электрона $S^2$ (протон внутри)</span></div>
+      <div class="legend-dot"><div class="dot" style="background: #f59e0b;"></div><span>Протон (узел <i>T</i>(3,2), +1<i>e</i>)</span></div>
+      <div class="legend-dot"><div class="dot" style="background: #38bdf8; box-shadow: 0 0 6px #38bdf8;"></div><span>Сфера <i>S</i>² (нейтрон, протон внутри)</span></div>
       <div class="legend-dot"><div class="dot" style="background: #818cf8;"></div><span>Квадрупольная оболочка</span></div>
       <div class="legend-dot"><div class="dot" style="background: #10b981;"></div><span>Контактное экранирование девиаторов</span></div>
     </div>
@@ -434,41 +434,35 @@
       h2: {
         name: 'Параметры дейтрона (²H)',
         A: 2, Z: 1, N: 1,
-        protons: 1, neutrons: 1,
         Eb: 2.2246,
         Eb_A: 1.1123,
         Q: '+0.2859 э·фм²',
         PD_str: '3/52 (5.769%)',
         PD_val: 3 / 52,
         r_eq: 1.08,
-        V0: -32.5,
-        quadScale: { x: 1.35, y: 1.35, z: 1.85 } // выраженная пролатная дыня
+        V0: -32.5
       },
       he3: {
         name: 'Параметры гелия-3 (³He)',
         A: 3, Z: 2, N: 1,
-        protons: 2, neutrons: 1,
         Eb: 7.718,
         Eb_A: 2.5727,
         Q: '-0.0450 э·фм²',
         PD_str: '~1.5% (сжатие)',
         PD_val: 0.015,
         r_eq: 1.05,
-        V0: -48.0,
-        quadScale: { x: 1.65, y: 1.55, z: 1.35 }
+        V0: -48.0
       },
       he4: {
         name: 'Параметры альфа-частицы (⁴He)',
         A: 4, Z: 2, N: 2,
-        protons: 2, neutrons: 2,
         Eb: 28.296,
         Eb_A: 7.074,
         Q: '0.0000 э·фм² (Сфера)',
         PD_str: '0.0% (Дважды магич.)',
         PD_val: 0.0,
         r_eq: 0.98,
-        V0: -92.0,
-        quadScale: { x: 1.60, y: 1.60, z: 1.60 } // идеальная сферическая оболочка
+        V0: -92.0
       }
     };
 
@@ -489,7 +483,7 @@
     }
 
     /* =========================================================================
-       2. THREE.JS СЦЕНА И ЕДИНАЯ СИСТЕМА КООРДИНАТ ЯДРА
+       2. THREE.JS СЦЕНА
        ========================================================================= */
     const container = document.getElementById('webgl-container');
     const scene = new THREE.Scene();
@@ -511,8 +505,7 @@
     controls.maxDistance = 22;
     controls.minDistance = 3.2;
 
-    const ambientLight = new THREE.AmbientLight(0x1e293b, 1.8);
-    scene.add(ambientLight);
+    scene.add(new THREE.AmbientLight(0x1e293b, 2.0));
 
     const dirLight1 = new THREE.DirectionalLight(0xffffff, 2.0);
     dirLight1.position.set(7, 11, 8);
@@ -522,12 +515,11 @@
     dirLight2.position.set(-8, -4, -6);
     scene.add(dirLight2);
 
-    // Главная группа ядра: всё вращается строго синхронно с ней
     const nucleusGroup = new THREE.Group();
     scene.add(nucleusGroup);
 
     /* =========================================================================
-       3. ТОЛСТЫЕ ГЛАДКИЕ УЗЛЫ T(3,2) БЕЗ ИЗЛОМОВ И БЕЗ БЕЛЫХ ТОЧЕК
+       3. ТОЛСТЫЕ ГЛАДКИЕ УЗЛЫ T(3,2)
        ========================================================================= */
     class SmoothTrefoilCurve extends THREE.Curve {
       constructor(scale = 0.31) {
@@ -536,7 +528,6 @@
       }
       getPoint(t, optionalTarget = new THREE.Vector3()) {
         const phi = t * Math.PI * 2;
-        // Канонический гладкий трилистник C^oo
         const x = (Math.sin(phi) + 2.0 * Math.sin(2.0 * phi)) * this.scale;
         const y = (Math.cos(phi) - 2.0 * Math.cos(2.0 * phi)) * this.scale;
         const z = (-Math.sin(3.0 * phi)) * this.scale * 1.1;
@@ -545,23 +536,19 @@
     }
 
     const trefoilCurve = new SmoothTrefoilCurve(0.31);
-    // Делаем трубки существенно толще: радиус 0.096 вместо 0.058
-    const trefoilGeo = new THREE.TubeGeometry(trefoilCurve, 240, 0.096, 24, true);
+    const trefoilGeo = new THREE.TubeGeometry(trefoilCurve, 220, 0.096, 22, true);
 
-    // Генерация текстуры бегущей поперечной волны Комптона (3 периода стоячей волны)
-    function createMöbiusWaveTexture(isProton) {
+    function createWaveTexture(isProton) {
       const cv = document.createElement('canvas');
       cv.width = 1024;
       cv.height = 64;
       const ctx = cv.getContext('2d');
 
-      const bgCol = isProton ? '#9a3412' : '#0284c7';
-      ctx.fillStyle = bgCol;
+      ctx.fillStyle = isProton ? '#9a3412' : '#0284c7';
       ctx.fillRect(0, 0, cv.width, cv.height);
 
       for (let x = 0; x < cv.width; x++) {
         const u = x / cv.width;
-        // 3 периода стоячей волны Комптона
         const wave = Math.pow(Math.sin(u * Math.PI * 6), 2);
         ctx.fillStyle = isProton
           ? `rgba(254, 240, 138, ${0.15 + wave * 0.85})`
@@ -575,8 +562,8 @@
       return tex;
     }
 
-    const protonTex = createMöbiusWaveTexture(true);
-    const neutronTex = createMöbiusWaveTexture(false);
+    const protonTex = createWaveTexture(true);
+    const neutronTex = createWaveTexture(false);
 
     const protonMat = new THREE.MeshStandardMaterial({
       map: protonTex,
@@ -597,17 +584,14 @@
     });
 
     /* =========================================================================
-       4. КОНСТРУКТОР НУКЛОНОВ: ПРОТОН И НЕЙТРОН СО СФЕРОЙ S^2
+       4. СФЕРА S^2 НЕЙТРОНА И ПУЛ НУКЛОНОВ
        ========================================================================= */
-    // Радиус сферы электрона S^2 выбран равным 1.35, гарантируя,
-    // что трилистник (макс. радиус 0.93 + 0.096 = 1.026) полностью заперт внутри!
     const SHELL_RADIUS = 1.35;
 
     function buildNeutronShell() {
       const g = new THREE.Group();
 
-      // Внутренняя светящаяся диэлектрическая оболочка
-      const innerGeo = new THREE.SphereGeometry(SHELL_RADIUS, 44, 32);
+      const innerGeo = new THREE.SphereGeometry(SHELL_RADIUS, 36, 26);
       const innerMat = new THREE.MeshPhysicalMaterial({
         color: 0x0284c7,
         emissive: 0x0369a1,
@@ -620,23 +604,20 @@
         side: THREE.DoubleSide,
         depthWrite: false
       });
-      const innerMesh = new THREE.Mesh(innerGeo, innerMat);
-      g.add(innerMesh);
+      g.add(new THREE.Mesh(innerGeo, innerMat));
 
-      // Внешняя решетка поверхностного натяжения вакуума
-      const gridGeo = new THREE.SphereGeometry(SHELL_RADIUS * 1.005, 24, 16);
+      const gridGeo = new THREE.SphereGeometry(SHELL_RADIUS * 1.005, 22, 14);
       const gridMat = new THREE.MeshBasicMaterial({
         color: 0x38bdf8,
         wireframe: true,
         transparent: true,
-        opacity: 0.45
+        opacity: 0.45,
+        depthWrite: false
       });
-      const gridMesh = new THREE.Mesh(gridGeo, gridMat);
-      g.add(gridMesh);
+      g.add(new THREE.Mesh(gridGeo, gridMat));
 
-      // Экваториальное и меридиональное кольца натяжения (delta M_np = 1.287 МэВ)
-      const ringGeo = new THREE.TorusGeometry(SHELL_RADIUS, 0.016, 16, 64);
-      const ringMat = new THREE.MeshBasicMaterial({ color: 0x7dd3fc });
+      const ringGeo = new THREE.TorusGeometry(SHELL_RADIUS, 0.016, 14, 48);
+      const ringMat = new THREE.MeshBasicMaterial({ color: 0x7dd3fc, depthWrite: false });
       const ring1 = new THREE.Mesh(ringGeo, ringMat);
       const ring2 = new THREE.Mesh(ringGeo, ringMat);
       ring2.rotation.y = Math.PI / 2;
@@ -646,75 +627,62 @@
       return g;
     }
 
-    // Создаем пул нуклонов (максимум для 4He: 2 протона и 2 нейтрона)
-    const protonMeshes = [
-      new THREE.Mesh(trefoilGeo, protonMat),
-      new THREE.Mesh(trefoilGeo, protonMat)
-    ];
-
-    const neutronMeshes = [
-      new THREE.Mesh(trefoilGeo, neutronMat),
-      new THREE.Mesh(trefoilGeo, neutronMat)
-    ];
-
-    const neutronShells = [
-      buildNeutronShell(),
-      buildNeutronShell()
-    ];
-
-    // Группы для каждого нуклона
     const protonNodes = [new THREE.Group(), new THREE.Group()];
     const neutronNodes = [new THREE.Group(), new THREE.Group()];
 
-    protonNodes[0].add(protonMeshes[0]);
-    protonNodes[1].add(protonMeshes[1]);
+    protonNodes[0].add(new THREE.Mesh(trefoilGeo, protonMat));
+    protonNodes[1].add(new THREE.Mesh(trefoilGeo, protonMat));
 
-    neutronNodes[0].add(neutronMeshes[0]);
-    neutronNodes[0].add(neutronShells[0]);
+    neutronNodes[0].add(new THREE.Mesh(trefoilGeo, neutronMat));
+    const neutronShell0 = buildNeutronShell();
+    neutronNodes[0].add(neutronShell0);
 
-    neutronNodes[1].add(neutronMeshes[1]);
-    neutronNodes[1].add(neutronShells[1]);
+    neutronNodes[1].add(new THREE.Mesh(trefoilGeo, neutronMat));
+    const neutronShell1 = buildNeutronShell();
+    neutronNodes[1].add(neutronShell1);
+
+    const neutronShells = [neutronShell0, neutronShell1];
 
     protonNodes.forEach(node => nucleusGroup.add(node));
     neutronNodes.forEach(node => nucleusGroup.add(node));
 
     /* =========================================================================
-       5. КВАДРУПОЛЬНАЯ ОБОЛОЧКА: ВРАЩАЕТСЯ СИНХРОННО С ЯДРОМ В NUCLEUSGROUP
+       5. КВАДРУПОЛЬНАЯ ОБОЛОЧКА И ЭФФЕКТЫ
        ========================================================================= */
-    const quadGeo = new THREE.SphereGeometry(1, 48, 36);
+    const quadGeo = new THREE.SphereGeometry(1, 42, 32);
     const quadMat = new THREE.MeshStandardMaterial({
       color: 0x818cf8,
       emissive: 0x4338ca,
       emissiveIntensity: 0.28,
       transparent: true,
       opacity: 0.24,
-      wireframe: true
+      wireframe: true,
+      depthWrite: false
     });
     const quadMesh = new THREE.Mesh(quadGeo, quadMat);
-    // Добавляем дыню прямо внутрь nucleusGroup, чтобы она была механически зафиксирована на ядре!
     nucleusGroup.add(quadMesh);
 
-    // Контактный диск притяжения между нуклонами
-    const contactDiskGeo = new THREE.CylinderGeometry(0.65, 0.65, 0.08, 32, 1, false);
+    const contactDiskGeo = new THREE.CylinderGeometry(0.65, 0.65, 0.08, 28, 1, false);
     contactDiskGeo.rotateX(Math.PI / 2);
     const contactDiskMat = new THREE.MeshBasicMaterial({
       color: 0x10b981,
       transparent: true,
       opacity: 0.0,
-      wireframe: true
+      wireframe: true,
+      depthWrite: false
     });
     const contactDisk = new THREE.Mesh(contactDiskGeo, contactDiskMat);
     nucleusGroup.add(contactDisk);
 
-    // Ударные кольца отталкивающего керна (r < 0.6)
     const coreRings = new THREE.Group();
     for (let i = 0; i < 4; i++) {
-      const rGeo = new THREE.RingGeometry(0.22 + i * 0.22, 0.25 + i * 0.22, 36);
+      const rGeo = new THREE.RingGeometry(0.22 + i * 0.22, 0.25 + i * 0.22, 32);
       const rMat = new THREE.MeshBasicMaterial({
         color: 0xef4444,
         side: THREE.DoubleSide,
         transparent: true,
-        opacity: 0.0
+        opacity: 0.0,
+        depthWrite: false
       });
       const ring = new THREE.Mesh(rGeo, rMat);
       ring.rotation.x = Math.PI / 2;
@@ -722,32 +690,51 @@
     }
     nucleusGroup.add(coreRings);
 
-    // Частицы пионного обмена
-    const PION_COUNT = 20;
-    const pionGeo = new THREE.SphereGeometry(0.045, 12, 12);
-    const pionMat = new THREE.MeshBasicMaterial({ color: 0xec4899 });
-    const pionPool = [];
-    for (let i = 0; i < PION_COUNT; i++) {
-      const p = new THREE.Mesh(pionGeo, pionMat);
-      p.userData = {
-        progress: Math.random(),
-        speed: 0.008 + Math.random() * 0.006,
-        direction: Math.random() > 0.5 ? 1 : -1,
-        offsetPhase: Math.random() * Math.PI * 2
-      };
-      nucleusGroup.add(p);
-      pionPool.push(p);
+    // 6 УПРУГИХ ЖГУТОВ СДВИГА ВАКУУМА (ВМЕСТО ШАРИКОВ-ПИОНОВ)
+    const bridgeGeo = new THREE.CylinderGeometry(0.08, 0.08, 1.0, 16, 6, true);
+    const strainBridges = [];
+    for (let i = 0; i < 6; i++) {
+      const bMat = new THREE.MeshStandardMaterial({
+        color: 0xec4899,
+        emissive: 0xbe185d,
+        emissiveIntensity: 0.65,
+        wireframe: true,
+        transparent: true,
+        opacity: 0.0,
+        side: THREE.DoubleSide,
+        depthWrite: false
+      });
+      const bMesh = new THREE.Mesh(bridgeGeo, bMat);
+      bMesh.visible = false;
+      nucleusGroup.add(bMesh);
+      strainBridges.push(bMesh);
+    }
+
+    const _bridgeMid = new THREE.Vector3();
+    const _bridgeDir = new THREE.Vector3();
+    const _upY = new THREE.Vector3(0, 1, 0);
+
+    function setBridge(mesh, posA, posB, opacity, rotPhase) {
+      mesh.visible = opacity > 0.02;
+      if (!mesh.visible) return;
+      _bridgeMid.addVectors(posA, posB).multiplyScalar(0.5);
+      mesh.position.copy(_bridgeMid);
+      const dist = posA.distanceTo(posB);
+      mesh.scale.set(1, dist, 1);
+      _bridgeDir.subVectors(posB, posA).normalize();
+      mesh.quaternion.setFromUnitVectors(_upY, _bridgeDir);
+      mesh.material.opacity = opacity;
+      mesh.rotation.y = rotPhase;
     }
 
     /* =========================================================================
-       6. РАСПОЛОЖЕНИЕ НУКЛОНОВ ДЛЯ РАЗНЫХ ИЗОТОПОВ
+       6. ГЕОМЕТРИЯ КЛАСТЕРА
        ========================================================================= */
     function updateClusterGeometry(rDist) {
       const scaleDist = 2.4;
       const d = (rDist * scaleDist) / 2;
 
       if (activeIsoKey === 'h2') {
-        // Дейтрон: протон на -d, нейтрон на +d вдоль оси Z
         protonNodes[0].visible = true;
         protonNodes[0].position.set(0, 0, -d);
 
@@ -759,7 +746,6 @@
         neutronNodes[1].visible = false;
 
       } else if (activeIsoKey === 'he3') {
-        // Гелий-3: 2 протона и 1 нейтрон в равностороннем треугольнике в плоскости XZ
         const dTri = d * 1.05;
         protonNodes[0].visible = true;
         protonNodes[0].position.set(dTri * Math.cos(0), 0, dTri * Math.sin(0));
@@ -773,7 +759,6 @@
         neutronNodes[1].visible = false;
 
       } else if (activeIsoKey === 'he4') {
-        // Гелий-4 (Альфа-частица): тетраэдрический сверхплотный кластер (2p + 2n)
         const dTetra = d * 0.85;
         const norm = 1 / Math.sqrt(3);
 
@@ -792,7 +777,7 @@
     }
 
     /* =========================================================================
-       7. ИНТЕРФЕЙС И СОБЫТИЯ
+       7. ИНТЕРФЕЙС
        ========================================================================= */
     let currentR = 1.08;
     let targetR = 1.08;
@@ -848,7 +833,7 @@
 
     btnDWave.addEventListener('click', () => {
       if (dWaveAmp === 1.0) {
-        dWaveAmp = 3.2;
+        dWaveAmp = 3.0;
         btnDWave.textContent = 'Квадруполь PD (x3 Активен)';
         btnDWave.classList.add('active');
       } else {
@@ -859,7 +844,7 @@
     });
 
     /* =========================================================================
-       8. ГРАФИК NN-ПОТЕНЦИАЛА (CANVAS)
+       8. ГРАФИК V(r)
        ========================================================================= */
     const canvas = document.getElementById('plot-canvas');
     const ctx = canvas.getContext('2d');
@@ -897,7 +882,7 @@
       ctx.font = '10px monospace';
       ctx.fillText(`Eb = -${iso.Eb.toFixed(1)} МэВ`, toX(1.6), Math.max(12, yEb - 4));
 
-      ctx.lineWidth = 2.2;
+      ctx.lineWidth = 2.0;
       ctx.strokeStyle = '#38bdf8';
       ctx.beginPath();
       for (let px = 0; px <= w; px += 2) {
@@ -930,22 +915,24 @@
     });
 
     /* =========================================================================
-       9. ГЛАВНЫЙ АНИМАЦИОННЫЙ ЦИКЛ (СИНХРОННОЕ ВРАЩЕНИЕ И ВОЛНА МЁБИУСА)
+       9. АНИМАЦИОННЫЙ ЦИКЛ
        ========================================================================= */
     const clock = new THREE.Clock();
 
     function animate() {
       requestAnimationFrame(animate);
 
-      const delta = clock.getDelta();
       const time = clock.getElapsedTime();
 
-      // Авторелаксация в минимум потенциала
+      // Безопасная релаксация с защитой от вылета (clamping)
       if (isRelaxing) {
         const force = calcForce_NN(currentR);
-        targetR += force * 0.0016;
+        const step = Math.max(-0.025, Math.min(0.025, force * 0.0016));
+        targetR += step;
+        targetR = Math.max(0.40, Math.min(2.60, targetR));
+
         const req = ISOTOPES[activeIsoKey].r_eq;
-        if (Math.abs(force) < 0.06 && Math.abs(currentR - req) < 0.012) {
+        if (Math.abs(force) < 0.08 && Math.abs(currentR - req) < 0.015) {
           targetR = req;
           isRelaxing = false;
         }
@@ -953,7 +940,6 @@
 
       currentR += (targetR - currentR) * 0.12;
 
-      // Обновление UI
       valR.textContent = currentR.toFixed(2) + ' фм';
       sliderR.value = currentR.toFixed(2);
       const vVal = calcV_NN(currentR);
@@ -970,31 +956,28 @@
         statusBadge.textContent = 'Однопионный хвост (r > 1.5 фм)';
       }
 
-      // Обновляем пространственную геометрию кластера
       updateClusterGeometry(currentR);
 
-      // 1. СИНХРОННОЕ ВРАЩЕНИЕ ВСЕГО ЯДРА И КВАДРУПОЛЬНОЙ ДЫНИ
-      // Поворот nucleusGroup автоматически вращает все нуклоны и квадрупольную дыню вместе!
+      // Вращение ядра
       nucleusGroup.rotation.y = time * 0.45;
       nucleusGroup.rotation.x = Math.sin(time * 0.3) * 0.14;
 
-      // 2. ВНУТРЕННЯЯ ПРЕЦЕССИЯ УЗЛОВ ВОКРУГ СВОИХ ОСЕЙ
+      // Прецессия нуклонов
       const precSpeed = 1.3;
-      protonMeshes.forEach(m => {
-        m.rotation.z = time * precSpeed;
-        m.rotation.y = time * 0.55;
+      protonNodes.forEach(node => {
+        node.children[0].rotation.z = time * precSpeed;
+        node.children[0].rotation.y = time * 0.55;
       });
-      neutronMeshes.forEach(m => {
-        m.rotation.z = -time * precSpeed;
-        m.rotation.y = -time * 0.55;
+      neutronNodes.forEach(node => {
+        node.children[0].rotation.z = -time * precSpeed;
+        node.children[0].rotation.y = -time * 0.55;
       });
 
-      // 3. БЕГУЩИЙ ПОПЕРЕЧНЫЙ ИМПУЛЬС ПО МЁБИУСНОЙ ТРАЕКТОРИИ (БЕЗ БЕЛЫХ ТОЧЕК)
-      const pulseSpeed = 0.5;
-      protonTex.offset.x = (time * pulseSpeed) % 1.0;
-      neutronTex.offset.x = (-time * pulseSpeed) % 1.0;
+      // Бегущая волна по текстуре
+      protonTex.offset.x = (time * 0.5) % 1.0;
+      neutronTex.offset.x = (-time * 0.5) % 1.0;
 
-      // 4. УПРАВЛЕНИЕ И ДЕФОРМАЦИЯ СФЕРЫ ЭЛЕКТРОНА НЕЙТРОНА S^2
+      // Сферы нейтронов
       neutronShells.forEach(shell => {
         shell.visible = chkNeutronShell.checked;
         if (chkNeutronShell.checked) {
@@ -1003,7 +986,7 @@
         }
       });
 
-      // 5. КВАДРУПОЛЬНАЯ ОБОЛОЧКА: МАСШТАБИРОВАНИЕ В СИСТЕМЕ КООРДИНАТ ЯДРА
+      // Квадрупольная оболочка
       quadMesh.visible = chkQuad.checked;
       if (chkQuad.checked) {
         const iso = ISOTOPES[activeIsoKey];
@@ -1012,21 +995,18 @@
         const d = (currentR * scaleDist) / 2;
 
         if (activeIsoKey === 'h2') {
-          // Классическая вытянутая оболочка дейтрона вдоль оси Z
           const semiZ = (d + 1.25) * (1.0 + pdRatio * 1.5);
           const semiXY = 1.45 * (1.0 - pdRatio * 0.65);
           quadMesh.scale.set(semiXY, semiXY, semiZ);
         } else if (activeIsoKey === 'he3') {
-          // Сплюснутая треугольная форма гелия-3
           quadMesh.scale.set(d + 1.45, 1.40, d + 1.45);
         } else {
-          // Альфа-частица 4He: сферически симметричная оболочка (Q = 0)
           const rad4 = d * 1.1 + 1.35;
           quadMesh.scale.set(rad4, rad4, rad4);
         }
       }
 
-      // 6. КОНТАКТНОЕ ПЯТНО СКЛЕИВАНИЯ
+      // Контактное пятно
       const showAdhesion = chkAdhesion.checked && currentR >= 0.70 && currentR <= 1.55;
       if (showAdhesion) {
         const wellIntensity = Math.exp(-Math.pow((currentR - ISOTOPES[activeIsoKey].r_eq) / 0.32, 2));
@@ -1036,7 +1016,7 @@
         contactDisk.visible = false;
       }
 
-      // 7. УДАРНЫЙ КОР ОТТАЛКИВАНИЯ (r < 0.72)
+      // Ударный кор
       if (currentR < 0.72) {
         const intensity = Math.pow((0.72 - currentR) / 0.32, 2);
         coreRings.children.forEach((ring, idx) => {
@@ -1044,31 +1024,40 @@
           ring.scale.setScalar(1.0 + (time * 2.6 + idx * 0.3) % 1.4);
         });
       } else {
-        coreRings.children.forEach(ring => ring.material.opacity = 0);
+        coreRings.children.forEach(ring => { ring.material.opacity = 0; });
       }
 
-      // 8. ПИОННЫЙ ОБМЕН
-      const showPions = chkPion.checked && currentR > 1.15;
-      pionPool.forEach((p) => {
-        p.visible = showPions;
-        if (!showPions) return;
+      // Пионный обмен между парами нуклонов
+      // Упругие жгуты сдвига вакуума (эванесцентная мода e^{-r/1.41})
+      const showBridges = chkPion.checked && currentR > 1.05;
+      const yukawaOpacity = showBridges
+        ? Math.min(0.85, Math.exp(-(currentR - 1.05) / 1.41) * 0.85)
+        : 0.0;
 
-        p.userData.progress += p.userData.speed;
-        if (p.userData.progress > 1.0) p.userData.progress = 0.0;
+      strainBridges.forEach(b => { b.visible = false; });
 
-        const t = p.userData.progress;
-        const scaleDist = 2.4;
-        const d = (currentR * scaleDist) / 2;
-        const zStart = -d;
-        const zEnd = d;
-        const curZ = p.userData.direction > 0
-          ? THREE.MathUtils.lerp(zStart, zEnd, t)
-          : THREE.MathUtils.lerp(zEnd, zStart, t);
-
-        const helicalRadius = 0.28 * Math.sin(t * Math.PI);
-        const hAngle = t * Math.PI * 6 + p.userData.offsetPhase;
-        p.position.set(Math.cos(hAngle) * helicalRadius, Math.sin(hAngle) * helicalRadius, curZ);
-      });
+      if (showBridges) {
+        const rot = time * 3.5;
+        if (activeIsoKey === 'h2') {
+          // Дейтрон: 1 жгут между протоном и нейтроном
+          setBridge(strainBridges[0], protonNodes[0].position, neutronNodes[0].position, yukawaOpacity, rot);
+        } else if (activeIsoKey === 'he3') {
+          // Гелий-3: 3 жгута по треугольнику
+          setBridge(strainBridges[0], protonNodes[0].position, protonNodes[1].position, yukawaOpacity, rot);
+          setBridge(strainBridges[1], protonNodes[0].position, neutronNodes[0].position, yukawaOpacity, rot + 1.0);
+          setBridge(strainBridges[2], protonNodes[1].position, neutronNodes[0].position, yukawaOpacity, rot + 2.0);
+        } else if (activeIsoKey === 'he4') {
+          // Альфа-частица ⁴He: 6 жгутов по всем рёбрам тетраэдра
+          const nodes = [protonNodes[0], protonNodes[1], neutronNodes[0], neutronNodes[1]];
+          let bIdx = 0;
+          for (let i = 0; i < 4; i++) {
+            for (let j = i + 1; j < 4; j++) {
+              setBridge(strainBridges[bIdx], nodes[i].position, nodes[j].position, yukawaOpacity, rot + bIdx * 0.8);
+              bIdx++;
+            }
+          }
+        }
+      }
 
       drawPotentialPlot();
       controls.update();
