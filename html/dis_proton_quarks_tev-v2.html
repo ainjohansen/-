@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ТЭВ v5.2: Глубоко Неупругое Рассеяние (DIS) и Анатомия Протона T(3,2)</title>
+  <style>
+    :root {
+      --bg: #010307;
+      --panel-bg: rgba(2, 8, 20, 0.94);
+      --border: rgba(56, 189, 248, 0.32);
+      --cyan: #38bdf8;
+      --gold: #f59e0b;
+      --blue: #3b82f6;
+      --emerald: #10b981;
+      --rose: #f43f5e;
+      --violet: #a855f7;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+    body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden; width: 100vw; height: 100vh; }
+    #canvas-container { width: 100vw; height: 100vh; display: block; }
+
+    /* Левый HUD */
+    #hud {
+      position: absolute; top: 15px; left: 15px; background: var(--panel-bg);
+      padding: 14px 18px; border-radius: 12px; border: 1px solid var(--border);
+      max-width: 450px; box-shadow: 0 10px 35px rgba(0,0,0,0.85); backdrop-filter: blur(10px);
+      z-index: 10;
+    }
+    h1 { margin: 0 0 5px 0; font-size: 13.5px; color: var(--cyan); text-transform: uppercase; letter-spacing: 1.2px; }
+    p { margin: 4px 0; font-size: 11px; line-height: 1.4; color: var(--muted); }
+
+    .badge { padding: 6px 9px; margin: 5px 0; border-radius: 4px; font-size: 10.5px; line-height: 1.35; }
+    .badge-elastic { background: rgba(56, 189, 248, 0.15); border-left: 3px solid var(--cyan); color: #bae6fd; }
+    .badge-dis { background: rgba(245, 158, 11, 0.15); border-left: 3px solid var(--gold); color: #fde68a; }
+    .badge-confinement { background: rgba(244, 63, 94, 0.15); border-left: 3px solid var(--rose); color: #fecdd3; }
+
+    .tags { margin-top: 6px; display: flex; flex-wrap: wrap; gap: 4px; }
+    .tag { padding: 2px 6px; border-radius: 4px; font-size: 9.5px; font-weight: bold; }
+    .tag-rc { background: #0284c7; color: white; }
+    .tag-u { background: #d97706; color: white; }
+    .tag-d { background: #2563eb; color: white; }
+    .tag-bjorken { background: #7c3aed; color: white; }
+
+    /* Правая панель управления */
+    #controls-box {
+      position: absolute; top: 15px; right: 15px; background: var(--panel-bg);
+      padding: 14px 16px; border-radius: 12px; border: 1px solid var(--border);
+      width: 320px; box-shadow: 0 10px 35px rgba(0,0,0,0.85); backdrop-filter: blur(10px);
+      z-index: 10;
+    }
+    #controls-box h2 { margin: 0 0 8px 0; font-size: 11.5px; color: var(--cyan); text-transform: uppercase; border-bottom: 1px solid #1e3a5f; padding-bottom: 5px; }
+    .row-ctrl { display: flex; justify-content: space-between; align-items: center; margin: 7px 0; font-size: 10.5px; }
+    .row-ctrl span.name { color: #cbd5e1; }
+    .row-ctrl span.val { font-family: monospace; color: var(--cyan); font-weight: bold; }
+    input[type=range] { width: 130px; accent-color: var(--cyan); cursor: pointer; }
+
+    .preset-row { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin: 8px 0; }
+    button.btn-preset {
+      background: #091a2d; border: 1px solid #1e4976; color: #93c5fd; padding: 6px 6px;
+      border-radius: 6px; font-size: 9.5px; cursor: pointer; transition: all 0.2s; text-align: center;
+    }
+    button.btn-preset:hover { background: #163d66; color: white; border-color: var(--cyan); }
+    button.btn-preset.active { background: #0284c7; color: white; border-color: var(--cyan); font-weight: bold; }
+
+    .check-row { display: flex; align-items: center; gap: 7px; font-size: 10.5px; margin: 5px 0; cursor: pointer; color: #cbd5e1; }
+    .check-row input { cursor: pointer; accent-color: var(--cyan); }
+
+    /* Нижний график Сакса и Бьёркена */
+    #plots-panel {
+      position: absolute; bottom: 75px; left: 15px; background: var(--panel-bg);
+      padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);
+      width: 450px; font-size: 10px; box-shadow: 0 8px 30px rgba(0,0,0,0.85);
+      backdrop-filter: blur(8px); z-index: 10;
+    }
+    #plots-panel h3 { margin: 0 0 4px 0; font-size: 11px; color: #38bdf8; display: flex; justify-content: space-between; }
+    canvas#plot-canvas { width: 100%; height: 115px; background: rgba(15, 23, 42, 0.7); border-radius: 6px; border: 1px solid #1e293b; margin-top: 4px; }
+
+    /* Нижняя панель навигации */
+    #nav {
+      position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%);
+      background: var(--panel-bg); padding: 7px 16px; border-radius: 30px;
+      border: 1px solid var(--border); display: flex; gap: 6px; align-items: center;
+      box-shadow: 0 6px 30px rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 10;
+    }
+    button.nav-btn {
+      background: #091a2d; border: 1px solid #1e4976; color: #93c5fd;
+      padding: 6px 12px; border-radius: 18px; font-size: 10.5px; cursor: pointer; transition: all 0.2s;
+    }
+    button.nav-btn:hover { background: #163d66; color: white; border-color: var(--cyan); }
+    button.nav-btn.active { background: #0284c7; color: white; border-color: var(--cyan); font-weight: bold; }
+    .divider { width: 1px; height: 18px; background: #1e3a5f; margin: 0 3px; }
+
+    /* Правая панель телеметрии */
+    #telemetry-box {
+      position: absolute; bottom: 15px; right: 15px; background: var(--panel-bg);
+      padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border);
+      font-family: monospace; font-size: 9.5px; color: var(--muted); line-height: 1.45;
+      z-index: 10; width: 280px;
+    }
+    .tele-val { color: var(--cyan); font-weight: bold; }
+    .hit-badge {
+      display: inline-block; padding: 2px 6px; border-radius: 4px; font-weight: bold;
+      margin-top: 3px; font-size: 10px;
+    }
+    .hit-u { background: rgba(245, 158, 11, 0.25); color: #fde68a; border: 1px solid #f59e0b; }
+    .hit-d { background: rgba(59, 130, 246, 0.25); color: #bfdbfe; border: 1px solid #3b82f6; }
+    .hit-elastic { background: rgba(56, 189, 248, 0.25); color: #bae6fd; border: 1px solid #38bdf8; }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+  <div id="canvas-container"></div>
+
+  <!-- Левый HUD -->
+  <div id="hud">
+    <h1>Глубоко Неупругое Рассеяние (DIS) &bull; ТЭВ v5.2</h1>
+
+    <div id="badge-mode" class="badge badge-elastic">
+      <b>УПРУГОЕ РАССЕЯНИЕ (Q² &lt; 0.35 ГэВ²):</b> Длина волны &lambda; &ge; r<sub>c</sub>. Электрон упруго рассеивается на внешней зарядовой сфере r<sub>c</sub> = 0.841 фм без разрешения пучностей.
+    </div>
+
+    <div class="badge badge-confinement">
+      <b>КОНФАЙНМЕНТ НА САЛФЕТКЕ:</b> «Кварки» — это 3 пучности стоячей волны толстого трилистника T(3,2). Пучность нельзя вырвать: это неделимый замкнутый узел матрицы.
+    </div>
+
+    <p id="desc-probe">
+      <b>3D-Кувырок и Рассеяние:</b> Протон вращается по всем 3 осям. Налетающий зонд ударяет в пучность, вызывая вспышку отдачи и угловое рассеяние электрона!
+    </p>
+
+    <div class="tags">
+      <span class="tag tag-rc">r_c = 4&lambda;_p (0.841 фм)</span>
+      <span class="tag tag-u">u (+2/3e)</span>
+      <span class="tag tag-u">u (+2/3e)</span>
+      <span class="tag tag-d">d (-1/3e)</span>
+      <span class="tag tag-bjorken">x = 1/3 (Gottfried S_G = 1/3)</span>
+    </div>
+  </div>
+
+  <!-- График Сакса и Бьёркена -->
+  <div id="plots-panel">
+    <h3>
+      <span>Форм-фактор Сакса G_E(Q²) и Структурная функция F₂(x)</span>
+      <span id="txt-ge-val" style="color: var(--cyan); font-family: monospace;">G_E = 0.865</span>
+    </h3>
+    <canvas id="plot-canvas" width="420" height="115"></canvas>
+  </div>
+
+  <!-- Панель управления справа -->
+  <div id="controls-box">
+    <h2>Параметры Зондирования (DIS)</h2>
+
+    <div class="row-ctrl">
+      <span class="name">Переданный импульс Q²:</span>
+      <span class="val" id="lbl-q2">0.20 ГэВ²</span>
+    </div>
+    <input type="range" id="sl-q2" min="0.05" max="20.0" step="0.05" value="0.20">
+
+    <div class="row-ctrl">
+      <span class="name">Длина волны зонда &lambda;:</span>
+      <span class="val" id="lbl-lambda">0.441 фм</span>
+    </div>
+
+    <div class="row-ctrl">
+      <span class="name">Степень разрешения узла:</span>
+      <span class="val" id="lbl-resolution">24%</span>
+    </div>
+
+    <div class="preset-row">
+      <button class="btn-preset active" onclick="setPreset('elastic')">1. Упругий (Q²=0.1)<br><span style="font-size:8.5px;opacity:0.75;">Сфера r_c=0.84 фм</span></button>
+      <button class="btn-preset" onclick="setPreset('trans')">2. Переходный (Q²=1.0)<br><span style="font-size:8.5px;opacity:0.75;">Заглядывание внутрь</span></button>
+      <button class="btn-preset" onclick="setPreset('dis')">3. Глубокий DIS (Q²=12.0)<br><span style="font-size:8.5px;opacity:0.75;">3 кварка uud</span></button>
+      <button class="btn-preset" onclick="setPreset('extreme')">4. Асимптотика (Q²=20.0)<br><span style="font-size:8.5px;opacity:0.75;">Точечные пучности</span></button>
+    </div>
+
+    <h2 style="margin-top: 10px;">Режим Зондирования</h2>
+    <div class="preset-row">
+      <button class="btn-preset active" id="btn-mode-stream" onclick="setBeamMode('stream')">🌊 Непрерывный поток</button>
+      <button class="btn-preset" id="btn-mode-single" onclick="setBeamMode('single')">🎯 Одиночный импульс</button>
+    </div>
+
+    <h2 style="margin-top: 8px;">Слои Визуализации</h2>
+
+    <label class="check-row">
+      <input type="checkbox" id="chk-sphere" checked onchange="toggleLayer('sphere')">
+      <span>Зарядовая сфера r_c (Сакс)</span>
+    </label>
+    <label class="check-row">
+      <input type="checkbox" id="chk-knot" checked onchange="toggleLayer('knot')">
+      <span>Толстый трилистник T(3,2)</span>
+    </label>
+    <label class="check-row">
+      <input type="checkbox" id="chk-antinodes" checked onchange="toggleLayer('antinodes')">
+      <span>Кварковые пучности standing wave</span>
+    </label>
+    <label class="check-row">
+      <input type="checkbox" id="chk-scattered" checked onchange="toggleLayer('scattered')">
+      <span>Рассеянные сдвиговые волны</span>
+    </label>
+    <label class="check-row">
+      <input type="checkbox" id="chk-substrate" checked onchange="toggleLayer('substrate')">
+      <span>Упругая матрица вакуума</span>
+    </label>
+
+    <div class="row-ctrl" style="margin-top: 6px;">
+      <span class="name">Скорость анимации:</span>
+      <input id="sl-speed" type="range" min="0.2" max="2.5" step="0.1" value="1.0">
+    </div>
+  </div>
+
+  <!-- Нижняя навигация -->
+  <div id="nav">
+    <button class="nav-btn active" onclick="focusView('all')">Общий Вид</button>
+    <button class="nav-btn" onclick="focusView('proton')">Ядро Протона</button>
+    <button class="nav-btn" onclick="focusView('quarks')">Пучности Кварков</button>
+    <button class="nav-btn" onclick="focusView('beam')">Зондирующий Пучок</button>
+    <div class="divider"></div>
+    <button class="nav-btn" id="btn-fire" onclick="triggerSinglePulse()">⚡ Пуск Импульса</button>
+  </div>
+
+  <!-- Телеметрия -->
+  <div id="telemetry-box">
+    <b>Событие Рассеяния DIS:</b><br>
+    Статус детектора: <span id="tel-hit" class="hit-badge hit-elastic">Упругое рассеяние (Сфера)</span><br>
+    Угол рассеяния &theta;<sub>scat</sub>: <span class="tele-val" id="tel-theta">18.4°</span><br>
+    Сечение d&sigma;/d&Omega;: <span class="tele-val" id="tel-sigma">0.865 б/ср</span><br>
+    Валентный пик: <span class="tele-val">x = 1/3 (0.333)</span>
+  </div>
+
+  <script>
+    // =========================================================================
+    // 1. ИНИЦИАЛИЗАЦИЯ СЦЕНЫ THREE.JS
+    // =========================================================================
+    const container = document.getElementById('canvas-container');
+    const scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(0x010307, 0.014);
+
+    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 4.5, 14.5);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    container.appendChild(renderer.domElement);
+
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+
+    scene.add(new THREE.AmbientLight(0x0f172a, 2.2));
+    const dirLight1 = new THREE.DirectionalLight(0x38bdf8, 2.2);
+    dirLight1.position.set(12, 18, 15);
+    scene.add(dirLight1);
+
+    const dirLight2 = new THREE.DirectionalLight(0xf59e0b, 1.4);
+    dirLight2.position.set(-10, -5, -8);
+    scene.add(dirLight2);
+
+    let isTransitioning = false;
+    let targetCam = new THREE.Vector3(0, 4.5, 14.5);
+    let targetLook = new THREE.Vector3(0, 0, 0);
+
+    controls.addEventListener('start', () => { isTransitioning = false; });
+
+    function makeSprite(text, bgCol, textCol = '#ffffff') {
+      const canvas = document.createElement('canvas');
+      canvas.width = 170; canvas.height = 60;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = bgCol;
+      ctx.beginPath(); ctx.roundRect(8, 8, 154, 44, 10); ctx.fill();
+      ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 2.5; ctx.stroke();
+      ctx.fillStyle = textCol; ctx.font = 'bold 22px Segoe UI, Arial';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(text, 85, 30);
+      const tex = new THREE.CanvasTexture(canvas);
+      const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, depthTest: false }));
+      sp.scale.set(0.55, 0.22, 1);
+      return sp;
+    }
+
+    // =========================================================================
+    // 2. ПРОТОН: ТОЛСТЫЙ ТРИЛИСТНИК T(3,2) И ЗАРЯДОВАЯ СФЕРА
+    // =========================================================================
+    const protonRoot = new THREE.Group();
+    scene.add(protonRoot);
+
+    // Группа кувырка по всем 3 осям
+    const protonTumble = new THREE.Group();
+    protonRoot.add(protonTumble);
+
+    const CHARGE_RADIUS_3D = 2.15;
+
+    // Внешняя упругая зарядовая сфера Сакса (r_c = 4 lambda_p = 0.841 фм)
+    const sphereGeo = new THREE.SphereGeometry(CHARGE_RADIUS_3D, 44, 32);
+    const sphereMat = new THREE.MeshPhysicalMaterial({
+      color: 0x0284c7,
+      emissive: 0x0369a1,
+      emissiveIntensity: 0.45,
+      transparent: true,
+      opacity: 0.65,
+      roughness: 0.15,
+      metalness: 0.1,
+      transmission: 0.75,
+      side: THREE.DoubleSide,
+      depthWrite: false
+    });
+    const chargeSphere = new THREE.Mesh(sphereGeo, sphereMat);
+    protonTumble.add(chargeSphere);
+
+    const sphereGrid = new THREE.Mesh(
+      new THREE.SphereGeometry(CHARGE_RADIUS_3D * 1.006, 24, 16),
+      new THREE.MeshBasicMaterial({ color: 0x38bdf8, wireframe: true, transparent: true, opacity: 0.35, depthWrite: false })
+    );
+    protonTumble.add(sphereGrid);
+
+    const spProtonLabel = makeSprite("Протон: r_c = 0.841 фм", "#0369a1");
+    spProtonLabel.position.set(0, CHARGE_RADIUS_3D + 0.45, 0);
+    protonTumble.add(spProtonLabel);
+
+    // --- ТОЛСТЫЙ ВИХРЕВОЙ КЕРН ТРИЛИСТНИКА T(3,2) ---
+    class ThickTrefoil extends THREE.Curve {
+      constructor(scale = 0.72) { super(); this.scale = scale; }
+      getPoint(t, optionalTarget = new THREE.Vector3()) {
+        const phi = t * Math.PI * 2;
+        const x = (Math.sin(phi) + 1.85 * Math.sin(2 * phi)) * this.scale;
+        const y = (Math.cos(phi) - 2.0 * Math.cos(2 * phi)) * this.scale;
+        const z = (-Math.sin(3 * phi)) * (this.scale * 1.2);
+        return optionalTarget.set(x, y, z);
+      }
+    }
+
+    const trefoilCurve = new ThickTrefoil(0.72);
+    // Радиус трубки увеличен до 0.26 (толстый упругий солитон!)
+    const tubeGeo = new THREE.TubeGeometry(trefoilCurve, 240, 0.26, 24, true);
+
+    const tubeMat = new THREE.MeshStandardMaterial({
+      color: 0xf43f5e,
+      emissive: 0xbe123c,
+      emissiveIntensity: 0.6,
+      roughness: 0.2,
+      metalness: 0.8,
+      transparent: true,
+      opacity: 0.55
+    });
+    const trefoilMesh = new THREE.Mesh(tubeGeo, tubeMat);
+    protonTumble.add(trefoilMesh);
+
+    // --- КВАРКОВЫЕ ПУЧНОСТИ СТОЯЧЕЙ ВОЛНЫ (u, u, d) ---
+    const antinodesGroup = new THREE.Group();
+    protonTumble.add(antinodesGroup);
+
+    const antinodeData = [
+      { id: 'u1', t: 1.0 / 6.0, name: "u (+2/3)", col: 0xf59e0b, bgHex: "#d97706" },
+      { id: 'u2', t: 1.0 / 2.0, name: "u (+2/3)", col: 0xf59e0b, bgHex: "#d97706" },
+      { id: 'd',  t: 5.0 / 6.0, name: "d (-1/3)", col: 0x3b82f6, bgHex: "#1d4ed8" }
+    ];
+
+    const antinodeMeshes = [];
+    antinodeData.forEach(d => {
+      const pos = trefoilCurve.getPoint(d.t);
+
+      // Массивное ядро пучности на трубке
+      const mesh = new THREE.Mesh(
+        new THREE.SphereGeometry(0.38, 24, 24),
+        new THREE.MeshStandardMaterial({
+          color: d.col,
+          emissive: d.col,
+          emissiveIntensity: 0.85,
+          roughness: 0.1,
+          metalness: 0.7
+        })
+      );
+      mesh.position.copy(pos);
+      antinodesGroup.add(mesh);
+
+      // Ореол интерференционного сдвига
+      const glow = new THREE.Mesh(
+        new THREE.SphereGeometry(0.62, 18, 18),
+        new THREE.MeshBasicMaterial({ color: d.col, transparent: true, opacity: 0.35, blending: THREE.AdditiveBlending })
+      );
+      mesh.add(glow);
+
+      const sp = makeSprite(d.name, d.bgHex);
+      sp.position.set(0, 0.72, 0);
+      mesh.add(sp);
+
+      antinodeMeshes.push({ id: d.id, name: d.name, core: mesh, glow: glow, label: sp, t: d.t, hitIntensity: 0.0 });
+    });
+
+    // =========================================================================
+    // 3. ЗОНДИРУЮЩИЙ ПУЧОК, ВОЛНОВОЙ ПАКЕТ И РАССЕЯННАЯ ТРАЕКТОРИЯ
+    // =========================================================================
+    const beamGroup = new THREE.Group();
+    scene.add(beamGroup);
+
+    const START_X = -9.5;
+
+    // Налетающий электрон (источник слева)
+    const electronProbe = new THREE.Mesh(
+      new THREE.SphereGeometry(0.18, 16, 16),
+      new THREE.MeshBasicMaterial({ color: 0x38bdf8, wireframe: true })
+    );
+    electronProbe.position.set(START_X, 0, 0);
+    beamGroup.add(electronProbe);
+
+    const spBeam = makeSprite("Электрон e⁻ (Зонд)", "#0284c7");
+    spBeam.position.set(START_X, 0.8, 0);
+    beamGroup.add(spBeam);
+
+    // Волновые фронты падающего зонда
+    const WAVE_RINGS_COUNT = 8;
+    const waveRings = [];
+    const ringGeo = new THREE.RingGeometry(0.25, 0.35, 36);
+    ringGeo.rotateY(Math.PI / 2);
+
+    for (let i = 0; i < WAVE_RINGS_COUNT; i++) {
+      const ringMat = new THREE.MeshBasicMaterial({
+        color: 0x38bdf8,
+        side: THREE.DoubleSide,
+        transparent: true,
+        opacity: 0.7,
+        blending: THREE.AdditiveBlending
+      });
+      const r = new THREE.Mesh(ringGeo, ringMat);
+      beamGroup.add(r);
+      waveRings.push(r);
+    }
+
+    // Рассеянный электрон (вылетает из точки рассеяния под углом)
+    const scatteredElectron = new THREE.Mesh(
+      new THREE.SphereGeometry(0.16, 16, 16),
+      new THREE.MeshBasicMaterial({ color: 0x10b981, wireframe: true })
+    );
+    scatteredElectron.visible = false;
+    scene.add(scatteredElectron);
+
+    // Линия рассеянного трека
+    const scatLineGeo = new THREE.BufferGeometry().setFromPoints([
+      new THREE.Vector3(0, 0, 0),
+      new THREE.Vector3(8, 4, 3)
+    ]);
+    const scatLine = new THREE.Line(scatLineGeo, new THREE.LineDashedMaterial({
+      color: 0x10b981, dashSize: 0.3, gapSize: 0.15, transparent: true, opacity: 0.7
+    }));
+    scatLine.computeLineDistances();
+    scatLine.visible = false;
+    scene.add(scatLine);
+
+    // Расходящиеся сдвиговые кольца рассеяния (сдвиговые волны в вакууме)
+    const SCAT_RINGS_COUNT = 5;
+    const scatRingsGroup = new THREE.Group();
+    scene.add(scatRingsGroup);
+    const scatRings = [];
+    for (let i = 0; i < SCAT_RINGS_COUNT; i++) {
+      const sRing = new THREE.Mesh(
+        new THREE.RingGeometry(0.3, 0.4, 36),
+        new THREE.MeshBasicMaterial({
+          color: 0xf59e0b, side: THREE.DoubleSide, transparent: true, opacity: 0.0, blending: THREE.AdditiveBlending
+        })
+      );
+      scatRingsGroup.add(sRing);
+      scatRings.push({ mesh: sRing, progress: 1.0 });
+    }
+
+    // Вспышка соударения (Impact flash)
+    const impactFlash = new THREE.Mesh(
+      new THREE.SphereGeometry(0.6, 20, 20),
+      new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.0, blending: THREE.AdditiveBlending })
+    );
+    scene.add(impactFlash);
+
+    // =========================================================================
+    // 4. УПРУГАЯ МАТРИЦА ВАКУУМА
+    // =========================================================================
+    const membGeo = new THREE.PlaneGeometry(28, 16, 44, 24);
+    membGeo.rotateX(-Math.PI / 2);
+    const membMat = new THREE.MeshBasicMaterial({
+      color: 0x1e293b, wireframe: true, transparent: true, opacity: 0.22
+    });
+    const membraneMesh = new THREE.Mesh(membGeo, membMat);
+    membraneMesh.position.y = -3.2;
+    scene.add(membraneMesh);
+
+    // =========================================================================
+    // 5. ДВОЙНОЙ ГРАФИК: G_E(Q²) И БЬЁРКЕН F₂(x) (CANVAS 2D)
+    // =========================================================================
+    const canvas = document.getElementById('plot-canvas');
+    const ctx = canvas.getContext('2d');
+
+    function drawPlots(currentQ2) {
+      const w = canvas.width;
+      const h = canvas.height;
+      ctx.clearRect(0, 0, w, h);
+
+      const wMid = w * 0.50;
+
+      // --- ЛЕВЫЙ ГРАФИК: G_E(Q²) диполь Сакса ---
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(30, 10); ctx.lineTo(30, h - 18);
+      ctx.lineTo(wMid - 15, h - 18);
+      ctx.stroke();
+
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = '8.5px monospace';
+      ctx.fillText('G_E', 12, 16);
+      ctx.fillText('0', 20, h - 18);
+      ctx.fillText('Q² [ГэВ²]', wMid - 58, h - 6);
+
+      ctx.strokeStyle = '#38bdf8';
+      ctx.lineWidth = 1.8;
+      ctx.beginPath();
+      const qMax = 20.0;
+      for (let px = 30; px <= wMid - 15; px += 2) {
+        const qVal = ((px - 30) / (wMid - 45)) * qMax;
+        const ge = Math.pow(1.0 + qVal / 0.71, -2);
+        const py = (h - 18) - ge * (h - 32);
+        if (px === 30) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+      }
+      ctx.stroke();
+
+      // Точка текущего Q²
+      const curGe = Math.pow(1.0 + currentQ2 / 0.71, -2);
+      const ptX = 30 + (Math.min(currentQ2, qMax) / qMax) * (wMid - 45);
+      const ptY = (h - 18) - curGe * (h - 32);
+      ctx.fillStyle = '#f59e0b';
+      ctx.beginPath(); ctx.arc(ptX, ptY, 4, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.2; ctx.stroke();
+
+      // --- ПРАВЫЙ ГРАФИК: Структурная функция F₂(x) ---
+      const xStart = wMid + 25;
+      const xEnd = w - 15;
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(xStart, 10); ctx.lineTo(xStart, h - 18);
+      ctx.lineTo(xEnd, h - 18);
+      ctx.stroke();
+
+      ctx.fillStyle = '#94a3b8';
+      ctx.fillText('F₂(x)', xStart - 20, 16);
+      ctx.fillText('x=1/3', xStart + (xEnd - xStart) * 0.333 - 12, h - 6);
+      ctx.fillText('x', xEnd - 8, h - 6);
+
+      ctx.strokeStyle = '#a855f7';
+      ctx.lineWidth = 1.8;
+      ctx.beginPath();
+      for (let px = xStart; px <= xEnd; px += 2) {
+        const xVal = Math.max(0.001, Math.min(0.999, (px - xStart) / (xEnd - xStart)));
+        const f2 = Math.pow(xVal, 0.6) * Math.pow(1.0 - xVal, 2.5);
+        const py = (h - 18) - (f2 / 0.22) * (h - 32);
+        if (px === xStart) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+      }
+      ctx.stroke();
+
+      // Валентная линия x = 1/3
+      const x13 = xStart + (xEnd - xStart) * (1.0 / 3.0);
+      ctx.strokeStyle = '#f59e0b';
+      ctx.setLineDash([3, 3]);
+      ctx.beginPath(); ctx.moveTo(x13, 10); ctx.lineTo(x13, h - 18); ctx.stroke();
+      ctx.setLineDash([]);
+    }
+
+    // =========================================================================
+    // 6. ИНТЕРАКТИВНЫЕ ПАРАМЕТРЫ И СМЕНА РЕЖИМОВ
+    // =========================================================================
+    let currentQ2 = 0.20;
+    let beamMode = 'stream'; // 'stream' или 'single'
+    let singlePulseActive = false;
+    let singlePulseProgress = 0.0;
+
+    const slQ2 = document.getElementById('sl-q2');
+    const lblQ2 = document.getElementById('lbl-q2');
+    const lblLambda = document.getElementById('lbl-lambda');
+    const lblRes = document.getElementById('lbl-resolution');
+    const txtGe = document.getElementById('txt-ge-val');
+    const badgeMode = document.getElementById('badge-mode');
+
+    function updateQ2(val) {
+      currentQ2 = parseFloat(val);
+      lblQ2.textContent = currentQ2.toFixed(2) + ' ГэВ²';
+
+      const lambdaFm = 0.1973 / Math.sqrt(currentQ2);
+      lblLambda.textContent = lambdaFm.toFixed(3) + ' фм';
+
+      const resPct = Math.min(100, Math.round((0.8412 / Math.max(0.04, lambdaFm)) * 25));
+      lblRes.textContent = resPct + '%';
+
+      const ge = Math.pow(1.0 + currentQ2 / 0.71, -2);
+      txtGe.textContent = 'G_E = ' + ge.toFixed(3);
+
+      if (currentQ2 < 0.35) {
+        badgeMode.className = 'badge badge-elastic';
+        badgeMode.innerHTML = '<b>УПРУГОЕ РАССЕЯНИЕ (Q² &lt; 0.35 ГэВ²):</b> &lambda; &ge; r<sub>c</sub>. Электрон упруго рассеивается на зарядовой сфере r<sub>c</sub> = 0.841 фм. Внутренность узла не разрешается.';
+      } else if (currentQ2 >= 0.35 && currentQ2 < 2.5) {
+        badgeMode.className = 'badge badge-dis';
+        badgeMode.innerHTML = '<b>ПЕРЕХОДНЫЙ РЕЖИМ (0.35 &le; Q² &lt; 2.5 ГэВ²):</b> &lambda; соизмерима с комптоновской длиной &lambda;<sub>p</sub>. Начинается проникновение волнового пакета под оболочку.';
+      } else {
+        badgeMode.className = 'badge badge-dis';
+        badgeMode.innerHTML = '<b>ГЛУБОКИЙ DIS (Q² &ge; 2.5 ГэВ²):</b> &lambda; &ll; r<sub>c</sub>. Зонд проникает внутрь трубки и чётко бьёт по 3 пучностям стоячей волны: 2u (+2/3) и 1d (-1/3)!';
+      }
+
+      // Морфинг прозрачности оболочки и яркости узла
+      sphereMat.opacity = Math.max(0.04, Math.min(0.72, ge * 0.75));
+      sphereGrid.material.opacity = Math.max(0.02, Math.min(0.40, ge * 0.42));
+
+      tubeMat.opacity = Math.min(0.95, 0.35 + (1.0 - ge) * 0.60);
+
+      const antinodeSharpness = Math.min(1.0, currentQ2 / 4.0);
+      antinodeMeshes.forEach(a => {
+        const sCore = 0.32 + antinodeSharpness * 0.15;
+        a.core.scale.setScalar(sCore);
+        a.label.visible = currentQ2 > 0.35;
+      });
+
+      spProtonLabel.visible = currentQ2 < 1.2;
+
+      updateWavepacketGeometry(lambdaFm);
+      drawPlots(currentQ2);
+    }
+
+    slQ2.addEventListener('input', (e) => {
+      document.querySelectorAll('.btn-preset').forEach(b => b.classList.remove('active'));
+      updateQ2(e.target.value);
+    });
+
+    function setPreset(mode) {
+      document.querySelectorAll('.btn-preset').forEach(b => b.classList.remove('active'));
+      event.target.closest('button').classList.add('active');
+
+      if (mode === 'elastic') slQ2.value = 0.10;
+      else if (mode === 'trans') slQ2.value = 1.00;
+      else if (mode === 'dis') slQ2.value = 12.0;
+      else if (mode === 'extreme') slQ2.value = 20.0;
+
+      updateQ2(slQ2.value);
+    }
+
+    function setBeamMode(mode) {
+      beamMode = mode;
+      document.getElementById('btn-mode-stream').classList.toggle('active', mode === 'stream');
+      document.getElementById('btn-mode-single').classList.toggle('active', mode === 'single');
+    }
+
+    function updateWavepacketGeometry(lambdaFm) {
+      const spacing3D = Math.max(0.12, Math.min(1.8, lambdaFm * 1.6));
+      waveRings.forEach((r, idx) => {
+        r.position.x = START_X + idx * spacing3D;
+        const rad = Math.max(0.3, Math.min(2.4, spacing3D * 1.8));
+        r.scale.set(rad, rad, rad);
+      });
+    }
+
+    function triggerSinglePulse() {
+      setBeamMode('single');
+      singlePulseActive = true;
+      singlePulseProgress = 0.0;
+    }
+
+    // =========================================================================
+    // 7. СЛОИ И ВИДЫ
+    // =========================================================================
+    function toggleLayer(layer) {
+      if (layer === 'sphere') {
+        chargeSphere.visible = document.getElementById('chk-sphere').checked;
+        sphereGrid.visible = document.getElementById('chk-sphere').checked;
+      }
+      if (layer === 'knot') trefoilMesh.visible = document.getElementById('chk-knot').checked;
+      if (layer === 'antinodes') antinodesGroup.visible = document.getElementById('chk-antinodes').checked;
+      if (layer === 'scattered') {
+        scatRingsGroup.visible = document.getElementById('chk-scattered').checked;
+        scatLine.visible = document.getElementById('chk-scattered').checked;
+        scatteredElectron.visible = document.getElementById('chk-scattered').checked;
+      }
+      if (layer === 'substrate') membraneMesh.visible = document.getElementById('chk-substrate').checked;
+    }
+
+    function focusView(v) {
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      event.target.classList.add('active');
+
+      if (v === 'all') {
+        targetCam.set(0, 4.5, 14.5); targetLook.set(0, 0, 0);
+      } else if (v === 'proton') {
+        targetCam.set(0, 1.4, 5.8); targetLook.set(0, 0, 0);
+      } else if (v === 'quarks') {
+        targetCam.set(0.6, 1.4, 3.6); targetLook.set(0, 0, 0);
+      } else if (v === 'beam') {
+        targetCam.set(-6.5, 2.5, 6.5); targetLook.set(-4.0, 0, 0);
+      }
+      isTransitioning = true;
+    }
+
+    // =========================================================================
+    // 8. ГЛАВНЫЙ АНИМАЦИОННЫЙ ЦИКЛ (3D-КУВЫРОК И РАССЕЯНИЕ НА ПУЧНОСТЯХ)
+    // =========================================================================
+    let clock = 0;
+    const worldPosA = new THREE.Vector3();
+    let hitAntinode = null;
+    let scatAngleRad = 0.35;
+    const scatDir = new THREE.Vector3(1, 0.5, 0.3).normalize();
+
+    updateQ2(0.20);
+
+    function triggerScatterEvent(hitObj, isElastic) {
+      const telHit = document.getElementById('tel-hit');
+      const telTheta = document.getElementById('tel-theta');
+      const telSigma = document.getElementById('tel-sigma');
+
+      // Вычисление угла рассеяния: растет с переданным импульсом Q²
+      scatAngleRad = Math.min(1.45, 0.22 + Math.sqrt(currentQ2) * 0.28);
+      telTheta.textContent = ((scatAngleRad * 180) / Math.PI).toFixed(1) + '°';
+
+      const dSigma = (Math.pow(1.0 + currentQ2 / 0.71, -4) * (isElastic ? 1.0 : 0.45)).toFixed(3);
+      telSigma.textContent = dSigma + ' б/ср';
+
+      // Направление рассеянного электрона
+      scatDir.set(Math.cos(scatAngleRad), Math.sin(scatAngleRad), Math.sin(clock * 2.0) * 0.3).normalize();
+
+      // Обновляем линию трека
+      const pts = [new THREE.Vector3(0, 0, 0), scatDir.clone().multiplyScalar(9.0)];
+      scatLine.geometry.setFromPoints(pts);
+      scatLine.computeLineDistances();
+      scatLine.visible = document.getElementById('chk-scattered').checked;
+
+      // Запуск рассеянного электрона
+      scatteredElectron.position.set(0, 0, 0);
+      scatteredElectron.visible = document.getElementById('chk-scattered').checked;
+
+      // Запуск сдвиговой волны (кольца в матрице вакуума)
+      const freeRing = scatRings.find(r => r.progress >= 1.0);
+      if (freeRing) {
+        freeRing.progress = 0.0;
+        freeRing.mesh.position.set(0, 0, 0);
+        freeRing.mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), scatDir);
+      }
+
+      // Вспышка на пучности или сфере
+      if (!isElastic && hitObj) {
+        hitObj.hitIntensity = 2.5;
+        impactFlash.position.copy(hitObj.core.getWorldPosition(worldPosA));
+        impactFlash.material.color.setHex(hitObj.id === 'd' ? 0x3b82f6 : 0xf59e0b);
+        impactFlash.material.opacity = 0.95;
+
+        telHit.className = 'hit-badge ' + (hitObj.id === 'd' ? 'hit-d' : 'hit-u');
+        telHit.textContent = 'УДАР: ' + hitObj.name;
+      } else {
+        impactFlash.position.set(0, 0, 0);
+        impactFlash.material.color.setHex(0x38bdf8);
+        impactFlash.material.opacity = 0.7;
+
+        telHit.className = 'hit-badge hit-elastic';
+        telHit.textContent = 'Упругое рассеяние (Сфера)';
+      }
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+
+      const speedUser = parseFloat(document.getElementById('sl-speed').value);
+      clock += 0.018 * speedUser;
+
+      if (isTransitioning) {
+        camera.position.lerp(targetCam, 0.06);
+        controls.target.lerp(targetLook, 0.06);
+        if (camera.position.distanceTo(targetCam) < 0.05) isTransitioning = false;
+      }
+      controls.update();
+
+      // =======================================================================
+      // 1. ЧЕСТНЫЙ ЭРГОДИЧЕСКИЙ КУВЫРОК ПРОТОНА ПО ВСЕМ 3 ОСЯМ (X, Y, Z)
+      // =======================================================================
+      protonTumble.rotation.x = clock * 0.75 + Math.sin(clock * 0.4) * 0.25;
+      protonTumble.rotation.y = clock * 0.95;
+      protonTumble.rotation.z = clock * 0.55 + Math.cos(clock * 0.3) * 0.35;
+
+      // =======================================================================
+      // 2. ПОИСК ПУЧНОСТИ, БЛИЖАЙШЕЙ К ПАДАЮЩЕМУ ЗОНДУ (X = 0)
+      // =======================================================================
+      let minDistToBeam = 999.0;
+      hitAntinode = null;
+      antinodeMeshes.forEach(a => {
+        a.core.getWorldPosition(worldPosA);
+        // Расстояние от пучности до оси луча (Y=0, Z=0)
+        const distAxis = Math.sqrt(worldPosA.y * worldPosA.y + worldPosA.z * worldPosA.z);
+        if (distAxis < minDistToBeam) {
+          minDistToBeam = distAxis;
+          hitAntinode = a;
+        }
+
+        // Затухание вспышки от соударения
+        if (a.hitIntensity > 0.01) {
+          a.hitIntensity *= 0.88;
+          a.core.material.emissiveIntensity = 0.85 + a.hitIntensity;
+          a.glow.scale.setScalar(1.0 + a.hitIntensity * 0.35);
+        } else {
+          a.core.material.emissiveIntensity = 0.85;
+          a.glow.scale.setScalar(1.0);
+        }
+      });
+
+      // Затухание общей вспышки
+      if (impactFlash.material.opacity > 0.01) {
+        impactFlash.material.opacity *= 0.85;
+        impactFlash.scale.multiplyScalar(1.08);
+      }
+
+      // =======================================================================
+      // 3. АНИМАЦИЯ ЗОНДИРУЮЩЕГО ПУЧКА И СОБЫТИЯ СОУДАРЕНИЯ
+      // =======================================================================
+      const spacing3D = Math.max(0.12, Math.min(1.8, (0.1973 / Math.sqrt(currentQ2)) * 1.6));
+      const speedBeam = 4.5 * speedUser;
+      const isElastic = currentQ2 < 0.8;
+
+      if (beamMode === 'stream') {
+        // --- РЕЖИМ НЕПРЕРЫВНОГО ПОТОКА ---
+        waveRings.forEach((r, idx) => {
+          let curX = START_X + ((clock * speedBeam + idx * spacing3D) % (-START_X));
+          r.position.x = curX;
+
+          // Волна нарастает при подлёте к протону
+          const progress = (curX - START_X) / (-START_X);
+          r.material.opacity = Math.sin(progress * Math.PI) * 0.85;
+
+          // В момент прохождения плоскости протона (X ≈ 0) происходит соударение
+          if (Math.abs(curX) < 0.20 && idx === 0) {
+            triggerScatterEvent(hitAntinode, isElastic);
+          }
+        });
+      } else {
+        // --- РЕЖИМ ОДИНОЧНОГО ИМПУЛЬСА ---
+        if (singlePulseActive) {
+          singlePulseProgress += 0.025 * speedUser;
+          const curX = START_X + singlePulseProgress * (-START_X);
+
+          waveRings.forEach((r, idx) => {
+            r.position.x = curX - idx * spacing3D;
+            r.material.opacity = Math.max(0.0, 1.0 - idx * 0.22);
+          });
+
+          // Соударение в центре (X ≈ 0)
+          if (singlePulseProgress >= 1.0) {
+            singlePulseActive = false;
+            triggerScatterEvent(hitAntinode, isElastic);
+          }
+        } else {
+          waveRings.forEach(r => { r.material.opacity = 0.0; });
+        }
+      }
+
+      // =======================================================================
+      // 4. ДВИЖЕНИЕ РАССЕЯННОГО ЭЛЕКТРОНА И ВОЛН РАССЕЯНИЯ
+      // =======================================================================
+      if (scatteredElectron.visible) {
+        scatteredElectron.position.addScaledVector(scatDir, 0.22 * speedUser);
+        if (scatteredElectron.position.length() > 9.0) {
+          scatteredElectron.visible = false;
+        }
+      }
+
+      scatRings.forEach(r => {
+        if (r.progress < 1.0) {
+          r.progress += 0.03 * speedUser;
+          const rad = r.progress * 4.2;
+          r.mesh.scale.set(rad, rad, rad);
+          r.mesh.material.opacity = Math.sin((1.0 - r.progress) * Math.PI) * 0.75;
+          r.mesh.position.addScaledVector(scatDir, 0.08 * speedUser);
+        } else {
+          r.mesh.material.opacity = 0.0;
+        }
+      });
+
+      renderer.render(scene, camera);
+    }
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    animate();
+  </script>
+</body>
+</html>
