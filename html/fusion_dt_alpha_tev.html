@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ТЭВ v5.2: D-T Термоядерный Синтез и Кванты Энергии</title>
+  <style>
+    :root {
+      --bg: #010307;
+      --panel-bg: rgba(2, 8, 20, 0.94);
+      --border: rgba(56, 189, 248, 0.32);
+      --cyan: #38bdf8;
+      --gold: #f59e0b;
+      --blue: #3b82f6;
+      --emerald: #10b981;
+      --rose: #f43f5e;
+      --violet: #a855f7;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+    body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden; width: 100vw; height: 100vh; }
+    #canvas-container { width: 100vw; height: 100vh; display: block; }
+
+    /* Левый HUD */
+    #hud {
+      position: absolute; top: 15px; left: 15px; background: var(--panel-bg);
+      padding: 14px 18px; border-radius: 12px; border: 1px solid var(--border);
+      max-width: 450px; box-shadow: 0 10px 35px rgba(0,0,0,0.85); backdrop-filter: blur(10px);
+      z-index: 10;
+    }
+    h1 { margin: 0 0 5px 0; font-size: 13.5px; color: var(--cyan); text-transform: uppercase; letter-spacing: 1.2px; }
+    p { margin: 4px 0; font-size: 11px; line-height: 1.4; color: var(--muted); }
+
+    .badge { padding: 6px 9px; margin: 5px 0; border-radius: 4px; font-size: 10.5px; line-height: 1.35; }
+    .badge-qval { background: rgba(16, 185, 129, 0.15); border-left: 3px solid var(--emerald); color: #a7f3d0; }
+    .badge-resonance { background: rgba(245, 158, 11, 0.15); border-left: 3px solid var(--gold); color: #fde68a; }
+    .badge-cells { background: rgba(168, 85, 247, 0.15); border-left: 3px solid var(--violet); color: #e9d5ff; }
+
+    .tags { margin-top: 6px; display: flex; flex-wrap: wrap; gap: 4px; }
+    .tag { padding: 2px 6px; border-radius: 4px; font-size: 9.5px; font-weight: bold; }
+    .tag-q { background: #059669; color: white; }
+    .tag-n { background: #2563eb; color: white; }
+    .tag-alpha { background: #d97706; color: white; }
+    .tag-cells { background: #7c3aed; color: white; }
+
+    /* Правая панель управления */
+    #controls-box {
+      position: absolute; top: 15px; right: 15px; background: var(--panel-bg);
+      padding: 14px 16px; border-radius: 12px; border: 1px solid var(--border);
+      width: 320px; box-shadow: 0 10px 35px rgba(0,0,0,0.85); backdrop-filter: blur(10px);
+      z-index: 10;
+    }
+    #controls-box h2 { margin: 0 0 8px 0; font-size: 11.5px; color: var(--cyan); text-transform: uppercase; border-bottom: 1px solid #1e3a5f; padding-bottom: 5px; }
+    .row-ctrl { display: flex; justify-content: space-between; align-items: center; margin: 7px 0; font-size: 10.5px; }
+    .row-ctrl span.name { color: #cbd5e1; }
+    .row-ctrl span.val { font-family: monospace; color: var(--cyan); font-weight: bold; }
+    input[type=range] { width: 130px; accent-color: var(--cyan); cursor: pointer; }
+
+    .preset-row { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin: 7px 0; }
+    button.btn-preset {
+      background: #091a2d; border: 1px solid #1e4976; color: #93c5fd; padding: 6px 6px;
+      border-radius: 6px; font-size: 9.5px; cursor: pointer; transition: all 0.2s; text-align: center;
+    }
+    button.btn-preset:hover { background: #163d66; color: white; border-color: var(--cyan); }
+    button.btn-preset.active { background: #0284c7; color: white; border-color: var(--cyan); font-weight: bold; }
+
+    .check-row { display: flex; align-items: center; gap: 7px; font-size: 10.5px; margin: 5px 0; cursor: pointer; color: #cbd5e1; }
+    .check-row input { cursor: pointer; accent-color: var(--cyan); }
+
+    /* Нижний график сечения D-T */
+    #plots-panel {
+      position: absolute; bottom: 75px; left: 15px; background: var(--panel-bg);
+      padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);
+      width: 450px; font-size: 10px; box-shadow: 0 8px 30px rgba(0,0,0,0.85);
+      backdrop-filter: blur(8px); z-index: 10;
+    }
+    #plots-panel h3 { margin: 0 0 4px 0; font-size: 11px; color: #38bdf8; display: flex; justify-content: space-between; }
+    canvas#plot-canvas { width: 100%; height: 115px; background: rgba(15, 23, 42, 0.75); border-radius: 6px; border: 1px solid #1e293b; margin-top: 4px; }
+
+    /* Нижняя навигация */
+    #nav {
+      position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%);
+      background: var(--panel-bg); padding: 7px 16px; border-radius: 30px;
+      border: 1px solid var(--border); display: flex; gap: 6px; align-items: center;
+      box-shadow: 0 6px 30px rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 10;
+    }
+    button.nav-btn {
+      background: #091a2d; border: 1px solid #1e4976; color: #93c5fd;
+      padding: 6px 12px; border-radius: 18px; font-size: 10.5px; cursor: pointer; transition: all 0.2s;
+    }
+    button.nav-btn:hover { background: #163d66; color: white; border-color: var(--cyan); }
+    button.nav-btn.active { background: #0284c7; color: white; border-color: var(--cyan); font-weight: bold; }
+    .divider { width: 1px; height: 18px; background: #1e3a5f; margin: 0 3px; }
+
+    /* Правая панель телеметрии */
+    #telemetry-box {
+      position: absolute; bottom: 15px; right: 15px; background: var(--panel-bg);
+      padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border);
+      font-family: monospace; font-size: 9.5px; color: var(--muted); line-height: 1.45;
+      z-index: 10; width: 290px;
+    }
+    .tele-val { color: var(--cyan); font-weight: bold; }
+    .tele-energy { color: #34d399; font-weight: bold; }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+  <div id="canvas-container"></div>
+
+  <!-- Левый HUD -->
+  <div id="hud">
+    <h1>D-T Термоядерный Синтез &bull; ТЭВ v5.2</h1>
+
+    <div class="badge badge-qval">
+      <b>ВЫХОД СИНТЕЗА: Q = &frac14; E₀ = 17.506 МэВ:</b> Топологический сброс избыточного поверхностного натяжения вакуума при перестройке в тетраэдр ⁴He (эксп: 17.589 МэВ, невязка 0.47%).
+    </div>
+
+    <div class="badge badge-resonance">
+      <b>РЕЗОНАНС ⁵He* (64 кэВ):</b> 5 нуклонов (2p + 3n) идеально сопрягаются с p+q = 5 ячейками голономии тора Клиффорда, поднимая сечение реакции в 100 раз по сравнению с D-D!
+    </div>
+
+    <div class="badge badge-cells">
+      <b>КВАНТОВОЕ РАЗДЕЛЕНИЕ 4:1:</b> Нейтрон уносит 4 ячейки (E_n = ⅕ E₀ = M_&pi;/10 = 14.005 МэВ), а альфа-частица — 1 ячейку (E_&alpha; = 1/20 E₀ = 3.501 МэВ).
+    </div>
+
+    <div class="tags">
+      <span class="tag tag-q">Q = 17.506 МэВ</span>
+      <span class="tag tag-n">n: 14.005 МэВ (4/5)</span>
+      <span class="tag tag-alpha">&alpha;: 3.501 МэВ (1/5)</span>
+      <span class="tag tag-cells">⁵He* p+q = 5 ячеек</span>
+    </div>
+  </div>
+
+  <!-- График сечения Брейта-Вигнера и Гамова -->
+  <div id="plots-panel">
+    <h3>
+      <span>Сечение D-T реакции &sigma;(E) и Резонанс 64 кэВ</span>
+      <span id="txt-sigma-val" style="color: #34d399; font-family: monospace;">&sigma; = 5.00 б</span>
+    </h3>
+    <canvas id="plot-canvas" width="420" height="115"></canvas>
+  </div>
+
+  <!-- Панель управления справа -->
+  <div id="controls-box">
+    <h2>Управление Синтезом</h2>
+
+    <div class="row-ctrl">
+      <span class="name">Фаза реакции:</span>
+      <span class="val" id="lbl-phase">50%</span>
+    </div>
+    <input type="range" id="sl-phase" min="0" max="100" step="0.5" value="50">
+
+    <div class="row-ctrl">
+      <span class="name">Энергия E_c.m.:</span>
+      <span class="val" id="lbl-energy">64.0 кэВ</span>
+    </div>
+    <input type="range" id="sl-energy" min="10" max="150" step="1" value="64">
+
+    <div class="preset-row">
+      <button class="btn-preset active" onclick="setReactionStage(0)">1. Подлёт d+t</button>
+      <button class="btn-preset" onclick="setReactionStage(38)">2. Барьер Гамова</button>
+      <button class="btn-preset" onclick="setReactionStage(52)">3. Резонанс ⁵He*</button>
+      <button class="btn-preset" onclick="setReactionStage(75)">4. Разлёт ⁴He + n</button>
+    </div>
+
+    <h2 style="margin-top: 10px;">Свойства Топлива</h2>
+    <label class="check-row">
+      <input type="checkbox" id="chk-polarized" onchange="togglePolarization()">
+      <span style="color:#fde68a;">Спин-поляризация (+50% к сечению)</span>
+    </label>
+    <label class="check-row">
+      <input type="checkbox" id="chk-loop" checked>
+      <span>Автоматический цикл реакции</span>
+    </label>
+
+    <h2 style="margin-top: 8px;">Слои Визуализации</h2>
+    <label class="check-row">
+      <input type="checkbox" id="chk-knots" checked onchange="toggleLayer('knots')">
+      <span>Узлы-трилистники протонов и нейтронов</span>
+    </label>
+    <label class="check-row">
+      <input type="checkbox" id="chk-shells" checked onchange="toggleLayer('shells')">
+      <span>Сферы электронов S² нейтронов</span>
+    </label>
+    <label class="check-row">
+      <input type="checkbox" id="chk-cells" checked onchange="toggleLayer('cells')">
+      <span>5 ячеек голономии компаунд-ядра ⁵He*</span>
+    </label>
+    <label class="check-row">
+      <input type="checkbox" id="chk-shock" checked onchange="toggleLayer('shock')">
+      <span>Сдвиговая ударная волна выхода 17.5 МэВ</span>
+    </label>
+  </div>
+
+  <!-- Нижняя навигация -->
+  <div id="nav">
+    <button class="nav-btn active" onclick="focusView('all')">Общий Вид</button>
+    <button class="nav-btn" onclick="focusView('he5')">Компаунд ⁵He*</button>
+    <button class="nav-btn" onclick="focusView('alpha')">Тетраэдр ⁴He</button>
+    <button class="nav-btn" onclick="focusView('neutron')">Нейтрон n</button>
+    <div class="divider"></div>
+    <button class="nav-btn" id="btn-play" onclick="togglePlay()">⏸ Пауза</button>
+  </div>
+
+  <!-- Телеметрия -->
+  <div id="telemetry-box">
+    <b>Телеметрия Термояда ТЭВ:</b><br>
+    Стадия: <span class="tele-val" id="tel-stage">Резонанс ⁵He*</span><br>
+    Выход Q_DT: <span class="tele-energy">17.506 МэВ</span> (&frac14; E₀)<br>
+    Нейтрон E_n: <span class="tele-energy">14.005 МэВ</span> (M_&pi;/10, 80%)<br>
+    Альфа-частица E_&alpha;: <span class="tele-energy">3.501 МэВ</span> (20%)<br>
+    Гамовский барьер E_G: <span class="tele-val">1183.5 кэВ</span>
+  </div>
+
+  <script>
+    // =========================================================================
+    // 1. ИНИЦИАЛИЗАЦИЯ СЦЕНЫ THREE.JS
+    // =========================================================================
+    const container = document.getElementById('canvas-container');
+    const scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(0x010307, 0.015);
+
+    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 5.5, 17.0);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    container.appendChild(renderer.domElement);
+
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+
+    scene.add(new THREE.AmbientLight(0x0f172a, 2.2));
+    const dirLight1 = new THREE.DirectionalLight(0x38bdf8, 2.2);
+    dirLight1.position.set(12, 18, 15);
+    scene.add(dirLight1);
+
+    const dirLight2 = new THREE.DirectionalLight(0xf59e0b, 1.4);
+    dirLight2.position.set(-10, -5, -8);
+    scene.add(dirLight2);
+
+    let isPlaying = true;
+    let isTransitioning = false;
+    let targetCam = new THREE.Vector3(0, 5.5, 17.0);
+    let targetLook = new THREE.Vector3(0, 0, 0);
+
+    controls.addEventListener('start', () => { isTransitioning = false; });
+
+    function makeSprite(text, bgCol, textCol = '#ffffff') {
+      const canvas = document.createElement('canvas');
+      canvas.width = 170; canvas.height = 60;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = bgCol;
+      ctx.beginPath(); ctx.roundRect(8, 8, 154, 44, 10); ctx.fill();
+      ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 2.5; ctx.stroke();
+      ctx.fillStyle = textCol; ctx.font = 'bold 22px Segoe UI, Arial';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(text, 85, 30);
+      const tex = new THREE.CanvasTexture(canvas);
+      const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, depthTest: false }));
+      sp.scale.set(0.55, 0.22, 1);
+      return sp;
+    }
+
+    // =========================================================================
+    // 2. МОДЕЛИРОВАНИЕ 5 НУКЛОНОВ (2 ПРОТОНА + 3 НЕЙТРОНА)
+    // =========================================================================
+    class ThickTrefoil extends THREE.Curve {
+      constructor(scale = 0.40) { super(); this.scale = scale; }
+      getPoint(t, optionalTarget = new THREE.Vector3()) {
+        const phi = t * Math.PI * 2;
+        const x = (Math.sin(phi) + 1.85 * Math.sin(2 * phi)) * this.scale;
+        const y = (Math.cos(phi) - 2.0 * Math.cos(2 * phi)) * this.scale;
+        const z = (-Math.sin(3 * phi)) * (this.scale * 1.2);
+        return optionalTarget.set(x, y, z);
+      }
+    }
+
+    const trefoilCurve = new ThickTrefoil(0.40);
+    const tubeGeo = new THREE.TubeGeometry(trefoilCurve, 180, 0.14, 18, true);
+
+    const protonMat = new THREE.MeshStandardMaterial({
+      color: 0xf59e0b, emissive: 0xd97706, emissiveIntensity: 0.65, roughness: 0.2, metalness: 0.8
+    });
+
+    const neutronMat = new THREE.MeshStandardMaterial({
+      color: 0x38bdf8, emissive: 0x0284c7, emissiveIntensity: 0.6, roughness: 0.2, metalness: 0.8
+    });
+
+    function buildNeutronShell() {
+      const g = new THREE.Group();
+      const sGeo = new THREE.SphereGeometry(0.85, 24, 18);
+      const sMat = new THREE.MeshPhysicalMaterial({
+        color: 0x0284c7, emissive: 0x0369a1, emissiveIntensity: 0.35, transparent: true, opacity: 0.28,
+        roughness: 0.1, transmission: 0.75, side: THREE.DoubleSide, depthWrite: false
+      });
+      g.add(new THREE.Mesh(sGeo, sMat));
+      const wGeo = new THREE.SphereGeometry(0.855, 18, 12);
+      const wMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8, wireframe: true, transparent: true, opacity: 0.38, depthWrite: false });
+      g.add(new THREE.Mesh(wGeo, wMat));
+      return g;
+    }
+
+    // Создаем 5 физических нуклонов
+    const nucleons = [];
+    const nucleonData = [
+      { id: 'p1', type: 'p', label: "p₁ (d)" },
+      { id: 'n1', type: 'n', label: "n₁ (d)" },
+      { id: 'p2', type: 'p', label: "p₂ (t)" },
+      { id: 'n2', type: 'n', label: "n₂ (t)" },
+      { id: 'n3', type: 'n', label: "n₃ (t → вылет)" }
+    ];
+
+    nucleonData.forEach(nd => {
+      const grp = new THREE.Group();
+      const mesh = new THREE.Mesh(tubeGeo, nd.type === 'p' ? protonMat : neutronMat);
+      grp.add(mesh);
+
+      let shell = null;
+      if (nd.type === 'n') {
+        shell = buildNeutronShell();
+        grp.add(shell);
+      }
+
+      const sp = makeSprite(nd.label, nd.type === 'p' ? "#d97706" : "#0284c7");
+      sp.position.set(0, 0.95, 0);
+      grp.add(sp);
+
+      scene.add(grp);
+      nucleons.push({ grp, mesh, shell, sp, type: nd.type, pos: new THREE.Vector3() });
+    });
+
+    // =========================================================================
+    // 3. СТРУКТУРЫ РЕАКЦИИ: 5 ЯЧЕЕК ГОЛОНОМИИ, ТЕТРАЭДР И УДАРНАЯ ВОЛНА
+    // =========================================================================
+    // 5 ячеек голономии тора Клиффорда (резонанс 5He*)
+    const cellsGroup = new THREE.Group();
+    scene.add(cellsGroup);
+    const cellMeshes = [];
+    for (let i = 0; i < 5; i++) {
+      const ang = (i * 2 * Math.PI) / 5;
+      const cGeo = new THREE.TorusGeometry(1.2, 0.05, 14, 36);
+      const cMat = new THREE.MeshBasicMaterial({ color: 0xa855f7, transparent: true, opacity: 0.0, wireframe: true });
+      const cMesh = new THREE.Mesh(cGeo, cMat);
+      cMesh.position.set(Math.cos(ang) * 1.6, Math.sin(ang) * 1.6, 0);
+      cMesh.rotation.z = ang;
+      cellsGroup.add(cMesh);
+      cellMeshes.push(cMesh);
+    }
+
+    // Тетраэдрическая оболочка альфа-частицы 4He
+    const alphaShellGeo = new THREE.SphereGeometry(1.8, 36, 26);
+    const alphaShellMat = new THREE.MeshPhysicalMaterial({
+      color: 0x10b981, emissive: 0x059669, emissiveIntensity: 0.35, transparent: true, opacity: 0.0,
+      roughness: 0.15, transmission: 0.8, side: THREE.DoubleSide, depthWrite: false
+    });
+    const alphaShell = new THREE.Mesh(alphaShellGeo, alphaShellMat);
+    scene.add(alphaShell);
+
+    const spAlphaLabel = makeSprite("⁴He (3.5 МэВ, 1 ячейка)", "#059669");
+    alphaShell.add(spAlphaLabel);
+    spAlphaLabel.position.set(0, 2.2, 0);
+    spAlphaLabel.visible = false;
+
+    // Сдвиговая ударная волна выхода 17.5 МэВ
+    const shockRings = [];
+    for (let i = 0; i < 3; i++) {
+      const sGeo = new THREE.RingGeometry(0.3, 0.45, 48);
+      const sMat = new THREE.MeshBasicMaterial({ color: 0x10b981, side: THREE.DoubleSide, transparent: true, opacity: 0.0, blending: THREE.AdditiveBlending });
+      const r = new THREE.Mesh(sGeo, sMat);
+      scene.add(r);
+      shockRings.push(r);
+    }
+
+    // Вспышка синтеза
+    const fusionFlash = new THREE.Mesh(
+      new THREE.SphereGeometry(1.2, 24, 24),
+      new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.0, blending: THREE.AdditiveBlending })
+    );
+    scene.add(fusionFlash);
+
+    // =========================================================================
+    // 4. ДВОЙНОЙ ГРАФИК СЕЧЕНИЯ Д-Т (БРЕЙТ-ВИГНЕР + ГАМОВ)
+    // =========================================================================
+    const canvas = document.getElementById('plot-canvas');
+    const ctx = canvas.getContext('2d');
+
+    function drawSigmaPlot(curE) {
+      const w = canvas.width, h = canvas.height;
+      ctx.clearRect(0, 0, w, h);
+
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(35, 12); ctx.lineTo(35, h - 18);
+      ctx.lineTo(w - 15, h - 18);
+      ctx.stroke();
+
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = '8.5px monospace';
+      ctx.fillText('σ [барн]', 10, 16);
+      ctx.fillText('0', 22, h - 18);
+      ctx.fillText('E_c.m. [кэВ]', w - 65, h - 6);
+      ctx.fillText('64 кэВ (⁵He*)', (64 / 150) * (w - 50) + 12, h - 6);
+
+      // Кривая сечения Брейта-Вигнера x Гамов: пик при 64 кэВ
+      ctx.strokeStyle = '#34d399';
+      ctx.lineWidth = 2.0;
+      ctx.beginPath();
+
+      const eMax = 150.0;
+      function sigmaVal(e) {
+        // Гамовский туннельный барьер EG = 1183.5 кэВ
+        const pGamow = Math.exp(-Math.sqrt(1183.5 / e));
+        // Резонанс Брейта-Вигнера 5He*: E_R = 64 кэВ, Gamma = 75 кэВ
+        const pRes = 1.0 / (Math.pow(e - 64.0, 2) + Math.pow(75.0 / 2.0, 2));
+        return (pGamow * pRes * 2.8e5); // нормировка к пику 5.0 барн
+      }
+
+      for (let px = 35; px <= w - 15; px += 2) {
+        const eVal = Math.max(5.0, ((px - 35) / (w - 50)) * eMax);
+        const sVal = Math.min(5.5, sigmaVal(eVal));
+        const py = (h - 18) - (sVal / 5.2) * (h - 32);
+        if (px === 35) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+      }
+      ctx.stroke();
+
+      // Линия резонанса 64 кэВ
+      const resX = 35 + (64.0 / eMax) * (w - 50);
+      ctx.strokeStyle = '#f59e0b';
+      ctx.setLineDash([3, 3]);
+      ctx.beginPath(); ctx.moveTo(resX, 12); ctx.lineTo(resX, h - 18); ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Текущая точка
+      const curS = Math.min(5.5, sigmaVal(curE));
+      const ptX = 35 + (curE / eMax) * (w - 50);
+      const ptY = (h - 18) - (curS / 5.2) * (h - 32);
+      ctx.fillStyle = '#38bdf8';
+      ctx.beginPath(); ctx.arc(ptX, ptY, 4.5, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.2; ctx.stroke();
+
+      document.getElementById('txt-sigma-val').textContent = 'σ = ' + curS.toFixed(2) + ' б';
+    }
+
+    // =========================================================================
+    // 5. КИНЕМАТИКА И ИНТЕРПОЛЯЦИЯ 4 ФАЗ СИНТЕЗА
+    // =========================================================================
+    let reactionProgress = 0.50; // 0.0 to 1.0
+    let cmEnergy = 64.0;
+    let isPolarized = false;
+
+    const slPhase = document.getElementById('sl-phase');
+    const lblPhase = document.getElementById('lbl-phase');
+    const slEnergy = document.getElementById('sl-energy');
+    const lblEnergy = document.getElementById('lbl-energy');
+    const telStage = document.getElementById('tel-stage');
+
+    slPhase.addEventListener('input', (e) => {
+      reactionProgress = parseFloat(e.target.value) / 100.0;
+      lblPhase.textContent = Math.round(reactionProgress * 100) + '%';
+    });
+
+    slEnergy.addEventListener('input', (e) => {
+      cmEnergy = parseFloat(e.target.value);
+      lblEnergy.textContent = cmEnergy.toFixed(1) + ' кэВ';
+      drawSigmaPlot(cmEnergy);
+    });
+
+    function setReactionStage(pct) {
+      reactionProgress = pct / 100.0;
+      slPhase.value = pct;
+      lblPhase.textContent = pct + '%';
+    }
+
+    function togglePolarization() {
+      isPolarized = document.getElementById('chk-polarized').checked;
+    }
+
+    function togglePlay() {
+      isPlaying = !isPlaying;
+      document.getElementById('btn-play').textContent = isPlaying ? '⏸ Пауза' : '▶ Пуск';
+    }
+
+    // Позиции нуклонов в разных фазах
+    const posApproach = [
+      new THREE.Vector3(-5.5, 0, -0.6), // p1 (d)
+      new THREE.Vector3(-5.5, 0, 0.6),  // n1 (d)
+      new THREE.Vector3(5.5, 0.7, -0.6), // p2 (t)
+      new THREE.Vector3(5.5, -0.7, -0.6),// n2 (t)
+      new THREE.Vector3(5.5, 0, 0.7)    // n3 (t)
+    ];
+
+    const posResonance = [
+      new THREE.Vector3(Math.cos(0) * 1.5, Math.sin(0) * 1.5, 0),
+      new THREE.Vector3(Math.cos(1.256) * 1.5, Math.sin(1.256) * 1.5, 0),
+      new THREE.Vector3(Math.cos(2.513) * 1.5, Math.sin(2.513) * 1.5, 0),
+      new THREE.Vector3(Math.cos(3.769) * 1.5, Math.sin(3.769) * 1.5, 0),
+      new THREE.Vector3(Math.cos(5.026) * 1.5, Math.sin(5.026) * 1.5, 0)
+    ];
+
+    const norm = 1.0 / Math.sqrt(3);
+    const posTetraAlpha = [
+      new THREE.Vector3(norm, norm, norm).multiplyScalar(1.0),   // p1
+      new THREE.Vector3(-norm, -norm, norm).multiplyScalar(1.0), // p2
+      new THREE.Vector3(norm, -norm, -norm).multiplyScalar(1.0), // n1
+      new THREE.Vector3(-norm, norm, -norm).multiplyScalar(1.0)  // n2
+    ];
+
+    function updateNucleonPositions(tProg) {
+      let stageText = "Подлёт d + t";
+      let flashOp = 0.0;
+      let cellsOp = 0.0;
+      let alphaOp = 0.0;
+
+      if (tProg < 0.38) {
+        // Фаза 1: Сближение дейтрона и тритона (t: 0 -> 0.38)
+        const alpha = tProg / 0.38;
+        stageText = "Подлёт d + t (Преодоление барьера Гамова)";
+        for (let i = 0; i < 5; i++) {
+          nucleons[i].pos.lerpVectors(posApproach[i], posResonance[i], alpha * 0.7);
+        }
+        spAlphaLabel.visible = false;
+
+      } else if (tProg >= 0.38 && tProg < 0.58) {
+        // Фаза 2: Резонанс 5He* (t: 0.38 -> 0.58)
+        const alpha = (tProg - 0.38) / 0.20;
+        stageText = "Резонанс ⁵He* (Согласование 5 ячеек голономии)";
+        cellsOp = Math.sin(alpha * Math.PI) * 0.85;
+
+        for (let i = 0; i < 5; i++) {
+          const breath = 1.0 + Math.sin(clock * 8.0 + i) * 0.08;
+          nucleons[i].pos.copy(posResonance[i]).multiplyScalar(breath);
+        }
+
+        // Вспышка синтеза на границе срыва (t ~ 0.56)
+        if (tProg > 0.52) {
+          flashOp = Math.sin((tProg - 0.52) / 0.06 * Math.PI);
+        }
+        spAlphaLabel.visible = false;
+
+      } else {
+        // Фаза 3: Разлёт 4He + n (t: 0.58 -> 1.0)
+        const alpha = (tProg - 0.58) / 0.42;
+        stageText = "Разлёт продуктов: ⁴He (3.5 МэВ) + n (14.0 МэВ)";
+
+        // Альфа-частица отлетает влево (скорость 1x)
+        const alphaCenter = new THREE.Vector3(-alpha * 4.5, 0, 0);
+        alphaShell.position.copy(alphaCenter);
+        alphaOp = Math.min(0.45, alpha * 1.5);
+        spAlphaLabel.visible = true;
+
+        for (let i = 0; i < 4; i++) {
+          nucleons[i].pos.copy(posTetraAlpha[i]).add(alphaCenter);
+        }
+
+        // Вылетающий нейтрон n3 отлетает вправо с удесятерённой скоростью (E_n = 4*E_alpha)
+        const neutronPos = new THREE.Vector3(alpha * 12.0, 0, 0);
+        nucleons[4].pos.copy(neutronPos);
+      }
+
+      telStage.textContent = stageText;
+
+      // Применяем вычисленные координаты
+      for (let i = 0; i < 5; i++) {
+        nucleons[i].grp.position.copy(nucleons[i].pos);
+      }
+
+      // Ячейки 5He*
+      cellMeshes.forEach(c => {
+        c.material.opacity = document.getElementById('chk-cells').checked ? cellsOp : 0;
+      });
+
+      // Оболочка 4He
+      alphaShell.material.opacity = alphaOp;
+
+      // Вспышка синтеза
+      fusionFlash.material.opacity = flashOp * 0.95;
+      fusionFlash.scale.setScalar(1.0 + flashOp * 2.5);
+    }
+
+    // =========================================================================
+    // 6. УПРАВЛЕНИЕ ВИДАМИ И СЛОЯМИ
+    // =========================================================================
+    function toggleLayer(layer) {
+      if (layer === 'knots') {
+        const on = document.getElementById('chk-knots').checked;
+        nucleons.forEach(n => n.mesh.visible = on);
+      }
+      if (layer === 'shells') {
+        const on = document.getElementById('chk-shells').checked;
+        nucleons.forEach(n => { if (n.shell) n.shell.visible = on; });
+      }
+      if (layer === 'shock') {
+        const on = document.getElementById('chk-shock').checked;
+        shockRings.forEach(r => r.visible = on);
+      }
+    }
+
+    function focusView(v) {
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      event.target.classList.add('active');
+
+      if (v === 'all') {
+        targetCam.set(0, 5.5, 17.0); targetLook.set(0, 0, 0);
+      } else if (v === 'he5') {
+        targetCam.set(0, 1.2, 5.2); targetLook.set(0, 0, 0);
+      } else if (v === 'alpha') {
+        targetCam.set(-3.5, 1.4, 4.8); targetLook.set(-3.5, 0, 0);
+      } else if (v === 'neutron') {
+        targetCam.set(6.5, 1.4, 4.8); targetLook.set(6.5, 0, 0);
+      }
+      isTransitioning = true;
+    }
+
+    // =========================================================================
+    // 7. ГЛАВНЫЙ АНИМАЦИОННЫЙ ЦИКЛ
+    // =========================================================================
+    let clock = 0;
+    drawSigmaPlot(64.0);
+
+    function animate() {
+      requestAnimationFrame(animate);
+
+      clock += 0.015;
+
+      if (isTransitioning) {
+        camera.position.lerp(targetCam, 0.06);
+        controls.target.lerp(targetLook, 0.06);
+        if (camera.position.distanceTo(targetCam) < 0.05) isTransitioning = false;
+      }
+      controls.update();
+
+      // Автоматический прогресс реакции
+      if (isPlaying && document.getElementById('chk-loop').checked) {
+        reactionProgress += 0.0035;
+        if (reactionProgress > 1.0) reactionProgress = 0.0;
+        slPhase.value = Math.round(reactionProgress * 100);
+        lblPhase.textContent = slPhase.value + '%';
+      }
+
+      updateNucleonPositions(reactionProgress);
+
+      // Вращение нуклонов вокруг собственных осей (квантовая прецессия)
+      nucleons.forEach((n, idx) => {
+        n.mesh.rotation.z = clock * 1.5 + idx;
+        n.mesh.rotation.y = clock * 0.8;
+      });
+
+      // Вращение 5 ячеек голономии
+      cellsGroup.rotation.z = clock * 0.5;
+
+      // Ударные волны при срыве
+      if (reactionProgress > 0.58 && document.getElementById('chk-shock').checked) {
+        const shockAlpha = (reactionProgress - 0.58) / 0.42;
+        shockRings.forEach((r, idx) => {
+          const rProg = (shockAlpha * 2.0 + idx * 0.3) % 1.0;
+          r.scale.setScalar(rProg * 14.0);
+          r.material.opacity = Math.sin((1.0 - rProg) * Math.PI) * 0.7;
+        });
+      } else {
+        shockRings.forEach(r => { r.material.opacity = 0; });
+      }
+
+      renderer.render(scene, camera);
+    }
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    animate();
+  </script>
+</body>
+</html>
