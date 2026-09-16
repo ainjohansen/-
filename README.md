@@ -37,24 +37,8 @@
 *   🔮 **[Квантовая Запутанность и Предел Цирельсона (hopf_epr_tsirelson_tev-v1.html)](https://ainjohansen.github.io/-/html/hopf_epr_tsirelson_tev-v1.html)**  
     *Снятие мистики с ЭПР-парадокса: причинность без сверхсветовых сигналов (теорема No-Signaling). Два полностью автономных солитона $T(1,1)$ разлетаются в пространстве 3-х проекций без соединительного жгута, совершая эргодический спинорный кувырок на сфере $S^3 \cong \mathrm{SU}(2)$. Память начальной противофазы ($\mathbf{J}_{\text{tot}} = 0$) сохраняется сквозь расстояния благодаря рекордной добротности вакуума $Q \sim 10^{122}$. Наглядная проекция расслоения Хопфа $S^1 \hookrightarrow S^3 \to S^2$ на сферы Блоха, интерактивное вращение осей детекторов Алисы и Боба, живой расчет коррелятора $E = -\cos\theta_{ab}$ и достижение предела Цирельсона $S_{\text{CHSH}} = 2\sqrt{2} \approx 2.8284$ с симуляцией дискретных триггерных кликов срыва Мизеса ($\pm 1$).*
 
-*  🚀 **[Визуализация анигиляции](https://ainjohansen.github.io/-/html/annihilation_tev.html)** *(Исходный автономный код: [`html/annihilation_tev.html`](html/annihilation_tev.html))*
-   Численное 3D-моделирование топологического фазового перехода пары солитонов $T(1,1)$ в среде упругого вакуума (Three.js / RK4-интегратор) без привлечения точечной феноменологии Стандартной Модели:
-
-* **Интерференция кулоновских хвостов (дальнодействие до контакта):**  
-  Солитоны противоположной киральности ($\chi_e = +1, \chi_p = -1$) индуцируют противоположные по знаку поля статических сдвиговых деформаций. В зазоре девиаторы вычитаются ($\mathbf{s}_{\text{tot}} \to 0$), вызывая локальную разгрузку упругой энергии среды ($\Delta\mathcal{W}_{\text{gap}} < 0$). Градиент внешнего давления среды стягивает пару по потенциалу $V_{\text{int}}(d)$ задолго до геометрического контакта кернов.
-* **Трёхосный кинематический замок (Spin Lock):**  
-  Противофазное согласованное вращение тороидов по трем степеням свободы ($\Omega_u, \Omega_v, \Omega_n$) с мёбиусовой $4\pi$-периодичностью («зацепление шестерней»), предотвращающее возникновение паразитных турбулентных напряжений при сближении.
-* **Топологический коллапс ($d^* = 2\alpha R_e$):**  
-  При контакте нелинейных кернов суммарная топологическая скрутка обнуляется ($\tau_{\text{sum}} = \tau_e + \tau_p = 0$). Исчезновение топологической защиты приводит к разрыву замкнутых лент Мёбиуса в двух диаметрально противоположных точках.
-* **Рождение поперечных мод $2\gamma$:**  
-  Энергия локализованной стоячей волны солитонов ($2m_e c^2$) высвобождается в виде двух разлетающихся вдоль оси $\pm X$ соленоидальных волновых пакетов с противоположной круговой поляризацией (правая и левая спиральность) со строгим сохранением нулевых суммарных импульса и спина ($\mathbf{P}_{\text{tot}} = 0$, $\mathbf{S}_{\text{tot}} = 0$).
-
-  Numerical 3D simulation of a topological phase transition of $T(1,1)$ soliton pairs in an elastic continuum (Three.js / RK4 numerical solver) without point-particle SM phenomenology:
-
-* **Pre-contact Coulomb tail interference:** Chiral deviatoric strain fields ($\chi_e = +1, \chi_p = -1$) interfere destructively in the intervening gap ($\mathbf{s}_{\text{tot}} \to 0$). The resulting strain energy drop ($\Delta\mathcal{W}_{\text{gap}} < 0$) establishes an attractive stress gradient long before core contact.
-* **Triaxial spin-locking:** Anti-phase synchronized 3-axis rotation ($\Omega_u, \Omega_v, \Omega_n$) with $4\pi$ Möbius boundary conditions, providing smooth kinematic meshing without shear jamming.
-* **Topological rupture ($d^* = 2\alpha R_e$):** Core contact cancels net topological twist ($\tau_{\text{sum}} = +2 - 2 = 0$). The topological barrier vanishes, breaking the closed Möbius waveguides.
-* **Transverse $2\gamma$ emission:** The trapped shear energy is radiated away as two counter-propagating solenoidal wave packets ($\pm \mathbf{e}_x$) with orthogonal circular polarizations, naturally conserving $\mathbf{P}_{\text{tot}} = 0$ and $\mathbf{S}_{\text{tot}} = 0$.
+*   💥 **[Аннигиляция Солитонов: e⁺e⁻ → 2γ (annihilation_tev.html)](https://ainjohansen.github.io/-/html/annihilation_tev.html)**  
+    *Прямое 3D-моделирование лобового столкновения двух противоположно закрученных тороидальных вихрей $T(1,1)$. Пластический срыв предела текучести Губера — фон Мизеса ($\sigma_{\text{eq}} \ge \alpha G_0$), топологическое пересоединение вихревых трубок и трансформация локализованной энергии кернов в два разлетающихся поперечных волновых пакета чистого сдвига (фотоны $\gamma$) с точным сохранением энергии $2m_e c^2$ и соленоидальности.*
 
 **[Интерактивная 3D-модель: Дейтрон ($^2\mathrm{H}$) и изотопы гелия ($^3\mathrm{He}$, $^4\mathrm{He}$)](https://ainjohansen.github.io/-/html/nucleus_tev_3d-v1.html)**
   * Натянутая экранирующая сфера электрона $S^2$ нейтрона ($\Delta M_{np} = \frac{3}{16}\alpha M_p$).
