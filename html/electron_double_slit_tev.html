@@ -2,76 +2,97 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>ТЭВ: Реальный двухщелевой опыт — Волна-Пилот и траектория керна</title>
+    <title>ТЭВ: Двухщелевой опыт — Волна-пилот, Детектор и Керн</title>
     <style>
-        body { margin: 0; overflow: hidden; background: #010408; font-family: 'Segoe UI', Arial, sans-serif; color: #e2e8f0; user-select: none; }
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: #040913;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+            color: #e2e8f0;
+            user-select: none;
+        }
         #canvas-container { width: 100vw; height: 100vh; display: block; }
 
+        /* Информационный блок */
         #hud {
-            position: absolute; top: 15px; left: 15px; background: rgba(2, 8, 18, 0.92);
-            padding: 16px 22px; border-radius: 10px; border: 1px solid #1e3a5f;
-            max-width: 420px; box-shadow: 0 8px 32px rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+            position: absolute; top: 16px; left: 16px;
+            background: rgba(5, 15, 30, 0.92);
+            padding: 16px 20px; border-radius: 12px;
+            border: 1px solid #0284c7;
+            max-width: 440px; box-shadow: 0 10px 35px rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(10px);
         }
-        h1 { margin: 0 0 6px 0; font-size: 15px; color: #38bdf8; text-transform: uppercase; letter-spacing: 1.5px; }
-        p { margin: 4px 0; font-size: 12px; line-height: 1.4; color: #94a3b8; }
+        h1 { margin: 0 0 6px 0; font-size: 15px; color: #38bdf8; text-transform: uppercase; letter-spacing: 1.2px; }
+        p { margin: 5px 0; font-size: 12px; line-height: 1.45; color: #94a3b8; }
         .tag { display: inline-block; padding: 2px 7px; border-radius: 4px; font-size: 10px; font-weight: bold; margin-right: 4px; }
         .tag-core { background: #0284c7; color: white; }
-        .tag-wave { background: #059669; color: white; }
+        .tag-wave { background: #0d9488; color: white; }
+        .tag-det { background: #f59e0b; color: black; }
         .tag-hit { background: #e11d48; color: white; }
 
         /* Окно-микроскоп в правом верхнем углу */
         #pip-microscope {
-            position: absolute; top: 15px; right: 15px; background: rgba(2, 8, 18, 0.95);
-            padding: 12px; border-radius: 10px; border: 1px solid #0284c7;
-            width: 220px; text-align: center; box-shadow: 0 8px 32px rgba(0,0,0,0.85);
+            position: absolute; top: 16px; right: 16px;
+            background: rgba(5, 15, 30, 0.92);
+            padding: 12px; border-radius: 12px;
+            border: 1px solid #38bdf8;
+            width: 220px; text-align: center;
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(8px);
         }
-        #pip-microscope h3 { margin: 0 0 6px 0; font-size: 11px; color: #38bdf8; text-transform: uppercase; }
-        #pip-canvas { width: 220px; height: 160px; display: block; border-radius: 6px; background: #000814; }
+        #pip-microscope h3 { margin: 0 0 6px 0; font-size: 11px; color: #38bdf8; text-transform: uppercase; letter-spacing: 0.8px; }
+        #pip-canvas { width: 220px; height: 160px; display: block; border-radius: 6px; background: #01060f; border: 1px solid #1e3a5f; }
 
+        /* Нижняя панель управления */
         #controls {
-            position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
-            background: rgba(2, 8, 18, 0.92); padding: 10px 22px; border-radius: 30px;
-            border: 1px solid #1e3a5f; display: flex; gap: 10px; align-items: center;
-            box-shadow: 0 6px 30px rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+            position: absolute; bottom: 22px; left: 50%; transform: translateX(-50%);
+            background: rgba(5, 15, 30, 0.92); padding: 10px 22px; border-radius: 30px;
+            border: 1px solid #0284c7; display: flex; gap: 10px; align-items: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px);
         }
         button {
-            background: #091a2d; border: 1px solid #1e4976; color: #93c5fd;
-            padding: 7px 15px; border-radius: 20px; font-size: 11px; cursor: pointer;
+            background: #0b213f; border: 1px solid #1e5288; color: #bae6fd;
+            padding: 8px 16px; border-radius: 20px; font-size: 11px; font-weight: 600; cursor: pointer;
             transition: all 0.2s ease;
         }
-        button:hover { background: #163d66; color: white; border-color: #38bdf8; }
-        button.active { background: #0284c7; color: white; border-color: #38bdf8; font-weight: bold; }
-        .divider { width: 1px; height: 22px; background: #1e3a5f; margin: 0 4px; }
-        #stats { font-size: 11px; color: #38bdf8; font-family: monospace; }
+        button:hover { background: #133968; color: #ffffff; border-color: #38bdf8; transform: translateY(-1px); }
+        button.active { background: #0284c7; color: white; border-color: #38bdf8; box-shadow: 0 0 12px rgba(2, 132, 199, 0.6); }
+        button.detector-active { background: #d97706; color: white; border-color: #fbbf24; box-shadow: 0 0 14px rgba(245, 158, 11, 0.7); }
+        .divider { width: 1px; height: 22px; background: #1e406d; margin: 0 4px; }
+        #stats { font-size: 12px; color: #38bdf8; font-family: 'Consolas', monospace; font-weight: bold; min-width: 110px; text-align: right; }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 </head>
 <body>
     <div id="hud">
-        <h1>Двухщелевой опыт на волне-пилоте ТЭВ</h1>
-        <p><b>Керн электрона</b> намного меньше щели: он летит строго сквозь <i>одну</i> щель, не касаясь стенок.</p>
-        <p><b>Кулоновский хвост матрицы (волна-пилот)</b> накрывает <i>обе</i> щели, рождая интерференционные полосы давления среды, которые направляют частицу в экран.</p>
-        <div style="margin-top: 6px;">
-            <span class="tag tag-core">Компактный керн</span>
-            <span class="tag tag-wave">Интерференция волны</span>
-            <span class="tag tag-hit">Накопление точек</span>
+        <h1>ТЭВ: Волна-пилот и Детектор Наблюдателя</h1>
+        <p><b>Вид по ходу движения частицы вперед к экрану.</b></p>
+        <p><b>1. Волна-пилот:</b> Волновой фронт частицы накрывает обе щели одновременно. Их интерференция за преградой создает гребни давления среды — каналы Бома.</p>
+        <p><b>2. Детектор за правой щелью:</b> При выключении прибор убран. При включении он <i>появляется за щелью</i>, регистрируя пролёт частицы и сбивая фазу волны. Каналы разрушаются — возникает классическая картина из <b>двух полос</b>.</p>
+        <div style="margin-top: 8px;">
+            <span class="tag tag-core">Керн частицы</span>
+            <span class="tag tag-wave">Каналы среды</span>
+            <span class="tag tag-det">Детектор за щелью</span>
+            <span class="tag tag-hit">Экран люминофора</span>
         </div>
     </div>
 
     <div id="pip-microscope">
-        <h3>Микроскоп керна (10⁻¹⁵ м)</h3>
+        <h3>Микроскоп керна (~10⁻¹⁵ м)</h3>
         <canvas id="pip-canvas"></canvas>
-        <p style="font-size: 10px; color: #64748b; margin: 4px 0 0 0;">3-осевой кувырок фотона внутри тора</p>
+        <p style="font-size: 10px; color: #94a3b8; margin: 4px 0 0 0;">3-осевой кувырок фотона внутри тора</p>
     </div>
 
     <div id="controls">
-        <button id="btn-fire" class="active" onclick="toggleAutoFire()">Непрерывный пучок: ВКЛ</button>
-        <button onclick="clearScreen()">Очистить экран</button>
+        <button id="btn-fire" class="active" onclick="toggleAutoFire()">Пучок: ВКЛ</button>
+        <button id="btn-detector" onclick="toggleDetector()">Детектор за щелью: ВЫКЛ</button>
+        <button onclick="clearScreen()">Стереть экран</button>
         <div class="divider"></div>
         <button onclick="setSlitChoice('rand')" id="btn-rand" class="active">Случайная щель</button>
-        <button onclick="setSlitChoice('left')" id="btn-left">Только левая</button>
-        <button onclick="setSlitChoice('right')" id="btn-right">Только правая</button>
+        <button onclick="setSlitChoice('left')" id="btn-left">Левая щель</button>
+        <button onclick="setSlitChoice('right')" id="btn-right">Правая щель</button>
         <div class="divider"></div>
         <span id="stats">Попаданий: 0</span>
     </div>
@@ -80,14 +101,16 @@
 
     <script>
         // =====================================================================
-        // 1. ОСНОВНАЯ 3D-СЦЕНА (ОПЫТ ЮНГА)
+        // 1. СЦЕНА, КАМЕРА (ВИД ПО ХОДУ ДВИЖЕНИЯ) И ОСВЕЩЕНИЕ
         // =====================================================================
         const container = document.getElementById('canvas-container');
         const scene = new THREE.Scene();
-        scene.fog = new THREE.FogExp2(0x010408, 0.015);
+        scene.background = new THREE.Color(0x040913);
+        scene.fog = new THREE.FogExp2(0x040913, 0.016);
 
         const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-        camera.position.set(0, 8.5, 15.5);
+        // Камера установлена ПОЗАДИ источника электронов, направлена вперед на стену и экран
+        camera.position.set(0, 7.8, -14.5);
 
         const renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
@@ -97,71 +120,161 @@
         const controls = new THREE.OrbitControls(camera, renderer.domElement);
         controls.enableDamping = true;
         controls.dampingFactor = 0.05;
-        controls.target.set(0, 0, 1.0);
+        controls.target.set(0, 1.5, 2.0);
 
-        scene.add(new THREE.AmbientLight(0x0c1e36, 1.6));
-        const light = new THREE.DirectionalLight(0x38bdf8, 1.2);
-        light.position.set(10, 20, 10);
-        scene.add(light);
+        // Яркий научно-лабораторный свет
+        scene.add(new THREE.AmbientLight(0x1a365d, 2.4));
+        const keyLight = new THREE.DirectionalLight(0xe0f2fe, 1.8);
+        keyLight.position.set(8, 16, -5);
+        scene.add(keyLight);
+
+        const backLight = new THREE.DirectionalLight(0x0284c7, 1.2);
+        backLight.position.set(-10, 8, 12);
+        scene.add(backLight);
+
+        // Координатная сетка пола лаборатории
+        const floorGrid = new THREE.GridHelper(36, 36, 0x0284c7, 0x0e2542);
+        floorGrid.position.y = -1.2;
+        scene.add(floorGrid);
 
         // =====================================================================
-        // 2. СПЛОШНАЯ НЕПРОНИЦАЕМАЯ ПРЕГРАДА С ДВУМЯ ЩЕЛЯМИ
+        // 2. СТЕНА С ДВУМЯ ЩЕЛЯМИ (СТРОГО ОРИЕНТИРОВАНА ПО ХОДУ ДВИЖЕНИЯ)
         // =====================================================================
-        const SLIT_SEP = 3.2;   // Расстояние между центрами щелей
-        const SLIT_WIDTH = 0.9; // Ширина каждой щели
-        const WALL_Z = 0.0;     // Положение стенки
+        // Движение идет от Z = -7.5 к Z = +7.5.
+        // При взгляде в направлении +Z:
+        // ЛЕВО находится в стороне +X, ПРАВО находится в стороне -X.
+        const SLIT_SEP = 3.6;   // Расстояние между центрами щелей
+        const SLIT_WIDTH = 0.85; // Ширина каждой щели
+        const WALL_Z = 0.0;
+
+        const LEFT_SLIT_X = SLIT_SEP / 2;    // Левая щель (+1.8)
+        const RIGHT_SLIT_X = -SLIT_SEP / 2;  // Правая щель (-1.8)
 
         const barrierGroup = new THREE.Group();
         scene.add(barrierGroup);
 
         const wallMat = new THREE.MeshStandardMaterial({
-            color: 0x0f2744, metalness: 0.85, roughness: 0.25
+            color: 0x0d233a, metalness: 0.85, roughness: 0.3
         });
+        const edgeGlowMat = new THREE.LineBasicMaterial({ color: 0x38bdf8, linewidth: 2 });
 
-        // 3 монолитных блока, формирующих две щели:
-        // Центральная перегородка
-        const centerWallW = SLIT_SEP - SLIT_WIDTH;
-        const wallCenter = new THREE.Mesh(new THREE.BoxGeometry(centerWallW, 5.0, 0.4), wallMat);
-        wallCenter.position.set(0, 1.5, WALL_Z);
-
-        // Левое крыло
-        const wallLeft = new THREE.Mesh(new THREE.BoxGeometry(7.0, 5.0, 0.4), wallMat);
-        wallLeft.position.set(- (centerWallW/2 + SLIT_WIDTH + 3.5), 1.5, WALL_Z);
-
-        // Правое крыло
-        const wallRight = new THREE.Mesh(new THREE.BoxGeometry(7.0, 5.0, 0.4), wallMat);
-        wallRight.position.set(centerWallW/2 + SLIT_WIDTH + 3.5, 1.5, WALL_Z);
-
-        barrierGroup.add(wallCenter, wallLeft, wallRight);
-
-        // Светящиеся окантовки щелей (атомные кромки)
-        const edgeMat = new THREE.LineBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.6 });
-        function addSlitEdges(xCenter) {
-            [-SLIT_WIDTH/2, SLIT_WIDTH/2].forEach(dx => {
-                const geo = new THREE.BufferGeometry().setFromPoints([
-                    new THREE.Vector3(xCenter + dx, -1.0, WALL_Z),
-                    new THREE.Vector3(xCenter + dx, 4.0, WALL_Z)
-                ]);
-                barrierGroup.add(new THREE.Line(geo, edgeMat));
-            });
+        function createWallBlock(w, h, d, x, y, z) {
+            const geo = new THREE.BoxGeometry(w, h, d);
+            const mesh = new THREE.Mesh(geo, wallMat);
+            mesh.position.set(x, y, z);
+            const wire = new THREE.LineSegments(new THREE.EdgesGeometry(geo), edgeGlowMat);
+            mesh.add(wire);
+            barrierGroup.add(mesh);
+            return mesh;
         }
-        addSlitEdges(-SLIT_SEP/2);
-        addSlitEdges(SLIT_SEP/2);
+
+        const centerW = SLIT_SEP - SLIT_WIDTH;
+        createWallBlock(centerW, 5.0, 0.45, 0, 1.5, WALL_Z);
+        // Левое крыло (в сторону +X)
+        createWallBlock(7.5, 5.0, 0.45, (centerW/2 + SLIT_WIDTH + 3.75), 1.5, WALL_Z);
+        // Правое крыло (в сторону -X)
+        createWallBlock(7.5, 5.0, 0.45, -(centerW/2 + SLIT_WIDTH + 3.75), 1.5, WALL_Z);
+
+        // Источник электронов в начале пути
+        const gunGroup = new THREE.Group();
+        gunGroup.position.set(0, 1.5, -7.6);
+        const gunMesh = new THREE.Mesh(
+            new THREE.CylinderGeometry(0.3, 0.45, 1.2, 16),
+            new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.9 })
+        );
+        gunMesh.rotation.x = Math.PI / 2;
+        gunGroup.add(gunMesh);
+        const gunNozzle = new THREE.Mesh(
+            new THREE.TorusGeometry(0.32, 0.05, 12, 24),
+            new THREE.MeshBasicMaterial({ color: 0x38bdf8 })
+        );
+        gunGroup.add(gunNozzle);
+        scene.add(gunGroup);
 
         // =====================================================================
-        // 3. ЭКРАН ДЕТЕКТОРА (С НАКОПЛЕНИЕМ ПОПАДАНИЙ ХИТАЧИ)
+        // 3. ДЕТЕКТОР НАБЛЮДАТЕЛЯ (СТОИТ ЗА ПРАВОЙ ЩЕЛЬЮ, ПО УМОЛЧАНИЮ СКРЫТ)
+        // =====================================================================
+        let isDetectorOn = false;
+        const detectorGroup = new THREE.Group();
+        // Размещён СТРОГО ЗА ЩЕЛЬЮ (z = 1.15) рядом с траекторией выхода
+        const DETECTOR_Z = 1.15;
+        detectorGroup.position.set(RIGHT_SLIT_X, 1.5, DETECTOR_Z);
+        detectorGroup.visible = false; // По умолчанию ВЫКЛЮЧЕН и НЕ ОТОБРАЖАЕТСЯ!
+        scene.add(detectorGroup);
+
+        // Массивная стойка-штатив от пола лаборатории
+        const standMat = new THREE.MeshStandardMaterial({ color: 0x334155, metalness: 0.9, roughness: 0.2 });
+        const standBase = new THREE.Mesh(new THREE.CylinderGeometry(0.45, 0.5, 0.2, 16), standMat);
+        standBase.position.set(0, -2.6, 0);
+        detectorGroup.add(standBase);
+
+        const standPole = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 2.6, 12), standMat);
+        standPole.position.set(0, -1.3, 0);
+        detectorGroup.add(standPole);
+
+        // Корпус детектора с оптическим датчиком
+        const detBodyGeo = new THREE.BoxGeometry(0.7, 0.7, 0.9);
+        const detBodyMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.9, roughness: 0.25 });
+        const detBody = new THREE.Mesh(detBodyGeo, detBodyMat);
+        detBody.add(new THREE.LineSegments(new THREE.EdgesGeometry(detBodyGeo), new THREE.LineBasicMaterial({ color: 0xf59e0b })));
+        detectorGroup.add(detBody);
+
+        // Коллиматорная бленда датчика
+        const lensGeo = new THREE.CylinderGeometry(0.22, 0.28, 0.35, 16);
+        const lensMesh = new THREE.Mesh(lensGeo, new THREE.MeshStandardMaterial({ color: 0x0f172a, metalness: 0.9 }));
+        lensMesh.rotation.x = Math.PI / 2;
+        lensMesh.position.set(0, 0, -0.45);
+        detectorGroup.add(lensMesh);
+
+        // Сканирующий лазерный луч поперек траектории керна
+        const scanLaserGeo = new THREE.CylinderGeometry(0.018, 0.018, 2.2, 8);
+        const scanLaserMat = new THREE.MeshBasicMaterial({ color: 0xf59e0b, transparent: true, opacity: 0.9 });
+        const scanLaser = new THREE.Mesh(scanLaserGeo, scanLaserMat);
+        detectorGroup.add(scanLaser);
+
+        // Индикатор фиксации частицы
+        const detStatusLed = new THREE.PointLight(0xf59e0b, 2.0, 5);
+        detStatusLed.position.set(0, 0.5, 0);
+        detectorGroup.add(detStatusLed);
+
+        function toggleDetector() {
+            isDetectorOn = !isDetectorOn;
+            detectorGroup.visible = isDetectorOn; // Показываем или скрываем за щелью
+
+            const btn = document.getElementById('btn-detector');
+            if (isDetectorOn) {
+                btn.classList.add('detector-active');
+                btn.innerText = "Детектор за щелью: ВКЛ";
+            } else {
+                btn.classList.remove('detector-active');
+                btn.innerText = "Детектор за щелью: ВЫКЛ";
+            }
+            buildGuideChannels();
+        }
+
+        // =====================================================================
+        // 4. ЭКРАН РЕГИСТРАЦИИ (ЛЮМИНОФОР С НЕОНОВОЙ ОГРАНКОЙ)
         // =====================================================================
         const SCREEN_Z = 7.5;
-        const screenGeo = new THREE.PlaneGeometry(16, 6);
-        const screenMat = new THREE.MeshBasicMaterial({
-            color: 0x031224, side: THREE.DoubleSide, transparent: true, opacity: 0.75
-        });
-        const screenMesh = new THREE.Mesh(screenGeo, screenMat);
-        screenMesh.position.set(0, 1.5, SCREEN_Z);
-        scene.add(screenMesh);
+        const screenGroup = new THREE.Group();
+        screenGroup.position.set(0, 1.5, SCREEN_Z);
+        scene.add(screenGroup);
 
-        // Холст накопления точек на экране
-        const MAX_HITS = 2500;
+        const screenPanel = new THREE.Mesh(
+            new THREE.PlaneGeometry(16, 5.5),
+            new THREE.MeshStandardMaterial({
+                color: 0x071526, roughness: 0.4, metalness: 0.7, side: THREE.DoubleSide
+            })
+        );
+        screenGroup.add(screenPanel);
+
+        const screenBorder = new THREE.LineSegments(
+            new THREE.EdgesGeometry(new THREE.BoxGeometry(16, 5.5, 0.1)),
+            new THREE.LineBasicMaterial({ color: 0x00f0ff, linewidth: 2 })
+        );
+        screenGroup.add(screenBorder);
+
+        const MAX_HITS = 3500;
         const hitPositions = new Float32Array(MAX_HITS * 3);
         const hitColors = new Float32Array(MAX_HITS * 3);
         let hitCount = 0;
@@ -171,22 +284,26 @@
         hitsGeo.setAttribute('color', new THREE.BufferAttribute(hitColors, 3));
 
         const hitsMat = new THREE.PointsMaterial({
-            size: 0.08, vertexColors: true, transparent: true, opacity: 0.9, blending: THREE.AdditiveBlending
+            size: 0.11, vertexColors: true, transparent: true, opacity: 0.95, blending: THREE.AdditiveBlending
         });
         const hitsMesh = new THREE.Points(hitsGeo, hitsMat);
         scene.add(hitsMesh);
 
         function registerHit(x, y) {
-            if (hitCount >= MAX_HITS) hitCount = 0; // перезапись по кругу
-            const idx = hitCount * 3;
+            const idx = (hitCount % MAX_HITS) * 3;
             hitPositions[idx + 0] = x;
             hitPositions[idx + 1] = y;
-            hitPositions[idx + 2] = SCREEN_Z - 0.02; // прямо на поверхности экрана
+            hitPositions[idx + 2] = SCREEN_Z - 0.03;
 
-            // Зеленовато-голубое люминофорное свечение
-            hitColors[idx + 0] = 0.2;
-            hitColors[idx + 1] = 0.9;
-            hitColors[idx + 2] = 1.0;
+            if (isDetectorOn) {
+                hitColors[idx + 0] = 1.0;
+                hitColors[idx + 1] = 0.65;
+                hitColors[idx + 2] = 0.15;
+            } else {
+                hitColors[idx + 0] = 0.1;
+                hitColors[idx + 1] = 0.95;
+                hitColors[idx + 2] = 0.85;
+            }
 
             hitCount++;
             hitsGeo.attributes.position.needsUpdate = true;
@@ -198,206 +315,265 @@
             hitCount = 0;
             for (let i = 0; i < MAX_HITS * 3; i++) hitPositions[i] = 0;
             hitsGeo.attributes.position.needsUpdate = true;
-            document.getElementById('stats').innerText = `Попаданий: 0`;
+            document.getElementById('stats').innerText = `Хитов: 0`;
         }
 
         // =====================================================================
-        // 4. ДИНАМИЧЕСКАЯ ИНТЕРФЕРЕНЦИОННАЯ СЕТКА УПРУГОЙ СРЕДЫ
+        // 5. ДИНАМИЧЕСКОЕ ВОЛНОВОЕ ПОЛОТНО СРЕДЫ (ВОЛНА-ПИЛОТ)
         // =====================================================================
-        // Горизонтальная плоскость сгустков и разряжений упругой матрицы
-        const gridW = 16, gridH = 15;
-        const nx = 90, nz = 80;
-        const fieldGeo = new THREE.BufferGeometry();
-        const fieldCoords = [];
-        const baseFieldCoords = [];
+        const waveW = 18, waveL = 17;
+        const segX = 110, segZ = 110;
+        const wavePlaneGeo = new THREE.PlaneGeometry(waveW, waveL, segX, segZ);
+        wavePlaneGeo.rotateX(-Math.PI / 2);
 
-        for (let iz = 0; iz < nz; iz++) {
-            const z = (iz / (nz - 1)) * gridH - 7.0; // от -7 до +8
-            for (let ix = 0; ix < nx; ix++) {
-                const x = (ix / (nx - 1)) * gridW - gridW/2;
-                fieldCoords.push(x, -1.0, z);
-                baseFieldCoords.push({ x: x, y: -1.0, z: z });
-            }
-        }
-        fieldGeo.setAttribute('position', new THREE.Float32BufferAttribute(fieldCoords, 3));
-        const fieldMat = new THREE.PointsMaterial({
-            color: 0x0284c7, size: 0.04, transparent: true, opacity: 0.35, blending: THREE.AdditiveBlending
+        const wavePlaneMat = new THREE.MeshStandardMaterial({
+            color: 0x0284c7,
+            emissive: 0x042444,
+            wireframe: true,
+            transparent: true,
+            opacity: 0.38,
+            roughness: 0.3
         });
-        const fieldMesh = new THREE.Points(fieldGeo, fieldMat);
-        scene.add(fieldMesh);
+        const waveFieldMesh = new THREE.Mesh(wavePlaneGeo, wavePlaneMat);
+        waveFieldMesh.position.set(0, 0.4, 0.5);
+        scene.add(waveFieldMesh);
+
+        // Направляющие линии потока Бома (визуализация каналов)
+        const guideLinesGroup = new THREE.Group();
+        scene.add(guideLinesGroup);
+        const guideLinesMat = new THREE.LineBasicMaterial({ color: 0x00f0ff, transparent: true, opacity: 0.22 });
+
+        function buildGuideChannels() {
+            while(guideLinesGroup.children.length > 0) {
+                guideLinesGroup.remove(guideLinesGroup.children[0]);
+            }
+            [LEFT_SLIT_X, RIGHT_SLIT_X].forEach(slitX => {
+                for (let a = -1.2; a <= 1.2; a += 0.22) {
+                    const pts = [];
+                    for (let z = WALL_Z; z <= SCREEN_Z; z += 0.5) {
+                        const progress = (z - WALL_Z) / (SCREEN_Z - WALL_Z);
+                        let xVal = slitX;
+                        if (!isDetectorOn) {
+                            // Формирование интерференционных рукавов
+                            xVal = slitX * (1.0 - progress * 0.7) + (a * 3.4) * Math.sin(progress * Math.PI * 0.5);
+                        } else {
+                            // Прямой классический разлёт частиц за щелью
+                            xVal = slitX + a * progress * 0.75;
+                        }
+                        pts.push(new THREE.Vector3(xVal, 1.45, z));
+                    }
+                    const geom = new THREE.BufferGeometry().setFromPoints(pts);
+                    guideLinesGroup.add(new THREE.Line(geom, guideLinesMat));
+                }
+            });
+        }
+        buildGuideChannels();
 
         // =====================================================================
-        // 5. КОМПАКТНЫЙ КЕРН ЭЛЕКТРОНА (НАМНОГО МЕНЬШЕ ЩЕЛИ!)
+        // 6. КОМПАКТНЫЙ КЕРН ЭЛЕКТРОНА
         // =====================================================================
-        // Радиус щели = 0.45. Радиус керна = 0.12! Он свободно проходит внутрь.
         const R_CORE = 0.12;
         const electronCore = new THREE.Group();
         scene.add(electronCore);
 
-        const coreMesh = new THREE.Mesh(
-            new THREE.TorusGeometry(R_CORE, 0.02, 16, 32),
+        const coreTorus = new THREE.Mesh(
+            new THREE.TorusGeometry(R_CORE, 0.022, 16, 32),
             new THREE.MeshBasicMaterial({ color: 0x38bdf8 })
         );
-        electronCore.add(coreMesh);
+        electronCore.add(coreTorus);
 
         const photonSpark = new THREE.Mesh(
-            new THREE.SphereGeometry(0.04, 12, 12),
+            new THREE.SphereGeometry(0.045, 12, 12),
             new THREE.MeshBasicMaterial({ color: 0xffffff })
         );
         electronCore.add(photonSpark);
 
-        // Широкая кулоновская волна-пилот, набегающая на обе щели
-        const pilotWaveRing = new THREE.Mesh(
-            new THREE.RingGeometry(1.5, 1.58, 48),
-            new THREE.MeshBasicMaterial({ color: 0x00f0ff, transparent: true, opacity: 0.4, side: THREE.DoubleSide })
+        // Широкий кулоновский волновой фронт
+        const coreAura = new THREE.Mesh(
+            new THREE.RingGeometry(0.4, 2.6, 32),
+            new THREE.MeshBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.35, side: THREE.DoubleSide })
         );
-        pilotWaveRing.rotation.x = Math.PI / 2;
-        electronCore.add(pilotWaveRing);
+        coreAura.rotation.x = Math.PI / 2;
+        electronCore.add(coreAura);
+
+        const coreLight = new THREE.PointLight(0x38bdf8, 2.0, 4);
+        electronCore.add(coreLight);
 
         // =====================================================================
-        // 6. ФИЗИЧЕСКАЯ ТРАЕКТОРИЯ БОМА (УПРАВЛЕНИЕ ВОЛНОЙ)
+        // 7. ЛОГИКА ВЫБОРА ЩЕЛЕЙ И ПОЛЁТА
         // =====================================================================
         let slitChoice = 'rand';
         function setSlitChoice(c) {
             slitChoice = c;
-            document.getElementById('btn-rand').classList.toggle('active', c === 'rand');
-            document.getElementById('btn-left').classList.toggle('active', c === 'left');
-            document.getElementById('btn-right').classList.toggle('active', c === 'right');
+            ['rand', 'left', 'right'].forEach(t => {
+                document.getElementById('btn-' + t).classList.toggle('active', c === t);
+            });
         }
 
         let autoFire = true;
         function toggleAutoFire() {
             autoFire = !autoFire;
-            document.getElementById('btn-fire').classList.toggle('active', autoFire);
-            document.getElementById('btn-fire').innerText = autoFire ? "Непрерывный пучок: ВКЛ" : "Непрерывный пучок: ПАУЗА";
+            const btn = document.getElementById('btn-fire');
+            btn.classList.toggle('active', autoFire);
+            btn.innerText = autoFire ? "Пучок: ВКЛ" : "Пучок: ПАУЗА";
         }
 
-        // Параметры текущего летящего электрона
-        let pZ = -6.5;
-        let chosenSlitX = -SLIT_SEP/2;
-        let targetFringeX = 0;
+        let pZ = -7.5;
+        let chosenSlitX = LEFT_SLIT_X;
+        let targetScreenX = 0;
         let pY = 1.5;
 
+        function pickTargetX(slitX) {
+            if (!isDetectorOn) {
+                // ИНТЕРФЕРЕНЦИЯ: полосы максимумов
+                const fringeOrders = [-2.8, -1.4, 0.0, 1.4, 2.8];
+                const weights = [0.15, 0.25, 0.35, 0.25, 0.15];
+                let r = Math.random();
+                let chosenFringe = 0;
+                let acc = 0;
+                for (let i = 0; i < weights.length; i++) {
+                    acc += weights[i];
+                    if (r <= acc) { chosenFringe = fringeOrders[i]; break; }
+                }
+                return chosenFringe + (Math.random() - 0.5) * 0.38;
+            } else {
+                // ДЕТЕКТОР ВКЛЮЧЕН: классическое пятно прямо напротив щели
+                return slitX + (Math.random() - 0.5) * 0.85;
+            }
+        }
+
         function spawnElectron() {
-            pZ = -6.5;
-            pY = 1.5 + (Math.random() - 0.5) * 0.4;
+            pZ = -7.5;
+            pY = 1.5 + (Math.random() - 0.5) * 0.3;
 
-            // Выбор щели, через которую летит компактный керн
-            if (slitChoice === 'left') chosenSlitX = -SLIT_SEP/2;
-            else if (slitChoice === 'right') chosenSlitX = SLIT_SEP/2;
-            else chosenSlitX = (Math.random() < 0.5) ? -SLIT_SEP/2 : SLIT_SEP/2;
+            // Теперь кнопки строго согласованы: Левая = LEFT_SLIT_X, Правая = RIGHT_SLIT_X
+            if (slitChoice === 'left') chosenSlitX = LEFT_SLIT_X;
+            else if (slitChoice === 'right') chosenSlitX = RIGHT_SLIT_X;
+            else chosenSlitX = (Math.random() < 0.5) ? LEFT_SLIT_X : RIGHT_SLIT_X;
 
-            // Случайный выбор интерференционной полосы по распределению cos^2
-            // Полосы максимумов: x = 0, +-1.4, +-2.8, +-4.2
-            const fringeOrder = Math.floor(Math.random() * 5) - 2; // -2, -1, 0, 1, 2
-            const lambdaD = 1.4; // масштаб полос
-            targetFringeX = fringeOrder * lambdaD + (Math.random() - 0.5) * 0.35;
+            targetScreenX = pickTargetX(chosenSlitX);
         }
         spawnElectron();
 
         // =====================================================================
-        // 7. МИКРОСКОП В УГЛУ: 3-ОСЕВОЙ КУВЫРОК В РЕАЛЬНОМ МАСШТАБЕ
+        // 8. МИКРОСКОП КЕРНА
         // =====================================================================
         const pipCanvas = document.getElementById('pip-canvas');
         const pipScene = new THREE.Scene();
-        const pipCamera = new THREE.PerspectiveCamera(40, 220/160, 0.1, 20);
+        const pipCamera = new THREE.PerspectiveCamera(40, 220 / 160, 0.1, 20);
         pipCamera.position.set(0, 0, 3.2);
 
         const pipRenderer = new THREE.WebGLRenderer({ canvas: pipCanvas, antialias: true, alpha: true });
         pipRenderer.setSize(220, 160);
 
-        pipScene.add(new THREE.AmbientLight(0xffffff, 1.5));
-        const pipLight = new THREE.PointLight(0x38bdf8, 2, 10);
-        pipLight.position.set(2, 3, 2);
-        pipScene.add(pipLight);
+        pipScene.add(new THREE.AmbientLight(0xffffff, 1.8));
+        const pLight = new THREE.PointLight(0x38bdf8, 2.5, 10);
+        pLight.position.set(2, 3, 2);
+        pipScene.add(pLight);
 
-        // Тор в микроскопе
         const pipTumbleGroup = new THREE.Group();
         pipScene.add(pipTumbleGroup);
 
         const pipTorus = new THREE.Mesh(
-            new THREE.TorusGeometry(0.85, 0.035, 20, 80),
-            new THREE.MeshStandardMaterial({ color: 0x38bdf8, emissive: 0x0284c7, roughness: 0.1 })
+            new THREE.TorusGeometry(0.85, 0.04, 20, 80),
+            new THREE.MeshStandardMaterial({ color: 0x38bdf8, emissive: 0x0284c7, roughness: 0.15 })
         );
         pipTumbleGroup.add(pipTorus);
 
         const pipPhoton = new THREE.Mesh(
-            new THREE.SphereGeometry(0.08, 16, 16),
+            new THREE.SphereGeometry(0.09, 16, 16),
             new THREE.MeshBasicMaterial({ color: 0xffffff })
         );
         pipTumbleGroup.add(pipPhoton);
 
         // =====================================================================
-        // 8. ГЛАВНЫЙ ЦИКЛ АНИМАЦИИ
+        // 9. ГЛАВНЫЙ ЦИКЛ АНИМАЦИИ
         // =====================================================================
         let clock = 0;
-        const waveK = 2.8; // волновое число интерференции
+        const waveK = 2.4;
 
         function animate() {
             requestAnimationFrame(animate);
-            clock += 0.03;
+            clock += 0.035;
 
-            // Рендер микроскопа (кувырок по 3 осям)
-            const pipAngle = clock * 6.0;
+            // Кувырок фотона в торе
+            const pipAngle = clock * 6.5;
             pipPhoton.position.set(0.85 * Math.cos(pipAngle), 0.85 * Math.sin(pipAngle), 0);
-            pipTumbleGroup.rotation.x += 0.02;
-            pipTumbleGroup.rotation.y += 0.028;
-            pipTumbleGroup.rotation.z += 0.041;
+            pipTumbleGroup.rotation.x += 0.022;
+            pipTumbleGroup.rotation.y += 0.031;
+            pipTumbleGroup.rotation.z += 0.045;
             pipRenderer.render(pipScene, pipCamera);
 
-            // Полет электрона сквозь щель
+            // Полет частицы
             if (autoFire) {
-                pZ += 0.09;
+                pZ += 0.11;
 
                 let curX = 0;
                 if (pZ < WALL_Z) {
-                    // 1. До щели: керн плавно целится в выбранную щель
-                    const prog = (pZ - (-6.5)) / (WALL_Z - (-6.5));
-                    curX = THREE.MathUtils.lerp(0, chosenSlitX, Math.pow(prog, 1.4));
+                    // 1. До щели: керн плавно следует в выбранную щель
+                    const prog = (pZ - (-7.5)) / (WALL_Z - (-7.5));
+                    curX = THREE.MathUtils.lerp(0, chosenSlitX, Math.pow(prog, 1.3));
                 } else if (pZ >= WALL_Z && pZ < SCREEN_Z) {
-                    // 2. После щели: интерференционная волна рулит керн к полосе!
+                    // Пролёт мимо детектора за правой щелью
+                    if (isDetectorOn && chosenSlitX === RIGHT_SLIT_X && Math.abs(pZ - DETECTOR_Z) < 0.45) {
+                        detStatusLed.intensity = 5.5; // Вспышка регистрации керна детектором
+                    } else if (isDetectorOn) {
+                        detStatusLed.intensity = 2.0;
+                    }
+
+                    // 2. За щелью: следование по интерференционному или классическому каналу
                     const prog = (pZ - WALL_Z) / (SCREEN_Z - WALL_Z);
-                    curX = THREE.MathUtils.lerp(chosenSlitX, targetFringeX, Math.pow(prog, 0.85));
+                    curX = THREE.MathUtils.lerp(chosenSlitX, targetScreenX, Math.pow(prog, 0.85));
                 } else {
-                    // 3. Удар в экран: оставляем постоянный люминофорный след
-                    registerHit(targetFringeX, pY);
+                    // 3. Удар в экран регистрации
+                    registerHit(targetScreenX, pY);
                     spawnElectron();
                 }
 
                 electronCore.position.set(curX, pY, pZ);
 
-                // Вращение крошечного керна
-                coreMesh.rotation.x += 0.05;
-                coreMesh.rotation.y += 0.07;
+                coreTorus.rotation.x += 0.06;
+                coreTorus.rotation.y += 0.08;
                 photonSpark.position.set(
-                    R_CORE * Math.cos(clock * 12.0),
-                    R_CORE * Math.sin(clock * 12.0),
+                    R_CORE * Math.cos(clock * 14.0),
+                    R_CORE * Math.sin(clock * 14.0),
                     0
                 );
             }
 
-            // Динамическая интерференция упругой матрицы на полу
-            const fPos = fieldMesh.geometry.attributes.position.array;
-            for (let i = 0; i < baseFieldCoords.length; i++) {
-                const pt = baseFieldCoords[i];
-                let amp = 0;
+            // Динамический рельеф среды волны-пилота
+            const posAttr = wavePlaneGeo.attributes.position;
+            for (let i = 0; i < posAttr.count; i++) {
+                const vx = posAttr.getX(i);
+                const vz = posAttr.getZ(i);
 
-                if (pt.z < WALL_Z) {
-                    // До щелей: одиночная волна-пилот от частицы
-                    const r = Math.sqrt((pt.x - electronCore.position.x)**2 + (pt.z - electronCore.position.z)**2);
-                    amp = Math.cos(waveK * r - clock * 4.0) / (1.0 + r * 0.8);
+                let h = 0;
+                if (vz < WALL_Z) {
+                    // До преграды: единый волновой фронт охватывает обе щели
+                    const r = Math.hypot(vx - electronCore.position.x, vz - electronCore.position.z);
+                    h = Math.cos(waveK * r - clock * 4.5) / (1.0 + r * 0.45);
                 } else {
-                    // За щелями: ДВЕ когерентные волны из щелей интерферируют!
-                    const r1 = Math.sqrt((pt.x - (-SLIT_SEP/2))**2 + pt.z**2);
-                    const r2 = Math.sqrt((pt.x - (SLIT_SEP/2))**2 + pt.z**2);
-                    // Сумма двух волн Гюйгенса
-                    amp = (Math.cos(waveK * r1 - clock * 4.0) + Math.cos(waveK * r2 - clock * 4.0)) * 0.5;
-                    amp = amp / (1.0 + Math.sqrt(pt.z) * 0.5);
+                    // За преградой:
+                    const r1 = Math.hypot(vx - LEFT_SLIT_X, vz - WALL_Z);
+                    const r2 = Math.hypot(vx - RIGHT_SLIT_X, vz - WALL_Z);
+
+                    if (!isDetectorOn) {
+                        // ДЕТЕКТОР ВЫКЛ: чистое когерентное сложение волн среды
+                        const w1 = Math.cos(waveK * r1 - clock * 4.5) / (1.0 + Math.sqrt(r1) * 0.6);
+                        const w2 = Math.cos(waveK * r2 - clock * 4.5) / (1.0 + Math.sqrt(r2) * 0.6);
+                        h = (w1 + w2) * 0.55;
+                    } else {
+                        // ДЕТЕКТОР ВКЛ: измерение за правой щелью разрушает интерференцию
+                        const w1 = Math.cos(waveK * r1 - clock * 4.5) / (1.0 + Math.sqrt(r1) * 0.6);
+                        const w2Noise = Math.cos(waveK * 1.8 * r2 - clock * 7.5 + Math.sin(vx * 4.0)) * 0.3;
+                        h = (chosenSlitX === LEFT_SLIT_X ? w1 : w2Noise) * 0.5;
+                    }
                 }
 
-                fPos[i * 3 + 1] = pt.y + amp * 0.18; // Вертикальное смещение точек матрицы
+                posAttr.setY(i, h * 0.35);
             }
-            fieldMesh.geometry.attributes.position.needsUpdate = true;
+            posAttr.needsUpdate = true;
+            wavePlaneGeo.computeVertexNormals();
 
             controls.update();
             renderer.render(scene, camera);
