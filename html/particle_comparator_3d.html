@@ -2,16 +2,16 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>ТЭВ: Компаратор Частиц (Комптоновский масштаб и кулоновские хвосты)</title>
+    <title>ТЭВ: Компаратор Частиц — Амплитуда r(p,q) и Топология Кернов</title>
     <style>
         body { margin: 0; overflow: hidden; background: #010408; font-family: 'Segoe UI', Arial, sans-serif; color: #e2e8f0; user-select: none; }
         #canvas-container { width: 100vw; height: 100vh; display: block; }
 
         /* Верхняя панель */
         #hud-main {
-            position: absolute; top: 15px; left: 15px; background: rgba(2, 8, 18, 0.9);
+            position: absolute; top: 15px; left: 15px; background: rgba(2, 8, 18, 0.92);
             padding: 16px 22px; border-radius: 10px; border: 1px solid #1e3a5f;
-            max-width: 440px; box-shadow: 0 8px 32px rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+            max-width: 460px; box-shadow: 0 8px 32px rgba(0,0,0,0.85); backdrop-filter: blur(8px);
         }
         h1 { margin: 0 0 6px 0; font-size: 15px; color: #38bdf8; text-transform: uppercase; letter-spacing: 1.5px; }
         p { margin: 4px 0; font-size: 12px; line-height: 1.4; color: #94a3b8; }
@@ -23,9 +23,9 @@
 
         /* Карточка данных */
         #node-card {
-            position: absolute; top: 15px; right: 15px; background: rgba(2, 8, 18, 0.9);
+            position: absolute; top: 15px; right: 15px; background: rgba(2, 8, 18, 0.92);
             padding: 16px 20px; border-radius: 10px; border: 1px solid #1e3a5f;
-            width: 310px; box-shadow: 0 8px 32px rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+            width: 330px; box-shadow: 0 8px 32px rgba(0,0,0,0.85); backdrop-filter: blur(8px);
         }
         #node-card h2 { margin: 0 0 8px 0; font-size: 14px; color: #38bdf8; border-bottom: 1px solid #1e3a5f; padding-bottom: 6px; }
         .row { display: flex; justify-content: space-between; font-size: 11px; margin: 5px 0; }
@@ -36,9 +36,10 @@
         /* Нижнее меню */
         #nav {
             position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
-            background: rgba(2, 8, 18, 0.92); padding: 8px 18px; border-radius: 30px;
+            background: rgba(2, 8, 18, 0.94); padding: 8px 18px; border-radius: 30px;
             border: 1px solid #1e3a5f; display: flex; gap: 8px; align-items: center;
             box-shadow: 0 6px 30px rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+            flex-wrap: wrap; justify-content: center;
         }
         button {
             background: #091a2d; border: 1px solid #1e4976; color: #93c5fd;
@@ -47,6 +48,8 @@
         }
         button:hover { background: #163d66; color: white; border-color: #38bdf8; }
         button.active { background: #0284c7; color: white; border-color: #38bdf8; font-weight: bold; box-shadow: 0 0 12px rgba(56,189,248,0.5); }
+        button.btn-special { border-color: #f59e0b; color: #fde68a; }
+        button.btn-special.active { background: #d97706; color: white; border-color: #fbbf24; box-shadow: 0 0 12px rgba(245,158,11,0.6); }
         .divider { width: 1px; height: 22px; background: #1e3a5f; margin: 0 4px; }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -54,8 +57,8 @@
 </head>
 <body>
     <div id="hud-main">
-        <h1>Топологический Атлас ТЭВ v3.0</h1>
-        <p>Плотные тонкие керны Золотого ряда, кулоновские хвосты среды ($1/r^2$) и точный Комптоновский масштаб.</p>
+        <h1>Топологический Атлас ТЭВ v3.3</h1>
+        <p>Амплитуда жгута поперечного импульса: $r(p,q) = (p/q)\cdot\alpha / R(p,q)$. В физическом масштабе толщина колец мюона и тау близка к толщине электрона.</p>
         <div style="margin-top: 6px;">
             <span class="tag tag-e">e⁻ Тор R_e</span>
             <span class="tag tag-mu">μ⁻ Узел T(3,2)</span>
@@ -66,13 +69,13 @@
 
     <div id="node-card">
         <h2 id="card-title">Электрон (e⁻)</h2>
-        <div class="row"><span class="lbl">Комптоновский масштаб:</span><span class="val" id="card-compton">R_e = 386.16 фм</span></div>
+        <div class="row"><span class="lbl">Комптоновский радиус:</span><span class="val" id="card-compton">R_e = 386.16 фм</span></div>
         <div class="row"><span class="lbl">Топология намотки:</span><span class="val" id="card-topo">Тор T(1,1)</span></div>
-        <div class="row"><span class="lbl">Толщина керна r₀:</span><span class="val" id="card-core">2.818 фм (α R_e)</span></div>
+        <div class="row"><span class="lbl">Амплитуда жгута r(p,q):</span><span class="val" id="card-core">2.818 фм (1.0·α R_e)</span></div>
         <div class="row"><span class="lbl">Кулоновский хвост:</span><span class="val" id="card-tail">Втягивание матрицы (-e)</span></div>
         <div class="row"><span class="lbl">Масса покоя:</span><span class="val" id="card-mass">0.510999 МэВ</span></div>
         <div class="desc" id="card-desc">
-            Широчайший макро-волновод. Огромный кулоновский хвост упругого втягивания матрицы формирует волну-пилот в опыте с 2 щелями.
+            Базовый тор T(1,1). Тонкое замкнутое кольцо. Втягивание среды формирует протяженный кулоновский хвост (волну-пилот).
         </div>
     </div>
 
@@ -83,7 +86,9 @@
         <button id="btn-tau" onclick="setView('tau')">Тау T(5,3)</button>
         <button id="btn-p" onclick="setView('p')">Протон</button>
         <div class="divider"></div>
-        <button id="btn-scale" onclick="toggleScale()">Комптоновский масштаб: ВЫКЛ</button>
+        <button id="btn-reset" onclick="resetCamera()">Сброс обзора</button>
+        <button id="btn-thickness" class="btn-special" onclick="toggleCoreThickness()">Амплитуда r: ДЕМО</button>
+        <button id="btn-scale" onclick="toggleScale()">Масштаб R: ВЫКЛ</button>
     </div>
 
     <div id="canvas-container"></div>
@@ -94,7 +99,7 @@
         scene.fog = new THREE.FogExp2(0x010408, 0.015);
 
         const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-        camera.position.set(0, 7, 20);
+        camera.position.set(0, 6, 20);
 
         const renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
@@ -104,8 +109,14 @@
         const controls = new THREE.OrbitControls(camera, renderer.domElement);
         controls.enableDamping = true;
         controls.dampingFactor = 0.06;
+        controls.target.set(0, 0, 0);
 
-        scene.add(new THREE.AmbientLight(0x0a1626, 1.8));
+        // Пользователь управляет камерой свободно
+        controls.addEventListener('start', () => {
+            isTransitioningCamera = false;
+        });
+
+        scene.add(new THREE.AmbientLight(0x0a1626, 2.2));
         const light = new THREE.DirectionalLight(0x38bdf8, 1.4);
         light.position.set(10, 20, 15);
         scene.add(light);
@@ -113,15 +124,15 @@
         const POS_X = { e: -7.5, mu: -2.5, tau: 2.5, p: 7.5 };
 
         // ---------------------------------------------------------------------
-        // КЛАССЫ ГЕОМЕТРИИ (ТОНКИЕ, ПЛОТНЫЕ КЕРНЫ)
+        // КЛАССЫ КРИВЫХ С ДИНАМИЧЕСКОЙ АМПЛИТУДОЙ r(p,q)
         // ---------------------------------------------------------------------
 
-        // Мюон: Тор T(3,2) — плотнее и тоньше
-        class MuonCurveDense extends THREE.Curve {
-            constructor() {
+        // Мюон T(3,2): R - большой радиус, r - амплитуда поперечного импульса
+        class MuonCurveDynamic extends THREE.Curve {
+            constructor(R = 1.35, r = 0.50) {
                 super();
-                this.R = 1.35; // Компактный радиус
-                this.r = 0.52; // Стянутый малый радиус
+                this.R = R;
+                this.r = r;
             }
             getPoint(t) {
                 const theta = t * Math.PI * 2;
@@ -132,12 +143,12 @@
             }
         }
 
-        // Тау-лептон: Тор T(5,3) — сверхплотное тонкое плетение
-        class TauCurveDense extends THREE.Curve {
-            constructor() {
+        // Тау-лептон T(5,3): R - большой радиус, r - амплитуда поперечного импульса
+        class TauCurveDynamic extends THREE.Curve {
+            constructor(R = 1.15, r = 0.60) {
                 super();
-                this.R = 1.15; // Еще компактнее
-                this.r = 0.62; // Плотная упаковка витков
+                this.R = R;
+                this.r = r;
             }
             getPoint(t) {
                 const theta = t * Math.PI * 2;
@@ -149,6 +160,7 @@
         }
 
         // Протон: Самозатягивающийся трилистник
+        // Вершины лепестков строго при t = 1/6, 3/6 (0.5), 5/6
         class ProtonCinchedCurve extends THREE.Curve {
             constructor() {
                 super();
@@ -163,13 +175,12 @@
         }
 
         // ---------------------------------------------------------------------
-        // КУЛОНОВСКИЕ ХВОСТЫ УПРУГОЙ СРЕДЫ (1/r^2) С ПОЛЯРНОСТЬЮ
+        // КУЛОНОВСКИЕ ХВОСТЫ УПРУГОЙ СРЕДЫ
         // ---------------------------------------------------------------------
         function createCoulombTail(parentGroup, colorHex, isPositive = false) {
             const tailGroup = new THREE.Group();
             parentGroup.add(tailGroup);
 
-            // Концентрические кольца упругих деформаций (градиент 1/r)
             const nRings = 7;
             const rings = [];
 
@@ -188,7 +199,6 @@
                 rings.push({ mesh: ringMesh, baseR: rInner, phase: i * 0.5 });
             }
 
-            // Дополнительный объемный сферический ореол
             const haloGeo = new THREE.SphereGeometry(3.6, 24, 24);
             const haloMat = new THREE.MeshBasicMaterial({
                 color: colorHex,
@@ -202,9 +212,6 @@
             return { group: tailGroup, rings: rings, isPositive: isPositive };
         }
 
-        // ---------------------------------------------------------------------
-        // СБОРКА ЧАСТИЦ
-        // ---------------------------------------------------------------------
         function createPedestal(x, colorHex) {
             const base = new THREE.Mesh(
                 new THREE.CylinderGeometry(1.9, 2.1, 0.35, 32),
@@ -229,75 +236,148 @@
 
         const tailControllers = [];
 
-        // 1. ЭЛЕКТРОН: Тонкий тор + Огромный кулоновский хвост
+        // ---------------------------------------------------------------------
+        // СБОРКА ЧАСТИЦ
+        // ---------------------------------------------------------------------
+        let isPhysicalCore = false; // Флаг реальной физической амплитуды r(p,q)
+
+        // 1. ЭЛЕКТРОН
         const eGroup = new THREE.Group();
         eGroup.position.set(POS_X.e, 0, 0);
         scene.add(eGroup);
 
-        const eMesh = new THREE.Mesh(
-            new THREE.TorusGeometry(1.85, 0.024, 24, 120), // Очень тонкий керн
-            new THREE.MeshStandardMaterial({ color: 0x38bdf8, emissive: 0x0284c7, roughness: 0.2 })
-        );
-        eGroup.add(eMesh);
-
-        const ePulse = new THREE.Mesh(new THREE.SphereGeometry(0.065, 16, 16), new THREE.MeshBasicMaterial({ color: 0xffffff }));
+        let eMesh;
+        const ePulse = new THREE.Mesh(new THREE.SphereGeometry(0.08, 16, 16), new THREE.MeshBasicMaterial({ color: 0xffffff }));
         eGroup.add(ePulse);
-
         tailControllers.push(createCoulombTail(eGroup, 0x0284c7, false));
 
-        // 2. МЮОН: T(3,2) плотный и тонкий + средний кулоновский хвост
+        // 2. МЮОН
         const muGroup = new THREE.Group();
         muGroup.position.set(POS_X.mu, 0, 0);
         scene.add(muGroup);
 
-        const muCurve = new MuonCurveDense();
-        const muMesh = new THREE.Mesh(
-            new THREE.TubeGeometry(muCurve, 200, 0.038, 16, true), // Тонкая нить (0.038 вместо 0.075)
-            new THREE.MeshStandardMaterial({ color: 0x10b981, emissive: 0x047857, roughness: 0.3, metalness: 0.7 })
-        );
-        muGroup.add(muMesh);
-
-        const muPulse = new THREE.Mesh(new THREE.SphereGeometry(0.07, 16, 16), new THREE.MeshBasicMaterial({ color: 0xffffff }));
+        let muCurve = new MuonCurveDynamic();
+        let muMesh;
+        const muPulse = new THREE.Mesh(new THREE.SphereGeometry(0.075, 16, 16), new THREE.MeshBasicMaterial({ color: 0xffffff }));
         muGroup.add(muPulse);
-
         tailControllers.push(createCoulombTail(muGroup, 0x059669, false));
 
-        // 3. ТАУ-ЛЕПТОН: T(5,3) плотный и тонкий + концентрированный кулоновский хвост
+        // 3. ТАУ-ЛЕПТОН
         const tauGroup = new THREE.Group();
         tauGroup.position.set(POS_X.tau, 0, 0);
         scene.add(tauGroup);
 
-        const tauCurve = new TauCurveDense();
-        const tauMesh = new THREE.Mesh(
-            new THREE.TubeGeometry(tauCurve, 280, 0.032, 16, true), // Тонкая нить (0.032 вместо 0.088)
-            new THREE.MeshStandardMaterial({ color: 0xf59e0b, emissive: 0xb45309, roughness: 0.25, metalness: 0.8 })
-        );
-        tauGroup.add(tauMesh);
-
-        const tauPulse = new THREE.Mesh(new THREE.SphereGeometry(0.075, 16, 16), new THREE.MeshBasicMaterial({ color: 0xffffff }));
+        let tauCurve = new TauCurveDynamic();
+        let tauMesh;
+        const tauPulse = new THREE.Mesh(new THREE.SphereGeometry(0.07, 16, 16), new THREE.MeshBasicMaterial({ color: 0xffffff }));
         tauGroup.add(tauPulse);
-
         tailControllers.push(createCoulombTail(tauGroup, 0xd97706, false));
 
-        // 4. ПРОТОН: Самозатянутый трилистник + Кулоновский хвост распирания (+e)
+        // 4. ПРОТОН: Утолщенная трубка + Неподвижные кварки на вершинах
         const pGroup = new THREE.Group();
         pGroup.position.set(POS_X.p, 0, 0);
         scene.add(pGroup);
 
         const pCurve = new ProtonCinchedCurve();
-        const pMesh = new THREE.Mesh(
-            new THREE.TubeGeometry(pCurve, 220, 0.078, 18, true), // Плотный керн
-            new THREE.MeshStandardMaterial({ color: 0xf43f5e, emissive: 0x9f1239, roughness: 0.2, metalness: 0.85 })
-        );
-        pGroup.add(pMesh);
+        let pMesh;
 
-        const qGeo = new THREE.SphereGeometry(0.12, 16, 16);
-        const q1 = new THREE.Mesh(qGeo, new THREE.MeshBasicMaterial({ color: 0xffffff }));
-        const q2 = new THREE.Mesh(qGeo, new THREE.MeshBasicMaterial({ color: 0xffffff }));
-        const q3 = new THREE.Mesh(qGeo, new THREE.MeshBasicMaterial({ color: 0xfde047 }));
+        // Неподвижные пучности стоячей волны (кварки uud) строго на вершинах лепестков
+        const qGeoU = new THREE.SphereGeometry(0.20, 18, 18);
+        const qGeoD = new THREE.SphereGeometry(0.19, 18, 18);
+        const q1 = new THREE.Mesh(qGeoU, new THREE.MeshStandardMaterial({ color: 0x38bdf8, emissive: 0x0284c7, roughness: 0.2 }));
+        const q2 = new THREE.Mesh(qGeoU, new THREE.MeshStandardMaterial({ color: 0x38bdf8, emissive: 0x0284c7, roughness: 0.2 }));
+        const q3 = new THREE.Mesh(qGeoD, new THREE.MeshStandardMaterial({ color: 0xfacc15, emissive: 0xb45309, roughness: 0.2 }));
+
+        q1.position.copy(pCurve.getPoint(1.0 / 6.0));
+        q2.position.copy(pCurve.getPoint(5.0 / 6.0));
+        q3.position.copy(pCurve.getPoint(0.5));
         pGroup.add(q1); pGroup.add(q2); pGroup.add(q3);
 
-        tailControllers.push(createCoulombTail(pGroup, 0xe11d48, true)); // Положительный кулоновский хвост!
+        // Бегущий по трилистнику квант поперечного импульса
+        const pPulse = new THREE.Mesh(
+            new THREE.SphereGeometry(0.13, 16, 16),
+            new THREE.MeshBasicMaterial({ color: 0xffffff })
+        );
+        pGroup.add(pPulse);
+        tailControllers.push(createCoulombTail(pGroup, 0xe11d48, true));
+
+        // ---------------------------------------------------------------------
+        // ПОСТРОЕНИЕ ГЕОМЕТРИИ: ДЕМО (РАЗДУТЫЙ УЗЕЛ) vs РЕАЛЬНЫЙ r(p,q)
+        // ---------------------------------------------------------------------
+        function buildMeshes() {
+            if (eMesh) eGroup.remove(eMesh);
+            if (muMesh) muGroup.remove(muMesh);
+            if (tauMesh) tauGroup.remove(tauMesh);
+            if (pMesh) pGroup.remove(pMesh);
+
+            // =================================================================
+            // ПРИНЦИП ТЭВ: r(p,q) = (p/q) * alpha / R(p,q)
+            // =================================================================
+            // Электрон T(1,1): p/q = 1.0. Базовая толщина жгута = r_e (0.055)
+            // Мюон T(3,2): p/q = 1.5. В реальности r_mu = 1.5 * r_e = 0.082 (лишь на 50% толще электрона!)
+            // Тау T(5,3): p/q = 1.67. В реальности r_tau = 1.67 * r_e = 0.092 (лишь на 67% толще электрона!)
+            // В ДЕМО-режиме r_mu и r_tau искусственно раздуты до 0.48 и 0.58, чтобы видеть петли узла.
+
+            const rAmpMu  = isPhysicalCore ? 0.082 : 0.48; // Амплитуда жгута T(3,2)
+            const rAmpTau = isPhysicalCore ? 0.092 : 0.58; // Амплитуда жгута T(5,3)
+
+            // Толщина самой вихревой нити внутри жгута
+            const wireR_E   = 0.055;
+            const wireR_Mu  = isPhysicalCore ? 0.022 : 0.065;
+            const wireR_Tau = isPhysicalCore ? 0.018 : 0.055;
+            const wireR_P   = 0.170; // Толстая трубка протона
+
+            // Обновляем параметры кривых
+            muCurve = new MuonCurveDynamic(1.35, rAmpMu);
+            tauCurve = new TauCurveDynamic(1.15, rAmpTau);
+
+            // 1. Электрон T(1,1)
+            eMesh = new THREE.Mesh(
+                new THREE.TorusGeometry(1.85, wireR_E, 24, 120),
+                new THREE.MeshStandardMaterial({ color: 0x38bdf8, emissive: 0x0284c7, roughness: 0.2 })
+            );
+            eGroup.add(eMesh);
+
+            // 2. Мюон T(3,2)
+            muMesh = new THREE.Mesh(
+                new THREE.TubeGeometry(muCurve, 320, wireR_Mu, 16, true),
+                new THREE.MeshStandardMaterial({ color: 0x10b981, emissive: 0x047857, roughness: 0.25, metalness: 0.7 })
+            );
+            muGroup.add(muMesh);
+
+            // 3. Тау T(5,3)
+            tauMesh = new THREE.Mesh(
+                new THREE.TubeGeometry(tauCurve, 420, wireR_Tau, 16, true),
+                new THREE.MeshStandardMaterial({ color: 0xf59e0b, emissive: 0xb45309, roughness: 0.25, metalness: 0.8 })
+            );
+            tauGroup.add(tauMesh);
+
+            // 4. Протон (Трилистник)
+            pMesh = new THREE.Mesh(
+                new THREE.TubeGeometry(pCurve, 220, wireR_P, 18, true),
+                new THREE.MeshStandardMaterial({ color: 0xf43f5e, emissive: 0x9f1239, roughness: 0.2, metalness: 0.85 })
+            );
+            pGroup.add(pMesh);
+        }
+
+        buildMeshes();
+
+        function toggleCoreThickness() {
+            isPhysicalCore = !isPhysicalCore;
+            const btn = document.getElementById('btn-thickness');
+            if (isPhysicalCore) {
+                btn.classList.add('active');
+                btn.innerText = "Амплитуда r: ФИЗИЧЕСКАЯ";
+            } else {
+                btn.classList.remove('active');
+                btn.innerText = "Амплитуда r: ДЕМО";
+            }
+            buildMeshes();
+
+            // Обновление карточки
+            const activeKey = currentViewKey;
+            if (activeKey !== 'all') setView(activeKey);
+        }
 
         // ---------------------------------------------------------------------
         // ДАННЫЕ И НАВИГАЦИЯ
@@ -305,34 +385,38 @@
         const cardData = {
             e: {
                 title: "Электрон (e⁻)", compton: "386.16 фм (R_e = 1.0)", topo: "Тор T(1,1)",
-                core: "2.818 фм (α R_e)", tail: "Втягивание матрицы (-e)", mass: "0.511 МэВ",
-                desc: "Широчайший макро-волновод. Гигантский кулоновский хвост упругого втягивания матрицы формирует волну-пилот в опыте с 2 щелями."
+                core: "r₀ = 1.0·α R_e (2.818 фм)", tail: "Втягивание матрицы (-e)", mass: "0.511 МэВ",
+                desc: "Базовый макро-волновод. Кольцо диаметром R_e с тонким керном. Формирует волну-пилот в опыте Юнга."
             },
             mu: {
-                title: "Мюон (μ⁻)", compton: "1.868 фм (R_e / 206.8)", topo: "Узел T(3,2) тонкий",
-                core: "0.0136 фм", tail: "Плотный шлейф (-e)", mass: "105.658 МэВ",
-                desc: "В 206.8 раз компактнее электрона. Узел T(3,2) сжат и плотен, нить керна тоньше, кулоновский хвост компактнее."
+                title: "Мюон (μ⁻)", compton: "1.868 фм (R_e / 206.8)", topo: "Узел T(3,2)",
+                core: "r(3,2) = 1.5·α/R_μ", tail: "Плотный шлейф (-e)", mass: "105.658 МэВ",
+                desc: "В 206.8 раз компактнее электрона. В физ. режиме видно, что толщина кольца всего в 1.5 раза больше толщины электрона, но несет 3 витка на 2 оборота."
             },
             tau: {
                 title: "Тау-лептон (τ⁻)", compton: "0.111 фм (R_e / 3477)", topo: "Узел T(5,3) сверхплотный",
-                core: "Закритический натяг", tail: "Микро-воронка (-e)", mass: "1776.86 МэВ",
-                desc: "В 8 раз меньше протона! 5 витков вдоль и 3 поперек. Нить предельно тонкая, натяжение на границе пластичности Мизеса."
+                core: "r(5,3) = 1.67·α/R_τ", tail: "Микро-воронка (-e)", mass: "1776.86 МэВ",
+                desc: "В 3477 раз меньше электрона. Амплитуда жгута лишь в 1.67 раза превышает электронную. Плотнейшая микро-спираль 5 на 3 оборота."
             },
             p: {
                 title: "Протон (p, Барион)", compton: "0.210 фм (Заряд: 0.841 фм)", topo: "Трилистник uud",
-                core: "3 кварковых керна", tail: "Распирание среды (+e)", mass: "938.272 МэВ",
-                desc: "Узел стянут сам на себя в центре. Три волны Комптона (кварки). Кулоновский хвост распирает среду наружу (+e), компенсируя хвост электрона."
+                core: "3 кварковые пучности", tail: "Распирание среды (+e)", mass: "938.272 МэВ",
+                desc: "Массивная трубка натяжения. Пучности стоячей волны (кварки uud) неподвижны на вершинах лепестков. По трубке циркулирует квант поперечного импульса."
             }
         };
 
+        let currentViewKey = 'all';
         let isScaleMode = false;
-        let targetCam = new THREE.Vector3(0, 6, 20);
-        let targetLook = new THREE.Vector3(0, 0, 0);
+        let isTransitioningCamera = false;
+        const targetCam = new THREE.Vector3(0, 6, 20);
+        const targetLook = new THREE.Vector3(0, 0, 0);
 
         function setView(k) {
+            currentViewKey = k;
             document.querySelectorAll('#nav button').forEach(b => {
-                if (b.id !== 'btn-scale') b.classList.remove('active');
+                if (b.id !== 'btn-scale' && b.id !== 'btn-thickness') b.classList.remove('active');
             });
+
             if (k === 'all') {
                 document.getElementById('btn-all').classList.add('active');
                 targetCam.set(0, 6, 20);
@@ -340,7 +424,7 @@
             } else {
                 document.getElementById('btn-' + k).classList.add('active');
                 const x = POS_X[k];
-                targetCam.set(x, 1.5, 6.2);
+                targetCam.set(x, 1.2, 5.8);
                 targetLook.set(x, 0, 0);
 
                 const d = cardData[k];
@@ -352,6 +436,11 @@
                 document.getElementById('card-mass').innerText = d.mass;
                 document.getElementById('card-desc').innerText = d.desc;
             }
+            isTransitioningCamera = true;
+        }
+
+        function resetCamera() {
+            setView('all');
         }
 
         function toggleScale() {
@@ -359,10 +448,10 @@
             const btn = document.getElementById('btn-scale');
             if (isScaleMode) {
                 btn.classList.add('active');
-                btn.innerText = "Комптоновский масштаб: ВКЛ";
+                btn.innerText = "Масштаб R: ВКЛ";
             } else {
                 btn.classList.remove('active');
-                btn.innerText = "Комптоновский масштаб: ВЫКЛ";
+                btn.innerText = "Масштаб R: ВЫКЛ";
             }
         }
 
@@ -375,8 +464,16 @@
             requestAnimationFrame(animate);
             t += 0.015;
 
-            camera.position.lerp(targetCam, 0.05);
-            controls.target.lerp(targetLook, 0.05);
+            // Плавный полет камеры только при нажатии кнопки выбора
+            if (isTransitioningCamera) {
+                camera.position.lerp(targetCam, 0.08);
+                controls.target.lerp(targetLook, 0.08);
+                if (camera.position.distanceTo(targetCam) < 0.04 && controls.target.distanceTo(targetLook) < 0.04) {
+                    camera.position.copy(targetCam);
+                    controls.target.copy(targetLook);
+                    isTransitioningCamera = false;
+                }
+            }
             controls.update();
 
             // Динамика электрона
@@ -384,45 +481,47 @@
             ePulse.position.set(1.85 * Math.cos(ePhi), 1.85 * Math.sin(ePhi), 0);
             eGroup.rotation.y = Math.sin(t * 0.5) * 0.15;
 
-            // Динамика мюона
+            // Динамика мюона (циркуляция поперечного импульса по динамической траектории)
             const muT = (t * 0.35) % 1.0;
             muPulse.position.copy(muCurve.getPoint(muT));
-            muGroup.rotation.z = t * 0.4;
+            muGroup.rotation.z = t * 0.35;
 
-            // Динамика тау
+            // Динамика тау (циркуляция поперечного импульса)
             const tauT = (t * 0.45) % 1.0;
             tauPulse.position.copy(tauCurve.getPoint(tauT));
-            tauGroup.rotation.z = t * 0.3;
+            tauGroup.rotation.z = t * 0.28;
 
-            // Динамика протона
-            pGroup.rotation.z = t * 0.35;
-            pGroup.rotation.y = Math.sin(t * 0.4) * 0.2;
+            // ДИНАМИКА ПРОТОНА:
+            // Кварковые пучности (q1, q2, q3) НЕ движутся по трубке — они зафиксированы на вершинах!
+            // По трубке непрерывно бежит квант импульса pPulse:
+            const pPulseT = (t * 0.4) % 1.0;
+            pPulse.position.copy(pCurve.getPoint(pPulseT));
 
-            const pT1 = (t * 0.25) % 1.0;
-            const pT2 = (pT1 + 0.3333) % 1.0;
-            const pT3 = (pT1 + 0.6666) % 1.0;
-            q1.position.copy(pCurve.getPoint(pT1));
-            q2.position.copy(pCurve.getPoint(pT2));
-            q3.position.copy(pCurve.getPoint(pT3));
+            // Пульсация стоячей волны кварков на вершинах лепестков
+            const qPulseScale = 1.0 + 0.08 * Math.sin(t * 4.0);
+            q1.scale.set(qPulseScale, qPulseScale, qPulseScale);
+            q2.scale.set(qPulseScale, qPulseScale, qPulseScale);
+            q3.scale.set(qPulseScale, qPulseScale, qPulseScale);
 
-            // Анимация кулоновских хвостов с полярностью
+            pGroup.rotation.z = t * 0.25;
+            pGroup.rotation.y = Math.sin(t * 0.35) * 0.15;
+
+            // Анимация кулоновских хвостов среды
             tailControllers.forEach(tc => {
                 tc.rings.forEach(r => {
-                    // Пульсация волн сжатия/растяжения матрицы среды
                     const wavePhase = tc.isPositive ? (t * 2.5 - r.phase) : -(t * 2.5 - r.phase);
                     const scaleFactor = 1.0 + 0.03 * Math.sin(wavePhase);
                     r.mesh.scale.set(scaleFactor, scaleFactor, 1.0);
                 });
             });
 
-            // Комптоновский физический масштаб:
-            // e = 386 фм, mu = 1.87 фм (1/206), p = 0.84 фм (1/460), tau = 0.11 фм (1/3477)
+            // Комптоновский физический масштаб радиусов R
             let sc_e = 1.0, sc_mu = 1.0, sc_tau = 1.0, sc_p = 1.0;
             if (isScaleMode) {
-                sc_e = 1.8;      // Огромный обруч электрона (386 фм)
-                sc_mu = 0.085;   // Мюон (1.87 фм)
-                sc_p = 0.045;    // Протон (0.84 фм)
-                sc_tau = 0.018;  // Тау (0.11 фм)
+                sc_e = 1.8;      // 386 фм
+                sc_mu = 0.085;   // 1.87 фм (1/206)
+                sc_p = 0.045;    // 0.84 фм (1/460)
+                sc_tau = 0.018;  // 0.11 фм (1/3477)
             }
 
             eGroup.scale.lerp(new THREE.Vector3(sc_e, sc_e, sc_e), 0.05);
