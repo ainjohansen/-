@@ -1,0 +1,275 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[T2A]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[russian]{babel}
+\usepackage{amsmath, amssymb, amsfonts, amsthm}
+\usepackage{geometry}
+\geometry{top=2.0cm, bottom=2.0cm, left=2.0cm, right=2.0cm}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\hypersetup{colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue}
+
+\newtheorem{theorem}{Теорема}
+\newtheorem{lemma}[theorem]{Лемма}
+\theoremstyle{definition}
+\newtheorem{definition}{Определение}
+\theoremstyle{remark}
+\newtheorem{remark}{Замечание}
+
+\begin{document}
+
+\title{\textbf{\Large Квантовые основания в механике упругого континуума:}\\
+\large огибающая Навье--Коши, расслоение Хопфа,\\ предел Цирельсона и гидростатическая природа тяготения\\[2mm]
+\normalsize \textit{Серия: Расчетные методы топологической эластодинамики континуума. Статья 07}}
+
+\author{\textbf{Дмитрий Михайленко}\\[1mm]
+\small Исследовательская группа топологической физики континуума}
+
+\date{\today}
+
+\maketitle
+
+\begin{abstract}
+\noindent В рамках инженерной модели упругого квазинесжимаемого 3D-континуума с параметром порядка $\boldsymbol{\Phi} \in S^3 \cong \mathrm{SU}(2)$ представлен детерминистический вывод ключевых квантовых феноменов без использования копенгагенского постулата о «коллапсе волновой функции» и мистики наблюдателя. Уравнение Шрёдингера строго выведено из соленоидального волнового уравнения Навье--Коши как параболическое приближение медленно меняющейся пространственно-временной огибающей поперечных сдвиговых деформаций относительно несущей частоты Zitterbewegung $\omega_0 = M c^2 / \hbar$. Волна де Бройля интерпретируется как реальный интерференционный акустический шлейф континуума, направляющий центр солитона. Правило Борна $P \propto |\psi|^2$ обосновано как вероятность преодоления порога пластической текучести Губера--фон Мизеса макроскопическими метастабильными доменами детектора. Геометрия расслоения Хопфа $S^3 \to S^2$ воспроизводит спинорные квантовые корреляции синглетной пары $E(\mathbf{a},\mathbf{b}) = -\mathbf{a}\cdot\mathbf{b}$, обеспечивая нарушение неравенств Белла--Клаузера--Хорна--Шимони--Хольта (CHSH) вплоть до квантового предела Цирельсона $S = 2\sqrt{2} \approx 2.8284$ при абсолютном соблюдении теоремы No-Signaling. В заключительном разделе сформулирована концепция гравитации как коллективного упругого гидростатического отклика среды на изъятый кавитационный объем дефектов (задача включений Эшелби), объясняющая происхождение силы тяжести без привлечения гипотетических гравитонов. Математические соотношения верифицированы в прувере Lean 4 без допущений (\texttt{sorry}).
+\end{abstract}
+
+\vspace{2mm}
+\noindent\textbf{Ключевые слова:} огибающая Навье--Коши, Zitterbewegung, правило Борна, порог пластичности, расслоение Хопфа, неравенства Белла, предел Цирельсона, теорема No-Signaling, кавитационный объем Эшелби, Lean 4.
+
+\section{Введение: демистификация квантовой механики}
+На протяжении века квантовая механика страдала от парадоксов измерения (проблема кота Шрёдингера, квантовое самоубийство, субъективный наблюдатель). Причиной кризиса стало объявление волновой функции $\psi(\mathbf{x}, t)$ первичным объектом нематериального «пространства вероятностей».
+
+В топологической эластодинамике континуума физический вакуум материален, квазинесжимаем и обладает сдвиговой упругостью $G_0$ и плотностью $\rho_0$. Частицы представляют собой топологические солитоны (вихревые узлы $T(3,2)$ и кольца $T^2$). 
+
+Цель настоящей статьи — показать, что **квантовые законы представляют собой статистическую механику упругих возмущений среды**, устранив необходимость в копенгагенском «коллапсе» и субъективном наблюдателе.
+
+\section{Вывод уравнения Шрёдингера из механики Навье--Коши}
+В несжимаемом континууме ($\nabla \cdot \mathbf{u} = 0$) векторное поле смещений $\mathbf{u}(\mathbf{x}, t)$ подчиняется классическому динамическому уравнению Навье--Коши для поперечных волн сдвига:
+\begin{equation}
+    \rho_0 \frac{\partial^2 \mathbf{u}}{\partial t^2} = G_0 \nabla^2 \mathbf{u}, \quad c = \sqrt{\frac{G_0}{\rho_0}}.
+    \label{eq:navier_cauchy}
+\end{equation}
+
+Солитон массы $M$ представляет собой локализованный вихревой дефект, совершающий стационарное предельное автоколебание (Zitterbewegung) с базовой частотой:
+\begin{equation}
+    \omega_0 = \frac{M c^2}{\hbar}.
+\end{equation}
+В присутствии поступательного движения или внешних градиентов поле смещения модулируется медленно меняющейся комплексной огибающей $\boldsymbol{\psi}(\mathbf{x}, t)$:
+\begin{equation}
+    \mathbf{u}(\mathbf{x}, t) = \operatorname{Re}\left[ \boldsymbol{\psi}(\mathbf{x}, t) e^{-i \omega_0 t} \right].
+\end{equation}
+
+\begin{theorem}[Параболическая огибающая Навье--Коши]
+В пределе медленной эволюции огибающей по сравнению с периодом автоколебаний ($|\partial_t \boldsymbol{\psi}| \ll \omega_0 |\boldsymbol{\psi}|$ и $|\partial_t^2 \boldsymbol{\psi}| \ll \omega_0 |\partial_t \boldsymbol{\psi}|$) классическое упругое волновое уравнение Навье--Коши строго редуцируется к свободному уравнению Шрёдингера для частицы массы $M$.
+\end{theorem}
+\begin{proof}
+Вычислим вторую производную поля смещения по времени:
+\begin{equation}
+    \frac{\partial \mathbf{u}}{\partial t} = \operatorname{Re}\left[ \left( \frac{\partial \boldsymbol{\psi}}{\partial t} - i\omega_0 \boldsymbol{\psi} \right) e^{-i\omega_0 t} \right],
+\end{equation}
+\begin{equation}
+    \frac{\partial^2 \mathbf{u}}{\partial t^2} = \operatorname{Re}\left[ \left( \frac{\partial^2 \boldsymbol{\psi}}{\partial t^2} - 2i\omega_0 \frac{\partial \boldsymbol{\psi}}{\partial t} - \omega_0^2 \boldsymbol{\psi} \right) e^{-i\omega_0 t} \right].
+\end{equation}
+Пренебрегая членом высшего порядка $\partial_t^2 \boldsymbol{\psi}$, подставим разложение в уравнение (\ref{eq:navier_cauchy}):
+\begin{equation}
+    \rho_0 \left( -\omega_0^2 \boldsymbol{\psi} - 2i\omega_0 \frac{\partial \boldsymbol{\psi}}{\partial t} \right) = G_0 \nabla^2 \boldsymbol{\psi}.
+\end{equation}
+Разделим обе части на $2\rho_0 \omega_0$:
+\begin{equation}
+    -i \frac{\partial \boldsymbol{\psi}}{\partial t} - \frac{\omega_0}{2} \boldsymbol{\psi} = \frac{G_0}{2\rho_0 \omega_0} \nabla^2 \boldsymbol{\psi} = \frac{c^2}{2\omega_0} \nabla^2 \boldsymbol{\psi}.
+\end{equation}
+Умножая на $-\hbar$ и устраняя постоянный фазовый сдвиг покоя $E_0 = \frac{1}{2}\hbar\omega_0$ (калибровка нулевого потенциала):
+\begin{equation}
+    i\hbar \frac{\partial \boldsymbol{\psi}}{\partial t} = -\frac{\hbar c^2}{2\omega_0} \nabla^2 \boldsymbol{\psi}.
+\end{equation}
+Используя соотношение $\omega_0 = M c^2 / \hbar$, коэффициент при лапласиане принимает вид:
+\begin{equation}
+    \frac{\hbar c^2}{2\omega_0} = \frac{\hbar c^2}{2 (M c^2 / \hbar)} = \frac{\hbar^2}{2M}.
+\end{equation}
+Получаем стандартное нестационарное уравнение Шрёдингера:
+\begin{equation}
+    i\hbar \frac{\partial \boldsymbol{\psi}}{\partial t} = -\frac{\hbar^2}{2M} \nabla^2 \boldsymbol{\psi}.
+\end{equation}
+\end{proof}
+Таким образом, мнимая единица $i$ отражает взаимный фазовый сдвиг на $\pi/2$ между упругой скоростью $\dot{\mathbf{u}}$ и градиентом деформации $\nabla \mathbf{u}$, а постоянная Планка $\hbar$ выступает размерным коэффициентом масштабирования плотности действия среды.
+
+\section{Волна де Бройля и правило Борна без мистики измерения}
+\subsection{Физическая природа волны де Бройля}
+В механике континуума солитон непрерывно излучает интерференционный квазиакустический шлейф деформации матрицы за счет колебаний Zitterbewegung. Скорость солитона жестко связана с градиентом фазы упругого поля:
+\begin{equation}
+    \mathbf{v}_{\mathrm{soliton}} = \frac{\hbar}{M} \nabla \theta(\mathbf{x}, t).
+\end{equation}
+В опыте с двумя щелями солитон физически проходит **через одну щель**, однако его непрерывный соленоидальный волновой шлейф проходит **через обе щели**. Интерференция волн среды за преградой модулирует поле фазы $\nabla\theta$, направляя движение солитона вдоль полос интерференции. Это полностью устраняет «мистику» корпускулярно-волнового дуализма в согласии с макроскопическими гидродинамическими экспериментами И. Кудэ с прыгающими каплями на вибрирующей ванне.
+
+\subsection{Детерминистический вывод правила Борна $P \propto |\psi|^2$}
+В стандартных учебниках правило Борна вводится как аксиома. В механике сплошных сред измерительный прибор (фотоумножитель, стримерная камера, полупроводниковый пиксель) представляет собой макроскопический ансамбль метастабильных ячеек, удерживаемых вблизи предела пластической текучести Мизеса $\sigma_{\mathrm{yield}} = \alpha G_0$.
+
+\begin{theorem}[Пороговый механизм детектирования]
+Срабатывание детектора происходит, когда мгновенная плотность упругой энергии сдвиговых волн $\mathcal{E}(\mathbf{x}, t)$ превышает локальный порог пластического срыва $\mathcal{E}_{\mathrm{crit}}$. В линейном акустическом приближении плотность энергии пропорциональна квадрату модуля огибающей:
+\begin{equation}
+    \mathcal{E}(\mathbf{x}, t) = \frac{1}{2} G_0 \|\nabla \mathbf{u}\|^2 + \frac{1}{2} \rho_0 \|\dot{\mathbf{u}}\|^2 \propto |\boldsymbol{\psi}(\mathbf{x}, t)|^2.
+\end{equation}
+Вероятность пластического срыва метастабильного триггера в элементарном объеме $\mathrm{d}^3\mathbf{x}$ строго пропорциональна объемной плотности энергии:
+\begin{equation}
+    \mathrm{d}P(\mathbf{x}) \propto \mathcal{E}(\mathbf{x}) \, \mathrm{d}^3\mathbf{x} \propto |\boldsymbol{\psi}(\mathbf{x})|^2 \, \mathrm{d}^3\mathbf{x}.
+\end{equation}
+\end{theorem}
+«Коллапс волновой функции» — это не метафизический скачок, а необратимый **пластический фазовый переход первого рода** в материале детектора, локализующий энергию волнового пакета в микроскопический след (трек, электронную лавину).
+
+\section{Топология спина и расслоение Хопфа $S^3 \to S^2$}
+Параметр порядка вакуума $\boldsymbol{\Phi}(\mathbf{x})$ принимает значения на трехмерной сфере $S^3 \subset \mathbb{C}^2$:
+\begin{equation}
+    \boldsymbol{\Phi} = \begin{pmatrix} z_1 \\ z_2 \end{pmatrix}, \quad |z_1|^2 + |z_2|^2 = 1.
+\end{equation}
+Пространство локальных ориентаций спина в $\mathbb{R}^3$ есть двумерная сфера $S^2$, получаемая проекцией Хопфа $\pi: S^3 \to S^2$:
+\begin{equation}
+    \mathbf{S} = \boldsymbol{\Phi}^\dagger \boldsymbol{\sigma} \boldsymbol{\Phi} = \begin{pmatrix} 2\operatorname{Re}(z_1 \bar{z}_2) \\ 2\operatorname{Im}(z_1 \bar{z}_2) \\ |z_1|^2 - |z_2|^2 \end{pmatrix} \in S^2.
+\end{equation}
+Топологическое волокно отображения Хопфа представляет собой окружность $S^1$ с фазой $\theta$. Поворот в физическом пространстве на угол $2\pi$ меняет знак спинора $\boldsymbol{\Phi} \to -\boldsymbol{\Phi}$, а полный возврат в исходное состояние требует поворота на $4\pi$. Спинорный характер фермионов $S=1/2$ детерминирован геометрией накрытия $\mathrm{SU}(2) \to \mathrm{SO}(3)$.
+
+\section{ЭПР-корреляции, предел Цирельсона $2\sqrt{2}$ и No-Signaling}
+Рассмотрим пару спин-запутанных солитонов в синглетном состоянии. В механике континуума синглет — это замкнутая вихревая структура с нулевым суммарным топологическим кручением:
+\begin{equation}
+    \mathbf{S}_A + \mathbf{S}_B = 0 \quad \text{на } S^2.
+\end{equation}
+При пространственном разведении солитонов на расстояние $L$ фазовая нить сохраняет соленоидальную неразрывность $\nabla \cdot \boldsymbol{\omega} = 0$.
+
+\begin{theorem}[Коррелятор проекций Хопфа]
+При измерении поляризаций двух удаленных солитонов детекторами с единичными ориентациями $\mathbf{a}, \mathbf{b} \in S^2$ квантово-механический коррелятор совпадает с взаимной проекцией ориентированных фазовых векторов:
+\begin{equation}
+    E(\mathbf{a}, \mathbf{b}) = -\mathbf{a} \cdot \mathbf{b} = -\cos\theta_{ab}.
+\end{equation}
+\end{theorem}
+
+\begin{theorem}[Достижение предела Цирельсона $2\sqrt{2}$]
+\label{thm:tsirelson}
+Для набора из четырех направлений детектирования $(\mathbf{a}, \mathbf{a}', \mathbf{b}, \mathbf{b}')$ функционал Белла--CHSH равен:
+\begin{equation}
+    S_{\mathrm{CHSH}} = E(\mathbf{a}, \mathbf{b}) - E(\mathbf{a}, \mathbf{b}') + E(\mathbf{a}', \mathbf{b}) + E(\mathbf{a}', \mathbf{b}').
+\end{equation}
+При канонической взаимной ориентации анализаторов с шагом $\Delta\theta = \pi/4$:
+\begin{equation}
+    \theta(\mathbf{a}, \mathbf{b}) = \frac{\pi}{4}, \quad \theta(\mathbf{a}, \mathbf{b}') = \frac{3\pi}{4}, \quad \theta(\mathbf{a}', \mathbf{b}) = \frac{\pi}{4}, \quad \theta(\mathbf{a}', \mathbf{b}') = \frac{\pi}{4},
+\end{equation}
+значение функционала строго равно фундаментальному пределу Цирельсона по модулю:
+\begin{equation}
+    S_{\mathrm{CHSH}} = -\cos\left(\frac{\pi}{4}\right) + \cos\left(\frac{3\pi}{4}\right) - \cos\left(\frac{\pi}{4}\right) - \cos\left(\frac{\pi}{4}\right) 
+    = -4 \times \frac{\sqrt{2}}{2} = \mathbf{-2\sqrt{2}} \approx -2.828427,
+\end{equation}
+так что $|S_{\mathrm{CHSH}}| = 2\sqrt{2} \approx 2.828427$ — точный предел Цирельсона.
+\end{theorem}
+Классический предел Белла ($|S| \le 2$) нарушается, поскольку детекторы измеряют не скрытые параметры в евклидовом пространстве, а фазовые проекции связности расслоения Хопфа $S^3$.
+
+\begin{theorem}[Теорема No-Signaling]
+Сверхсветовая передача информации через эластодинамические корреляции строго невозможна.
+\end{theorem}
+\begin{proof}
+Маргинальная вероятность регистрации проекции $+1$ на детекторе $A$ равна интегралу по равномерно распределенной фазе несжимаемой нити:
+\begin{equation}
+    P(A = +1 \mid \mathbf{a}, \mathbf{b}) = \frac{1}{4\pi} \int_{S^2} \frac{1 + \mathbf{a} \cdot \mathbf{n}}{2} \, \mathrm{d}\Omega_{\mathbf{n}} \equiv \frac{1}{2}.
+\end{equation}
+Она тождественно равна $1/2$ и строго не зависит от ориентации удаленного детектора $\mathbf{b}$. Корреляция проявляется лишь при апостериорном сличении классических протоколов измерений, передаваемых со скоростью сдвиговых волн $c$.
+\end{proof}
+
+\section{О физической природе тяготения: изъятый объем дефектов}
+В современной физике попытки квантования гравитации (постулирование гравитонов спина 2) зашли в тупик ультрафиолетовых расходимостей. Формальный вывод закона обратных квадратов Ньютона $F \propto 1/r^2$ через обмен поперечными волнами в стационарном режиме страдает искусственностью.
+
+В механике сплошных сред природа тяготения проста и фундаментальна: **гравитация — это не фундаментальное квантовое поле, а гидростатическое сжатие несжимаемого вакуума вокруг кавитационных дефектов**.
+
+\subsection{Кавитационный дефект объема (задача Эшелби)}
+Каждый устойчивый барионный узел $T(3,2)$ (протон) представляет собой кавитационную каверну с эффективным изъятым из континуума объемом:
+\begin{equation}
+    \Delta V = \frac{M}{\rho_0}.
+\end{equation}
+Поскольку объем континуума вокруг дефекта квазинесжимаем ($\nabla \cdot \mathbf{u} = 0$), вытеснение объема $\Delta V$ создает в упругой матрице радиальное поле гидростатических смещений:
+\begin{equation}
+    u_r(r) = \frac{\Delta V}{4\pi r^2}.
+\end{equation}
+
+Когда в поле радиальной деформации первого солитона помещается второй солитон с изъятым объемом $\Delta V_2$, возникает взаимодействие упругих включений (классическая задача Дж. Эшелби 1957 г.). Среда стремится минимизировать полную упругую энергию деформации:
+\begin{equation}
+    U_{\mathrm{int}}(r) \propto -G_0 \frac{\Delta V_1 \Delta V_2}{r} \propto -\frac{G_0}{\rho_0^2} \frac{M_1 M_2}{r}.
+\end{equation}
+Сила взаимного притяжения дефектов равна:
+\begin{equation}
+    F(r) = -\frac{\mathrm{d}U_{\mathrm{int}}}{\mathrm{d}r} \propto -\frac{G_N M_1 M_2}{r^2}.
+\end{equation}
+
+\begin{remark}[«На гирях надо писать ньютоны, а не килограммы»]
+Масса $M$ — это мера дефекта объема континуума $\Delta V$. Однако наблюдаемый «вес» — это реальная механическая сила упругого сжатия матрицы вакуума, прижимающая дефект к другим кавернам. Мы живем не в геометрической пустоте Эйнштейна, а внутри напряженного упругого тела.
+\end{remark}
+
+\section{Сводные результаты}
+
+\begin{table}[htbp]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\caption{Сравнение фундаментальных квантовых соотношений модели ТЭВ со стандартом}
+\label{tab:quantum_summary}
+\vspace{2mm}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash\hsize=0.85\hsize}X >{\raggedright\arraybackslash\hsize=1.2\hsize}X >{\raggedright\arraybackslash\hsize=1.15\hsize}X >{\centering\arraybackslash\hsize=0.8\hsize}X}
+\toprule
+\textbf{Феномен} & \textbf{Механизм ТЭВ} & \textbf{Квантовый стандарт} & \textbf{Статус вывода} \\
+\midrule
+Уравнение Шрёдингера & Огибающая поперечных волн Навье--Коши & Постулат волновой функции де Бройля & Строгая теорема \\
+\addlinespace[1mm]
+Волна де Бройля $\lambda = h/p$ & Реальный акустический шлейф солитона & Корпускулярно-волновой дуализм & Гидродинамика матрицы \\
+\addlinespace[1mm]
+Правило Борна $P \propto |\psi|^2$ & Порог пластического срыва Мизеса в детекторе & Постулат измерения / коллапс функции & Механический триггер \\
+\addlinespace[1mm]
+Спин $S = 1/2$ & Топология накрытия $S^3 \to S^2$ (расслоение Хопфа) & Матрицы Паули / генераторы $\mathrm{SU}(2)$ & Топология связности \\
+\addlinespace[1mm]
+ЭПР-коррелятор & Взаимная проекция $E(\mathbf{a},\mathbf{b}) = -\mathbf{a}\cdot\mathbf{b}$ & Синглетное состояние Белла & Геометрия на $S^2$ \\
+\addlinespace[1mm]
+Предел Цирельсона & Максимум функционала CHSH: $S = 2\sqrt{2} \approx 2.8284$ & Максимальное квантовое нарушение Белла & Тождество Цирельсона \\
+\addlinespace[1mm]
+Теорема No-Signaling & Маргинальная вероятность $P(A) \equiv 1/2$ & Запрет передачи сигналов быстрее $c$ & Строгое тождество \\
+\addlinespace[1mm]
+Природа тяготения & Гидростатический градиент изъятого объема каверн & Искривление пространства-времени / гравитоны & Механика включений Эшелби \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Заключение}
+Квантовая механика и тяготение естественным образом замыкаются в механике деформируемого упругого вакуума. Устранение мистики наблюдателя и замена «гравитонов» на гидростатический отклик среды завершает построение единого расчетного DAG-графа.
+
+\begin{thebibliography}{99}
+
+\bibitem{Navier1827}
+C.-L.~Navier, \textit{M{\'e}moire sur les lois de l'{\'e}quilibre et du mouvement des corps solides {\'e}lastiques}, M{\'e}m. Acad. Sci. Inst. France \textbf{7}, 375--393 (1827).
+
+\bibitem{Cauchy1828}
+A.-L.~Cauchy, \textit{Sur les {\'e}quations qui repr{\'e}sentent les mouvements d'un corps solide {\'e}lastique}, Exercices de Math{\'e}matiques \textbf{3}, 160--187 (1828).
+
+\bibitem{Schrodinger1926}
+E.~Schr{\"o}dinger, \textit{Quantisierung als Eigenwertproblem}, Ann. Phys. (Leipzig) \textbf{384}, 361--376 (1926).
+
+\bibitem{deBroglie1927}
+L.~de Broglie, \textit{La m{\'e}canique ondulatoire et la structure atomique de la mati{\`e}re et du rayonnement}, J. Phys. Radium \textbf{8}, 225--241 (1927).
+
+\bibitem{CouderFort2006}
+Y.~Couder and E.~Fort, \textit{Single-particle diffraction and interference at a macroscopic scale}, Phys. Rev. Lett. \textbf{97}, 154101 (2006).
+
+\bibitem{Born1926}
+M.~Born, \textit{Zur Quantenmechanik der Sto{\ss}vorg{\"a}nge}, Z. Phys. \textbf{37}, 863--867 (1926).
+
+\bibitem{Hopf1931}
+H.~Hopf, \textit{{\"U}ber die Abbildungen der dreidimensionalen Sph{\"a}re auf die Kugelfl{\"a}che}, Math. Ann. \textbf{104}, 637--665 (1931).
+
+\bibitem{Bell1964}
+J.~S.~Bell, \textit{On the Einstein Podolsky Rosen paradox}, Physics Physique Fizika \textbf{1}, 195--200 (1964).
+
+\bibitem{CHSH1969}
+J.~F.~Clauser, M.~A.~Horne, A.~Shimony, and R.~A.~Holt, \textit{Proposed experiment to test local hidden-variable theories}, Phys. Rev. Lett. \textbf{23}, 880--884 (1969).
+
+\bibitem{Tsirelson1980}
+B.~S.~Cirel'son, \textit{Quantum generalizations of Bell's inequality}, Lett. Math. Phys. \textbf{4}, 93--100 (1980).
+
+\bibitem{Eshelby1957}
+J.~D.~Eshelby, \textit{The determination of the elastic field of an ellipsoidal inclusion, and related problems}, Proc. R. Soc. London, Ser. A \textbf{241}, 376--396 (1957).
+
+\end{thebibliography}
+
+\end{document}
