@@ -1,7 +1,7 @@
 # 🌊 Азъ | Топологическая Эластодинамика Вакуума (ТЭВ)
 ### Topological Elastodynamics of the Vacuum | Wave Structure of the Universe
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![License: CC BY-NC-ND 4.0](https://shields.io)](http://creativecommons.org/licenses/by-nc-nd/4.0/)
 [![CAE Verification](https://img.shields.io/badge/CAE%20Scripts-24%20Verified-success.svg)](scripts/)
 [![Interactive Labs](https://img.shields.io/badge/WebGL%203D-Live%20Online-cyan.svg)](https://ainjohansen.github.io/-/html/)
 [![AME2020 Fit](https://img.shields.io/badge/AME2020%20Nuclear-R%C2%B2%20%3D%2094.7%25-brightgreen.svg)](scripts/11_weizsacker.py)
