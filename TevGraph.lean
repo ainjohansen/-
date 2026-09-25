@@ -4,8 +4,6 @@ import Mathlib.Tactic.Ring
 import Mathlib.Tactic.NormNum
 import Mathlib.Algebra.Order.Ring.Defs
 
-import Manifestv53.lean
-
 set_option linter.style.docString false
 set_option linter.style.whitespace false
 
