@@ -1,4 +1,24 @@
-name = "tev_graph"
+name = "tevmaser"
+version = "0.1.0"
+keywords = ["math"]
+defaultTargets = ["tev"]
+
+[leanOptions]
+pp.unicode.fun = true # pretty-prints `fun a ↦ b`
+relaxedAutoImplicit = false
+weak.linter.mathlibStandardSet = true
+maxSynthPendingDepth = 3
+
+[[require]]
+name = "mathlib"
+scope = "leanprover-community"
+rev = "v4.33.1"
+
+[[lean_lib]]
+name = "tev"
+srcDir = "."
+roots = ["tev.TevMaster"]
+globs = ["tev.+"]name = "tev_graph"
 version = "0.1.0"
 keywords = ["math"]
 defaultTargets = ["TevGraph"]
