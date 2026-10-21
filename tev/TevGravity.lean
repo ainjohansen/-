@@ -109,4 +109,22 @@ theorem gravitational_time_dilation_clock_slowing
     linarith
   exact mul_lt_mul_of_pos_left h_factor_lt hω
 
+/-- Инертная масса солитона через полную энергию автоколебаний Zitterbewegung -/
+noncomputable def inertialMass (E_total c : ℝ) : ℝ :=
+  E_total / (c ^ 2)
+
+/-- Гравитационная масса через вытесненный объем каверны Эшелби -/
+def gravitationalMass (ρ₀ ΔV : ℝ) : ℝ :=
+  ρ₀ * ΔV
+
+/-- ТЕОРЕМА: Тождество инертной и гравитационной масс по теореме Лауэ
+    (объем каверны ΔV строго равен E_total / (ρ₀ * c²)) -/
+theorem equivalence_principle_exact (E_total c ρ₀ : ℝ) (hc : c ≠ 0) (hρ : ρ₀ ≠ 0) :
+    let ΔV := E_total / (ρ₀ * c ^ 2)
+    gravitationalMass ρ₀ ΔV = inertialMass E_total c := by
+  intro ΔV
+  dsimp [gravitationalMass, inertialMass, ΔV]
+  have hc2 : c ^ 2 ≠ 0 := pow_ne_zero 2 hc
+  field_simp
+
 end TevGravity
