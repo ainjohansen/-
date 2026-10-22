@@ -193,7 +193,7 @@
     <!-- Панель управления -->
     <div id="controls-panel" class="hud-panel">
         <div class="section-title">Ориентация Детекторов</div>
-        
+
         <div class="control-group">
             <div class="control-label">
                 <span>Детектор Алисы (a):</span>
@@ -254,7 +254,7 @@
         </div>
 
         <button class="btn" id="btn-sim-clicks" style="margin-top: 10px; border-color: #00ff88; color: #00ff88;">Импульс Измерения (1000 пар)</button>
-        
+
         <div class="metric-box" style="margin-top: 8px;">
             <div class="metric-row">
                 <span>Маргинал P(A = +1) [No-Signaling]:</span>
@@ -273,7 +273,7 @@
         <p><b>1. Единый двухцентровый дефект:</b> В упругом вакууме синглетная пара — это не два изолированных шарика в пустоте, а связанная биполярная конфигурация матрицы вакуума с антикоррелированными спинорами $\boldsymbol{\Phi}_A = -\boldsymbol{\Phi}_B \in S^3$.</p>
         <p style="margin-top: 8px;"><b>2. Отказ от факторизуемости Белла:</b> Несжимаемость вакуума ($\nabla \cdot \mathbf{u} = 0$) и глобальная связность среды исключают факторизацию вероятностей: $P(AB) \neq P(A)P(B)$.</p>
         <p style="margin-top: 8px;"><b>3. Полуугол $\theta/2$ и предел Цирельсона:</b> Спинор циркулирует по $4\pi$-накрытию $\mathrm{Spin}(3)$. При срыве текучести Мизеса амплитуда $\cos(\theta/2)$ возводится в квадрат порогом энергии, формируя гладкий квантовый косинус $E = -\cos\theta$ и $S = 2\sqrt{2}$.</p>
-        
+
         <div class="lean-badge">✓ Lean 4: TevQuantum.tsirelson_bound_exact</div>
     </div>
 
@@ -328,7 +328,7 @@
 
         function createBlochSphere(colorHex) {
             const group = new THREE.Group();
-            
+
             // Внешняя проволочная сетка
             const wireGeo = new THREE.WireframeGeometry(new THREE.SphereGeometry(1.4, 16, 16));
             const wireMat = new THREE.LineBasicMaterial({ color: colorHex, transparent: true, opacity: 0.15 });
@@ -343,12 +343,12 @@
 
             // Керн солитона в центре (тороид)
             const torusGeo = new THREE.TorusGeometry(0.35, 0.09, 16, 32);
-            const torusMat = new THREE.MeshStandardMaterial({ 
-                color: colorHex, 
-                emissive: colorHex, 
-                emissiveIntensity: 0.4, 
-                roughness: 0.2, 
-                metalness: 0.8 
+            const torusMat = new THREE.MeshStandardMaterial({
+                color: colorHex,
+                emissive: colorHex,
+                emissiveIntensity: 0.4,
+                roughness: 0.2,
+                metalness: 0.8
             });
             const torus = new THREE.Mesh(torusGeo, torusMat);
             group.add(torus);
@@ -362,19 +362,33 @@
         bobGroup.add(bobSphere.group);
 
         // Векторы-стрелки детекторов a и b
-        function createDetectorArrow(colorHex) {
-            const dir = new THREE.Vector3(1, 0, 0);
-            const origin = new THREE.Vector3(0, 0, 0);
-            const length = 1.9;
-            const arrow = new THREE.ArrowHelper(dir, origin, length, colorHex, 0.35, 0.15);
-            arrow.line.material.linewidth = 3;
-            return arrow;
-        }
+        // Векторы-стрелки детекторов: a, a' (Алиса) и b, b' (Боб)
+    function createDetectorArrow(colorHex, isDashed = false) {
+    const dir = new THREE.Vector3(1, 0, 0);
+    const origin = new THREE.Vector3(0, 0, 0);
+    const length = 1.9;
+    const arrow = new THREE.ArrowHelper(dir, origin, length, colorHex, 0.35, 0.15);
+    arrow.line.material.linewidth = isDashed ? 1.5 : 3;
+    if (isDashed) {
+        arrow.line.material.transparent = true;
+        arrow.line.material.opacity = 0.45;
+        arrow.cone.material.transparent = true;
+        arrow.cone.material.opacity = 0.55;
+    }
+    return arrow;
+}
 
-        const arrowA = createDetectorArrow(0x00d4ff);
-        const arrowB = createDetectorArrow(0xff9900);
+        // Алиса: a (сплошная бирюзовая), a' (полупрозрачная бирюзовая)
+        const arrowA  = createDetectorArrow(0x00d4ff, false);
+        const arrowAp = createDetectorArrow(0x00d4ff, true);
         aliceGroup.add(arrowA);
-        bobGroup.add(arrowB);
+        aliceGroup.add(arrowAp);
+
+        // Боб: b (сплошная оранжевая), b' (полупрозрачная оранжевая)
+    const arrowB  = createDetectorArrow(0xff9900, false);
+    const arrowBp = createDetectorArrow(0xff9900, true);
+    bobGroup.add(arrowB);
+    bobGroup.add(arrowBp);
 
         // Мост несепарабельного вакуума (световодные линии связности)
         const bridgeCurve = new THREE.LineCurve3(new THREE.Vector3(-3.2, 0, 0), new THREE.Vector3(3.2, 0, 0));
@@ -449,8 +463,12 @@
             labelBp.innerText = `${sliderBp.value}°`;
 
             // Поворот стрелок в плоскости XY
-            arrowA.setDirection(new THREE.Vector3(Math.cos(aRad), Math.sin(aRad), 0).normalize());
-            arrowB.setDirection(new THREE.Vector3(Math.cos(bRad), Math.sin(bRad), 0).normalize());
+            // Поворот всех 4 стрелок в плоскости XY
+        arrowA.setDirection(new THREE.Vector3(Math.cos(aRad), Math.sin(aRad), 0).normalize());
+        arrowAp.setDirection(new THREE.Vector3(Math.cos(apRad), Math.sin(apRad), 0).normalize());
+
+        arrowB.setDirection(new THREE.Vector3(Math.cos(bRad), Math.sin(bRad), 0).normalize());
+        arrowBp.setDirection(new THREE.Vector3(Math.cos(bpRad), Math.sin(bpRad), 0).normalize());
 
             // Взаимный угол θ_ab
             const dTheta = Math.abs(aRad - bRad);
