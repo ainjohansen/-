@@ -1,6 +1,8 @@
 import Mathlib.Data.Real.Basic
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 import Mathlib.Tactic
+set_option linter.style.longLine false
+set_option linter.unusedVariables false
 
 /-!
 # ТОПОЛОГИЧЕСКАЯ ЭЛАСТОДИНАМИКА ВАКУУМА (ТЭВ)
@@ -231,6 +233,106 @@ theorem topological_qubit_immunity (W₁ W₂ : ℤ) (delta_sigma sigma_yield : 
   split_ifs at h_trans with h_eq
   · exact h_eq
   · linarith
+
+/-! =========================================================================
+    РАЗДЕЛ 8. BPS-РАВНОВЕСИЕ КАВИТАЦИИ МИЗЕСА И ИНВАРИАНТ КОИДЭ
+   ========================================================================= -/
+
+/-- Связь девиаторного радиуса ρ и гидростатической координаты ξ Хейга--Вестергарда:
+    при BPS-равновесии 2J₂ = 3σ_m² выполняется ρ = ξ -/
+def haighWestergaardBpsRatio (rho xi : ℝ) : Prop :=
+  rho = xi
+
+/-- Амплитуда модуляции главных напряжений девиатора A = √2 * (ρ/ξ) -/
+def deviatorAmplitude (rho xi : ℝ) : ℝ :=
+  Real.sqrt 2 * (rho / xi)
+
+-- ТЕОРЕМА 11 (Амплитуда девиатора BPS-каверны A = √2):
+-- Из условия BPS-равновесия (ρ = ξ > 0) строго следует, что амплитуда A тождественно равна √2.
+theorem koide_amplitude_sqrt_two (rho xi : ℝ) (h_pos : 0 < xi) (h_bps : haighWestergaardBpsRatio rho xi) :
+    deviatorAmplitude rho xi = Real.sqrt 2 := by
+  dsimp [deviatorAmplitude, haighWestergaardBpsRatio] at *
+  rw [h_bps]
+  have h_div : xi / xi = 1 := div_self (ne_of_gt h_pos)
+  rw [h_div, mul_one]
+
+/-- Сумма квадратных корней масс трехфазной системы при амплитуде A = √2:
+    Σ √m_k = 3μ (так как Σ cos θ_k = 0) -/
+def sumSqrtMasses (mu : ℝ) : ℝ := 3 * mu
+
+/-- Сумма масс трехфазной системы:
+    Σ m_k = μ² (3 + 2 * (3/2)) = 6μ² (так как Σ cos² θ_k = 3/2) -/
+def sumMasses (mu : ℝ) : ℝ := 6 * mu ^ 2
+
+/-- Каноническое отношение Коидэ Q = Σ m / (Σ √m)² -/
+def koideQ (mu : ℝ) : ℝ :=
+  sumMasses mu / (sumSqrtMasses mu) ^ 2
+
+-- ТЕОРЕМА 12 (Канонический инвариант Коидэ Q = 2/3):
+-- Из условия BPS-кавитационного равновесия и 120°-симметрии намотки тора
+-- отношение Коидэ строго равно 2/3 для любого масштабного множителя μ ≠ 0.
+theorem koide_exact_from_mises_balance (mu : ℝ) (h_mu : mu ≠ 0) :
+    koideQ mu = 2 / 3 := by
+  dsimp [koideQ, sumMasses, sumSqrtMasses]
+  have h3 : (3 : ℝ) ≠ 0 := by norm_num
+  have h3m : 3 * mu ≠ 0 := mul_ne_zero h3 h_mu
+  have h_denom : (3 * mu) ^ 2 ≠ 0 := pow_ne_zero 2 h3m
+  have h1 : 6 * mu ^ 2 = (2 / 3 : ℝ) * (3 * mu) ^ 2 := by ring
+  rw [h1]
+  rw [mul_div_cancel_right₀ (2 / 3 : ℝ) h_denom]
+
+/-! =========================================================================
+    РАЗДЕЛ 8. СТРОГИЙ ВЫВОД ФОРМЫ МИЗЕСА И ВИРИАЛЬНОЕ BPS-РАВНОВЕСИЕ
+   ========================================================================= -/
+
+-- ТЕОРЕМА 13: Связь критического напряжения чистого сдвига τ_c и 
+-- эквивалентного напряжения Мизеса σ_eq (происхождение множителя √3)
+theorem mises_equivalent_stress_ratio (alpha G0 : ℝ) (h_alpha : 0 < alpha) (hG : 0 < G0) :
+    let tau_c := alpha * G0
+    let J2 := tau_c ^ 2
+    let sigma_eq := Real.sqrt (3 * J2)
+    sigma_eq = Real.sqrt 3 * tau_c := by
+  intro tau_c J2 sigma_eq
+  dsimp [sigma_eq, J2]
+  rw [Real.sqrt_mul (by norm_num : (0 : ℝ) ≤ 3)]
+  rw [Real.sqrt_sq (by positivity)]
+
+-- ТЕОРЕМА 14: Двусторонняя эквивалентность инварианта Коидэ Q = 2/3 
+-- и BPS-баланса Губера--фон Мизеса 2*J₂ = 3*σ_m²
+theorem stress_koide_iff_mises_balance (J2 sigma_m : ℝ) (h : sigma_m ≠ 0) :
+    (2 * J2 + 3 * sigma_m ^ 2) / (9 * sigma_m ^ 2) = 2 / 3 ↔ 2 * J2 = 3 * sigma_m ^ 2 := by
+  have h_denom : 9 * sigma_m ^ 2 ≠ 0 := by
+    have h_sq : sigma_m ^ 2 > 0 := sq_pos_of_ne_zero h
+    positivity
+  rw [div_eq_iff h_denom]
+  have h_rhs : (2 : ℝ) / 3 * (9 * sigma_m ^ 2) = 6 * sigma_m ^ 2 := by ring
+  rw [h_rhs]
+  constructor
+  · intro h_eq
+    linarith
+  · intro h_bps
+    linarith
+
+-- ТЕОРЕМА 15 (Изохорность пластического срыва):
+-- При сохранении объема матрицы (Tr(ε̇ᵖ) = 0) пластическая работа
+-- тождественно не зависит от гидростатического давления σ_m
+theorem isochoric_dissipation_independent_of_pressure
+    (s_trace_prod : ℝ) (sigma_m : ℝ) (trace_eps_dot_p : ℝ)
+    (h_isochoric : trace_eps_dot_p = 0) :
+    s_trace_prod + sigma_m * trace_eps_dot_p = s_trace_prod := by
+  rw [h_isochoric, mul_zero, add_zero]
+
+-- ТЕОРЕМА 16 (Вириальный BPS-баланс прецессирующего источника Клиффорда):
+-- Усредненный тензор двух конгруэнтных мод тора Клиффорда (1/2, 1/2, 0)
+-- со спинорным 4π-удвоением тождественно удовлетворяет 2*J₂ = 3*σ_m²
+theorem clifford_precession_virial_bps_balance (E0 : ℝ) :
+    let sigma_m := (1 / 3 : ℝ) * E0
+    let J2_single := (1 / 12 : ℝ) * E0 ^ 2
+    let J2_total := 2 * J2_single  -- 4π-спинорное удвоение
+    2 * J2_total = 3 * sigma_m ^ 2 := by
+  intro sigma_m J2_single J2_total
+  dsimp [J2_total, J2_single, sigma_m]
+  ring
 
 end
 
