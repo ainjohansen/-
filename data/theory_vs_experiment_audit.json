@@ -1,0 +1,30 @@
+{
+  "total_predictions": 28,
+  "with_experimental_comparison": 24,
+  "theorems": 4,
+  "mean_sigma": 10.028385994634013,
+  "max_sigma": 104.99999999999972,
+  "min_sigma": 0.06333333333333499,
+  "groups": {
+    "ppm_level": [],
+    "precise_1_3_sigma": [
+      "m_e",
+      "rho_tree",
+      "theta_C",
+      "E_b_deuteron",
+      "sin2_theta13",
+      "a_0_MOND",
+      "alpha_G",
+      "G_N_pred"
+    ],
+    "deviant_gt_3sigma": [
+      "m_mu",
+      "M_Z",
+      "M_W",
+      "sin2_thetaW",
+      "v_vev",
+      "Delta_M_np",
+      "M_H"
+    ]
+  }
+}

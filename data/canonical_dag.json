@@ -1,0 +1,5831 @@
+{
+  "version": "5.5.5-ssot",
+  "total_nodes": 268,
+  "metrics": {
+    "dim_pass": 268,
+    "numeric_match": 175,
+    "acyclic": true
+  },
+  "nodes": [
+    {
+      "id": "COSMO_mond_acceleration",
+      "dim": [
+        0,
+        1,
+        -2,
+        0
+      ],
+      "unit": "m/s^2",
+      "type": "PURE",
+      "val": "1.042e-10",
+      "formula": "SI_c * COSMO_H_0 / (2*pi)",
+      "depends_on": [
+        "SI_c",
+        "COSMO_H_0"
+      ],
+      "chapter": "01_ontology",
+      "source": "v56:eq:mond_acceleration_exact",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 71
+    },
+    {
+      "id": "CONT_N_longitudinal",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "0",
+      "formula": "0",
+      "depends_on": [],
+      "chapter": "01_ontology",
+      "source": "v55:eq:n_longitudinal_zero",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 110
+    },
+    {
+      "id": "CONT_solenoidal_div_u",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "0",
+      "formula": "0",
+      "depends_on": [],
+      "chapter": "01_ontology",
+      "source": "v55:eq:solenoidal_constraint",
+      "lean_file": "TevSolenoidalBulk.lean",
+      "lean_thm": "solenoidal_smul",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 116
+    },
+    {
+      "id": "CONT_laplace_pressure",
+      "dim": [
+        1,
+        -3,
+        -2,
+        0
+      ],
+      "unit": "Pa/m^2",
+      "type": "PURE",
+      "val": "0",
+      "formula": "0",
+      "depends_on": [],
+      "chapter": "01_ontology",
+      "source": "v55:eq:laplace_pressure",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 133
+    },
+    {
+      "id": "CONT_spinor_order",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "1",
+      "formula": "abs(z1)**2 + abs(z2)**2",
+      "depends_on": [],
+      "chapter": "01_ontology",
+      "source": "v55:eq:spinor_order_parameter",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 173
+    },
+    {
+      "id": "ROOT_alpha",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "ANCHOR",
+      "val": "0.0072973525643",
+      "formula": "1 / 137.035999177",
+      "depends_on": [],
+      "chapter": "01_ontology",
+      "source": "v55:eq:alpha_impedance_def",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 190
+    },
+    {
+      "id": "SCALE_lambda_p",
+      "dim": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "unit": "fm",
+      "type": "PURE",
+      "val": "0.21030891",
+      "formula": "SI_hbar_c / ROOT_Mp",
+      "depends_on": [
+        "ROOT_Mp"
+      ],
+      "chapter": "01_ontology",
+      "source": "v55:eq:lambda_p_anchor_def",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 197
+    },
+    {
+      "id": "REL_navier_cauchy_moving",
+      "dim": [
+        0,
+        -1,
+        0,
+        0
+      ],
+      "unit": "m^-1",
+      "type": "PURE",
+      "formula": "(1 - v**2/c**2) * d2u_dx2 + d2u_dy2 + d2u_dz2",
+      "depends_on": [
+        "SI_c"
+      ],
+      "chapter": "01_ontology",
+      "source": "v55:eq:navier_cauchy_moving",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 323
+    },
+    {
+      "id": "REL_length_contraction",
+      "dim": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "unit": "m",
+      "type": "PURE",
+      "formula": "delta_L0 * sqrt(1 - v**2 / c**2)",
+      "depends_on": [
+        "SI_c"
+      ],
+      "chapter": "01_ontology",
+      "source": "v55:eq:lorentz_length_contraction",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 329
+    },
+    {
+      "id": "EM_energy_isomorphism",
+      "dim": [
+        1,
+        -1,
+        -2,
+        0
+      ],
+      "unit": "J/m^3",
+      "type": "PURE",
+      "formula": "0.5 * SI_epsilon_0 * (E**2) + (0.5 / SI_mu_0) * (B**2)",
+      "depends_on": [
+        "SI_epsilon_0",
+        "SI_mu_0"
+      ],
+      "chapter": "02_electromagnetism",
+      "source": "v55:eq:em_energy_density_match",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 367
+    },
+    {
+      "id": "EM_div_B_zero",
+      "dim": [
+        1,
+        -1,
+        -2,
+        -1
+      ],
+      "unit": "T/m",
+      "type": "PURE",
+      "val": "0",
+      "formula": "0",
+      "depends_on": [],
+      "chapter": "02_electromagnetism",
+      "source": "v55:eq:div_B_zero_theorem",
+      "lean_file": "TevLeptonMonopole.lean",
+      "lean_thm": "div_curl_identically_zero",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 381
+    },
+    {
+      "id": "EM_div_E_bulk",
+      "dim": [
+        1,
+        0,
+        -3,
+        -1
+      ],
+      "unit": "V/m^2",
+      "type": "PURE",
+      "val": "0",
+      "formula": "0",
+      "depends_on": [],
+      "chapter": "02_electromagnetism",
+      "source": "v55:eq:div_E_gauge",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 417
+    },
+    {
+      "id": "EM_manifold_boundary",
+      "dim": [
+        0,
+        2,
+        0,
+        0
+      ],
+      "unit": "m^2",
+      "type": "PURE",
+      "formula": "S_inf + S_core",
+      "depends_on": [],
+      "chapter": "02_electromagnetism",
+      "source": "v55:eq:manifold_boundaries",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 427
+    },
+    {
+      "id": "EM_gauss_flux",
+      "dim": [
+        1,
+        3,
+        -3,
+        -1
+      ],
+      "unit": "V*m",
+      "type": "PURE",
+      "formula": "q / SI_epsilon_0",
+      "depends_on": [
+        "SI_epsilon_0"
+      ],
+      "chapter": "02_electromagnetism",
+      "source": "v55:eq:gauss_charge_flux",
+      "lean_file": "TevLeptonMonopole.lean",
+      "lean_thm": "gauss_cavitation_boundary_flux",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 437
+    },
+    {
+      "id": "EM_charge_integral",
+      "dim": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "unit": "C",
+      "type": "PURE",
+      "val": "1.602176634e-19",
+      "formula": "SI_e",
+      "depends_on": [
+        "SI_e"
+      ],
+      "chapter": "02_electromagnetism",
+      "source": "v55:eq:charge_quantization_exact",
+      "lean_file": "TevLeptonMonopole.lean",
+      "lean_thm": "electron_charge_is_one",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 457
+    },
+    {
+      "id": "DEF_photon_mass",
+      "dim": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "unit": "kg",
+      "type": "PURE",
+      "val": "0",
+      "formula": "0",
+      "depends_on": [],
+      "chapter": "03_dimensions",
+      "source": "v55:eq:photon_mass_zero",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 473
+    },
+    {
+      "id": "DEF_neutrino_charge",
+      "dim": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "unit": "e",
+      "type": "PURE",
+      "val": "0",
+      "formula": "0",
+      "depends_on": [],
+      "chapter": "03_dimensions",
+      "source": "v55:eq:neutrino_charge_zero",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 482
+    },
+    {
+      "id": "DEF_zitter_frequency",
+      "dim": [
+        0,
+        0,
+        -1,
+        0
+      ],
+      "unit": "s^-1",
+      "type": "PURE",
+      "formula": "M * (SI_c**2) / SI_hbar",
+      "depends_on": [
+        "SI_c",
+        "SI_hbar"
+      ],
+      "chapter": "03_dimensions",
+      "source": "v55:eq:zitterbewegung_freq_def",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 496
+    },
+    {
+      "id": "CONT_Z_0",
+      "dim": [
+        1,
+        2,
+        -3,
+        -2
+      ],
+      "unit": "Ohm",
+      "type": "PURE",
+      "val": "376.730313668",
+      "formula": "SI_mu_0 * SI_c",
+      "depends_on": [
+        "SI_mu_0",
+        "SI_c"
+      ],
+      "chapter": "02_mises",
+      "source": "v56:eq:wave_impedance_z0",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 524
+    },
+    {
+      "id": "CONT_R_K",
+      "dim": [
+        1,
+        2,
+        -3,
+        -2
+      ],
+      "unit": "Ohm",
+      "type": "PURE",
+      "val": "25812.8074593",
+      "formula": "(2 * pi * SI_hbar) / (SI_e**2)",
+      "depends_on": [
+        "SI_hbar",
+        "SI_e"
+      ],
+      "chapter": "02_mises",
+      "source": "v56:eq:klitzing_rk_def",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 531
+    },
+    {
+      "id": "MISES_bps_postulate",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "POSTULATE",
+      "val": "1.0",
+      "formula": "2*J_2 / (3*sigma_m**2)",
+      "depends_on": [],
+      "chapter": "02_mises",
+      "source": "v56:eq:bps_mises_condition",
+      "role": "postulate",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 604
+    },
+    {
+      "id": "HW_xi_rho_defs",
+      "dim": [
+        1,
+        -1,
+        -2,
+        0
+      ],
+      "unit": "Pa",
+      "type": "PURE",
+      "formula": "xi = sqrt(3)*sigma_m, rho = sqrt(2*J_2)",
+      "depends_on": [],
+      "chapter": "02_mises",
+      "source": "v56:eq:haigh_westergaard_coords",
+      "role": "definition",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 622
+    },
+    {
+      "id": "CLIFF_hopf_coords",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "formula": "sin(eta)*exp(i*xi1) + cos(eta)*exp(i*xi2)",
+      "depends_on": [],
+      "chapter": "05_clifford_proton",
+      "source": "v55:eq:hopf_coordinates_def",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 709
+    },
+    {
+      "id": "CLIFF_willmore_functional",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "formula": "integral(H**2, dA)",
+      "depends_on": [],
+      "chapter": "05_clifford_proton",
+      "source": "v55:eq:willmore_functional_def",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 716
+    },
+    {
+      "id": "CLIFF_flat_metric",
+      "dim": [
+        0,
+        2,
+        0,
+        0
+      ],
+      "unit": "m^2",
+      "type": "PURE",
+      "formula": "0.5 * (d_xi1**2 + d_xi2**2)",
+      "depends_on": [],
+      "chapter": "05_clifford_proton",
+      "source": "v55:eq:clifford_flat_metric",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 730
+    },
+    {
+      "id": "CLIFF_mean_curvature_zero",
+      "dim": [
+        0,
+        -1,
+        0,
+        0
+      ],
+      "unit": "m^-1",
+      "type": "PURE",
+      "val": "0",
+      "formula": "(1 - 1) / 2",
+      "depends_on": [],
+      "chapter": "05_clifford_proton",
+      "source": "v55:eq:clifford_zero_mean_curvature",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 736
+    },
+    {
+      "id": "KNOT_dirac_laplace_op",
+      "dim": [
+        0,
+        -2,
+        0,
+        0
+      ],
+      "unit": "m^-2",
+      "type": "PURE",
+      "formula": "-laplace_T2 + T_spin**2",
+      "depends_on": [],
+      "chapter": "05_clifford_proton",
+      "source": "v55:eq:dirac_laplace_operator_def",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 759
+    },
+    {
+      "id": "KNOT_energy_invariant",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "formula": "(p**2 + q**2) + 2 / (p + q)",
+      "depends_on": [
+        "TOP_p",
+        "TOP_q"
+      ],
+      "chapter": "05_clifford_proton",
+      "source": "v55:eq:knot_energy_invariant_formula",
+      "lean_file": "TevFoundations.lean",
+      "lean_thm": "knotEnergy",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 768
+    },
+    {
+      "id": "TOP_I_trefoil",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "13.4",
+      "formula": "3**2 + 2**2 + 2 / (3 + 2)",
+      "depends_on": [
+        "TOP_p",
+        "TOP_q"
+      ],
+      "chapter": "05_clifford_proton",
+      "source": "v55:eq:trefoil_energy_exact",
+      "lean_file": "TevFoundations.lean",
+      "lean_thm": "trefoil_energy",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 809
+    },
+    {
+      "id": "KNOT_competitor_bound",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "25",
+      "formula": "25",
+      "depends_on": [],
+      "chapter": "05_clifford_proton",
+      "source": "v55:eq:trefoil_competitor_bound",
+      "lean_file": "TevFoundations.lean",
+      "lean_thm": "competing_knots_base_ge_25",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 815
+    },
+    {
+      "id": "KNOT_4_3_energy",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "25.285714",
+      "formula": "4**2 + 3**2 + 2 / (4 + 3)",
+      "depends_on": [],
+      "chapter": "05_clifford_proton",
+      "source": "v55:eq:knot_4_3_energy",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 857
+    },
+    {
+      "id": "LEP_winding_integers",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "formula": "p = 2*n - 1, q = n",
+      "depends_on": [],
+      "chapter": "06_leptons",
+      "source": "v55:eq:lepton_winding_components",
+      "lean_file": "TevLeptonTorus.lean",
+      "lean_thm": "turns_along",
+      "role": "definition",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 881
+    },
+    {
+      "id": "LEP_winding_W",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "formula": "(2*n - 1) / n",
+      "depends_on": [],
+      "chapter": "06_leptons",
+      "source": "v55:eq:spring_winding",
+      "lean_file": "TevLeptonTorus.lean",
+      "lean_thm": "springWinding",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 887
+    },
+    {
+      "id": "LEP_ring_radius",
+      "dim": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "unit": "m",
+      "type": "PURE",
+      "formula": "SI_hbar / (m * SI_c)",
+      "depends_on": [
+        "SI_hbar",
+        "SI_c"
+      ],
+      "chapter": "06_leptons",
+      "source": "v55:eq:lepton_major_radius",
+      "lean_file": "TevLeptonTorus.lean",
+      "lean_thm": "ringRadius",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 930
+    },
+    {
+      "id": "LEP_lagrangian",
+      "dim": [
+        1,
+        2,
+        -2,
+        0
+      ],
+      "unit": "J",
+      "type": "PURE",
+      "formula": "T_kin - U_eff",
+      "depends_on": [],
+      "chapter": "06_leptons",
+      "source": "v55:eq:electron_lagrangian",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1003
+    },
+    {
+      "id": "LEP_effective_potential",
+      "dim": [
+        1,
+        2,
+        -2,
+        0
+      ],
+      "unit": "J",
+      "type": "PURE",
+      "formula": "J_spin**2 / (2 * M_eff * R**2) + 2*pi * T_str * R + U_coulomb",
+      "depends_on": [],
+      "chapter": "06_leptons",
+      "source": "v55:eq:electron_effective_potential",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1009
+    },
+    {
+      "id": "SCALE_M_lobe",
+      "dim": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "unit": "MeV",
+      "type": "PURE",
+      "val": "312.75736314",
+      "formula": "ROOT_Mp / 3",
+      "depends_on": [
+        "ROOT_Mp"
+      ],
+      "chapter": "06_leptons",
+      "source": "v55:eq:m_scale_definition",
+      "role": "definition",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1067
+    },
+    {
+      "id": "LEP_theta_0",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "rad",
+      "type": "PURE",
+      "val": "0.222222",
+      "formula": "2 / 9",
+      "depends_on": [],
+      "chapter": "06_leptons",
+      "source": "v55:eq:lode_angle_exact",
+      "lean_file": "TevCKM.lean",
+      "lean_thm": "lode_angle_exact",
+      "role": "definition",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1076
+    },
+    {
+      "id": "LEP_laue_enthalpy",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "1.333333",
+      "formula": "4 / 3",
+      "depends_on": [],
+      "chapter": "06_leptons",
+      "source": "v56:eq:laue_enthalpy_exact",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1152
+    },
+    {
+      "id": "LEP_m_e_exp_benchmark",
+      "dim": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "unit": "MeV",
+      "type": "SEMI",
+      "val": "0.510998950",
+      "formula": "0.510998950",
+      "depends_on": [],
+      "chapter": "06_leptons",
+      "source": "v55:eq:electron_mass_codata_benchmark",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1197
+    },
+    {
+      "id": "LEP_dirac_g_factor",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "2",
+      "formula": "2",
+      "depends_on": [
+        "TOP_N_rev"
+      ],
+      "chapter": "06_leptons",
+      "source": "v55:eq:dirac_g_factor_exact",
+      "lean_file": "TevLeptonMonopole.lean",
+      "lean_thm": "dirac_g_factor_exact",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1220
+    },
+    {
+      "id": "LEP_C1_coeff",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "0.5",
+      "formula": "1 / 2",
+      "depends_on": [],
+      "chapter": "06_leptons",
+      "source": "v55:eq:schwinger_c1_exact",
+      "lean_file": "TevMesonAnomaly.lean",
+      "lean_thm": "C1_exact",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1248
+    },
+    {
+      "id": "LEP_I_geom_val",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "1.368056",
+      "formula": "197 / 144",
+      "depends_on": [],
+      "chapter": "06_leptons",
+      "source": "v55:eq:I_geom_fraction_exact",
+      "lean_file": "TevMesonAnomaly.lean",
+      "lean_thm": "I_geom_exact",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1275
+    },
+    {
+      "id": "LEP_I_geom_basis",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "144",
+      "formula": "(3 * 4)**2",
+      "depends_on": [
+        "TOP_dim",
+        "TOP_N_spin"
+      ],
+      "chapter": "06_leptons",
+      "source": "v55:eq:denominator_144_origin",
+      "lean_file": "TevMesonAnomaly.lean",
+      "lean_thm": "I_geom_exact",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1284
+    },
+    {
+      "id": "LEP_phase_cells",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "formula": "(2*n - 1) * n",
+      "depends_on": [],
+      "chapter": "06_leptons",
+      "source": "v55:eq:lepton_phase_volume_cells",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1305
+    },
+    {
+      "id": "LEP_anomaly_ratio_val",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "2.8",
+      "formula": "(15 - 1) / (6 - 1)",
+      "depends_on": [],
+      "chapter": "06_leptons",
+      "source": "v55:eq:lepton_anomaly_ratio_exact",
+      "lean_file": "TevMesonAnomaly.lean",
+      "lean_thm": "lepton_anomaly_ratio_exact",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1314
+    },
+    {
+      "id": "BAR_phase_shift_step",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "rad",
+      "type": "PURE",
+      "val": "2.094395",
+      "formula": "2 * pi / 3",
+      "depends_on": [
+        "TOP_p"
+      ],
+      "chapter": "07_baryons",
+      "source": "v55:eq:three_phase_shift_step",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1371
+    },
+    {
+      "id": "BAR_link_components_unity",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "1",
+      "formula": "gcd(3, 2)",
+      "depends_on": [
+        "TOP_p",
+        "TOP_q"
+      ],
+      "chapter": "07_baryons",
+      "source": "v55:eq:gcd_confinement_condition",
+      "lean_file": "TevProtonTransformer.lean",
+      "lean_thm": "quark_confinement_unbreakable",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1469
+    },
+    {
+      "id": "BAR_knot_pitch",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "0.666667",
+      "formula": "TOP_q / TOP_p",
+      "depends_on": [
+        "TOP_p",
+        "TOP_q"
+      ],
+      "chapter": "07_baryons",
+      "source": "v56:eq:knot_pitch_two_thirds",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1483
+    },
+    {
+      "id": "BAR_q0_monopole",
+      "dim": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "unit": "e",
+      "type": "PURE",
+      "val": "0.333333",
+      "formula": "(1 + 1 - 1) / 3",
+      "depends_on": [
+        "BAR_lobe_charges_set",
+        "TOP_p"
+      ],
+      "chapter": "07_baryons",
+      "source": "v55:eq:fortescue_monopole_flux",
+      "lean_file": "TevRefinements.lean",
+      "lean_thm": "q_monopole_val",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1520
+    },
+    {
+      "id": "BAR_neutron_charge_zero",
+      "dim": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "unit": "e",
+      "type": "PURE",
+      "val": "0",
+      "formula": "1 - 1",
+      "depends_on": [
+        "BAR_proton_charge"
+      ],
+      "chapter": "07_baryons",
+      "source": "v55:eq:neutron_charge_neutral",
+      "lean_file": "TevProtonTransformer.lean",
+      "lean_thm": "neutron_charge_is_zero",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1566
+    },
+    {
+      "id": "BAR_strangeness_max",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "3",
+      "formula": "TOP_p",
+      "depends_on": [
+        "TOP_p"
+      ],
+      "chapter": "07_baryons",
+      "source": "v55:eq:strangeness_bound_exact",
+      "lean_file": "TevNucleon.lean",
+      "lean_thm": "max_strangeness_is_three",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1688
+    },
+    {
+      "id": "BAR_C_Lambda",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "1.666667",
+      "formula": "(TOP_p + TOP_q) / TOP_p",
+      "depends_on": [
+        "TOP_p",
+        "TOP_q"
+      ],
+      "chapter": "07_baryons",
+      "source": "v55:eq:lambda_hyperon_coeff",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1701
+    },
+    {
+      "id": "CKM_delta_CP",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "rad",
+      "type": "PURE",
+      "val": "1.13029",
+      "formula": "arctan(3 / sqrt(2))",
+      "depends_on": [
+        "TOP_p",
+        "TOP_q"
+      ],
+      "chapter": "07_baryons",
+      "source": "v55:eq:delta_cp_exact",
+      "lean_file": "TevCKM.lean",
+      "lean_thm": "tan_delta_CP_sq",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1762
+    },
+    {
+      "id": "NEU_charge_zero",
+      "dim": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "unit": "e",
+      "type": "PURE",
+      "val": "0",
+      "formula": "0",
+      "depends_on": [],
+      "chapter": "08_neutrinos",
+      "source": "v55:eq:neutrino_charge_neutral_exact",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1785
+    },
+    {
+      "id": "NEU_circulation_quantum",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "rad",
+      "type": "PURE",
+      "val": "6.283185",
+      "formula": "2 * pi",
+      "depends_on": [],
+      "chapter": "08_neutrinos",
+      "source": "v55:eq:neutrino_circulation_quantum",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1791
+    },
+    {
+      "id": "TOP_N_3D_calc",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "5",
+      "formula": "TOP_dim * (TOP_dim + 1) / 2 - 1",
+      "depends_on": [
+        "TOP_dim"
+      ],
+      "chapter": "08_neutrinos",
+      "source": "v55:eq:deviator_dim_formula",
+      "lean_file": "TevNeutrino.lean",
+      "lean_thm": "deviator_dim_is_five",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1806
+    },
+    {
+      "id": "NEU_frenet_equations",
+      "dim": [
+        0,
+        -1,
+        0,
+        0
+      ],
+      "unit": "m^-1",
+      "type": "PURE",
+      "formula": "d_ds(t) = kappa * n",
+      "depends_on": [],
+      "chapter": "08_neutrinos",
+      "source": "v55:eq:frenet_serret_equations",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1817
+    },
+    {
+      "id": "TOP_N_1D",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "3",
+      "formula": "TOP_dim",
+      "depends_on": [
+        "TOP_dim"
+      ],
+      "chapter": "08_neutrinos",
+      "source": "v55:eq:frenet_dim_three",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1826
+    },
+    {
+      "id": "NEU_axial_energy_fraction",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "0.2",
+      "formula": "1 / 5",
+      "depends_on": [],
+      "chapter": "08_neutrinos",
+      "source": "v56:eq:axial_mode_one_fifth_exact",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1861
+    },
+    {
+      "id": "NEU_gauge_dim",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "12",
+      "formula": "(TOP_p**2 + TOP_q**2) - 1",
+      "depends_on": [
+        "TOP_p",
+        "TOP_q"
+      ],
+      "chapter": "08_neutrinos",
+      "source": "v55:eq:pmns_gauge_dim",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1974
+    },
+    {
+      "id": "NEU_m_betabeta",
+      "dim": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "unit": "eV",
+      "type": "PURE",
+      "val": "0",
+      "formula": "0",
+      "depends_on": [],
+      "chapter": "08_neutrinos",
+      "source": "v55:eq:majorana_mass_zero",
+      "lean_file": "TevNeutrino.lean",
+      "lean_thm": "majorana_mass_identically_zero",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2005
+    },
+    {
+      "id": "NEU_sum_stability_grad",
+      "dim": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "unit": "meV/rad",
+      "type": "PURE",
+      "val": "0.02",
+      "formula": "-2.36 + 22.37 - 19.99",
+      "depends_on": [],
+      "chapter": "08_neutrinos",
+      "source": "v55:eq:bps_cosmo_sum_stability",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2046
+    },
+    {
+      "id": "TOP_N_basis_ew",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "13",
+      "formula": "TOP_p**2 + TOP_q**2",
+      "depends_on": [
+        "TOP_p",
+        "TOP_q"
+      ],
+      "chapter": "09_electroweak",
+      "source": "v55:eq:torus_basis_thirteen",
+      "lean_file": "TevElectroweak.lean",
+      "lean_thm": "basis_dim_exact",
+      "role": "definition",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2110
+    },
+    {
+      "id": "EW_sin2_thetaW",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "0.230769",
+      "formula": "TOP_p / (TOP_p**2 + TOP_q**2)",
+      "depends_on": [
+        "TOP_p",
+        "TOP_q"
+      ],
+      "chapter": "09_electroweak",
+      "source": "v55:eq:weinberg_sin2_exact",
+      "lean_file": "TevElectroweak.lean",
+      "lean_thm": "weinberg_sin2_exact",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2122
+    },
+    {
+      "id": "EW_C_Z_derived",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "1.25",
+      "formula": "(TOP_p + TOP_q) / TOP_N_spin",
+      "depends_on": [
+        "TOP_p",
+        "TOP_q",
+        "TOP_N_spin"
+      ],
+      "chapter": "09_electroweak",
+      "source": "v56:eq:C_Z_exact_derived",
+      "lean_file": "TevElectroweak.lean",
+      "lean_thm": "C_Z_operator_exact",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2199
+    },
+    {
+      "id": "EW_C_W_derived",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "3.5",
+      "formula": "(TOP_p + TOP_q + TOP_N_rev) / 2",
+      "depends_on": [
+        "TOP_p",
+        "TOP_q",
+        "TOP_N_rev"
+      ],
+      "chapter": "09_electroweak",
+      "source": "v56:eq:C_W_exact_derived",
+      "lean_file": "TevElectroweak.lean",
+      "lean_thm": "C_W_operator_exact",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2205
+    },
+    {
+      "id": "EW_C_H_derived",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "-7.8",
+      "formula": "-((TOP_p**2 + TOP_q**2) * TOP_p) / (TOP_p + TOP_q)",
+      "depends_on": [
+        "TOP_p",
+        "TOP_q"
+      ],
+      "chapter": "09_electroweak",
+      "source": "v56:eq:C_H_exact_derived",
+      "lean_file": "TevElectroweak.lean",
+      "lean_thm": "C_H_operator_exact",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2212
+    },
+    {
+      "id": "QCD_strong_base_dim",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "17",
+      "formula": "(TOP_p**2 + TOP_q**2) + TOP_N_spin",
+      "depends_on": [
+        "TOP_p",
+        "TOP_q",
+        "TOP_N_spin"
+      ],
+      "chapter": "10_nuclear",
+      "source": "v55:eq:strong_basis_dimension_exact",
+      "lean_file": "TevStrongRunning.lean",
+      "lean_thm": "strong_base_is_17",
+      "role": "definition",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2311
+    },
+    {
+      "id": "NUC_Eb_deuteron",
+      "dim": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "unit": "MeV",
+      "type": "SEMI",
+      "val": "2.224442",
+      "formula": "(M_pi_pm**2 / (2 * ROOT_Mp)) * (3 / 14)",
+      "depends_on": [
+        "ROOT_Mp",
+        "TOP_p",
+        "TOP_q"
+      ],
+      "chapter": "10_nuclear",
+      "source": "v55:eq:deuteron_binding_exact",
+      "lean_file": "TevNucleon.lean",
+      "lean_thm": "deuteron_recoil_exact",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2362
+    },
+    {
+      "id": "NUC_tetra_sum_angle",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "deg",
+      "type": "PURE",
+      "val": "352.6439",
+      "formula": "5 * 70.528779",
+      "depends_on": [],
+      "chapter": "10_nuclear",
+      "source": "v55:eq:five_tetrahedra_sum",
+      "lean_file": "TevNuclearSEMF.lean",
+      "lean_thm": "tetrahedron_frustration_inequality",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2438
+    },
+    {
+      "id": "NUC_angular_deficit",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "rad",
+      "type": "PURE",
+      "val": "0.128388",
+      "formula": "2*pi - 5 * arccos(1/3)",
+      "depends_on": [],
+      "chapter": "10_nuclear",
+      "source": "v55:eq:angular_deficit_exact",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2444
+    },
+    {
+      "id": "GRAV_laue_integral",
+      "dim": [
+        1,
+        2,
+        -2,
+        0
+      ],
+      "unit": "J",
+      "type": "PURE",
+      "val": "0",
+      "formula": "0",
+      "depends_on": [],
+      "chapter": "11_gravity",
+      "source": "v55:eq:laue_equilibrium_zero",
+      "lean_file": "TevGravity.lean",
+      "lean_thm": "-",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2621
+    },
+    {
+      "id": "GRAV_N_cascade_val",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "18",
+      "formula": "(TOP_p**2 + TOP_q**2) + TOP_N_3D",
+      "depends_on": [
+        "TOP_p",
+        "TOP_q",
+        "TOP_N_3D"
+      ],
+      "chapter": "11_gravity",
+      "source": "v55:eq:cascade_power_eighteen",
+      "lean_file": "TevGravityInterface.lean",
+      "lean_thm": "cascade_total_is_18",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2743
+    },
+    {
+      "id": "GRAV_tridiagonal_chain",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "0",
+      "formula": "0",
+      "depends_on": [],
+      "chapter": "11_gravity",
+      "source": "v56:eq:tridiagonal_krylov_chain",
+      "role": "definition",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2766
+    },
+    {
+      "id": "GRAV_C_total_val",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "4.2",
+      "formula": "3 + 6/5",
+      "depends_on": [],
+      "chapter": "11_gravity",
+      "source": "v55:eq:total_screening_twenty_one_fifths",
+      "lean_file": "TevGravityInterface.lean",
+      "lean_thm": "total_screening_coeff_exact",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2799
+    },
+    {
+      "id": "GRAV_lab_dispersion_table",
+      "dim": [
+        -1,
+        3,
+        -2,
+        0
+      ],
+      "unit": "m^3/(kg*s^2)",
+      "type": "PURE",
+      "val": "6.67391e-11",
+      "formula": "GRAV_G_N_pred",
+      "depends_on": [
+        "GRAV_G_N_pred"
+      ],
+      "chapter": "11_gravity",
+      "source": "v55:tab:gravimetry_dispersion_audit",
+      "role": "table",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2864
+    },
+    {
+      "id": "GW_speed_equality",
+      "dim": [
+        0,
+        1,
+        -1,
+        0
+      ],
+      "unit": "m/s",
+      "type": "PURE",
+      "val": "299792458",
+      "formula": "SI_c",
+      "depends_on": [
+        "SI_c"
+      ],
+      "chapter": "11_gravity",
+      "source": "v55:eq:wave_speeds_equal",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2944
+    },
+    {
+      "id": "EM_maxwell_trace",
+      "dim": [
+        1,
+        -1,
+        -2,
+        0
+      ],
+      "unit": "Pa",
+      "type": "PURE",
+      "formula": "-0.5 * SI_epsilon_0 * (E**2)",
+      "depends_on": [
+        "SI_epsilon_0"
+      ],
+      "chapter": "11_gravity",
+      "source": "v55:eq:maxwell_stress_trace",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2954
+    },
+    {
+      "id": "COSMO_a0_mond",
+      "dim": [
+        0,
+        1,
+        -2,
+        0
+      ],
+      "unit": "m/s^2",
+      "type": "PURE",
+      "val": "1.042e-10",
+      "formula": "SI_c * COSMO_H_0 / (2 * pi)",
+      "depends_on": [
+        "SI_c",
+        "COSMO_H_0"
+      ],
+      "chapter": "11_gravity",
+      "source": "v56:eq:mond_acceleration_def",
+      "lean_file": "TevCosmology.lean",
+      "lean_thm": "mond_acceleration_pos",
+      "role": "definition",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 3001
+    },
+    {
+      "id": "COSMO_T_eff_def",
+      "dim": [
+        1,
+        -1,
+        -2,
+        0
+      ],
+      "unit": "Pa",
+      "type": "PURE",
+      "formula": "T_defect - T_vacuum",
+      "depends_on": [],
+      "chapter": "11_gravity",
+      "source": "v55:eq:effective_stress_tensor",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 3032
+    },
+    {
+      "id": "COSMO_lambda_zero",
+      "dim": [
+        0,
+        -2,
+        0,
+        0
+      ],
+      "unit": "m^-2",
+      "type": "PURE",
+      "val": "0",
+      "formula": "0",
+      "depends_on": [],
+      "chapter": "11_gravity",
+      "source": "v55:eq:lambda_vacuum_zero",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 3038
+    },
+    {
+      "id": "QM_navier_cauchy_wave",
+      "dim": [
+        0,
+        1,
+        -2,
+        0
+      ],
+      "unit": "m/s^2",
+      "type": "PURE",
+      "formula": "(SI_c**2) * laplace(u)",
+      "depends_on": [
+        "SI_c"
+      ],
+      "chapter": "12_quantum",
+      "source": "v55:eq:navier_cauchy_scalar",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 3051
+    },
+    {
+      "id": "QM_envelope_ansatz",
+      "dim": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "unit": "m",
+      "type": "PURE",
+      "formula": "Re(psi * exp(-i * omega_0 * t))",
+      "depends_on": [],
+      "chapter": "12_quantum",
+      "source": "v55:eq:envelope_ansatz",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 3058
+    },
+    {
+      "id": "QM_schroedinger_equation",
+      "dim": [
+        1,
+        3,
+        -2,
+        0
+      ],
+      "unit": "J*m",
+      "type": "PURE",
+      "formula": "-(SI_hbar**2 / (2 * M)) * laplace(psi)",
+      "depends_on": [
+        "SI_hbar"
+      ],
+      "chapter": "12_quantum",
+      "source": "v55:eq:schroedinger_exact",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 3067
+    },
+    {
+      "id": "QM_guidance_velocity",
+      "dim": [
+        0,
+        1,
+        -1,
+        0
+      ],
+      "unit": "m/s",
+      "type": "PURE",
+      "formula": "(SI_hbar / M) * grad(theta)",
+      "depends_on": [
+        "SI_hbar"
+      ],
+      "chapter": "12_quantum",
+      "source": "v55:eq:de_broglie_guidance",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 3102
+    },
+    {
+      "id": "QM_born_probability",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "formula": "abs(psi)**2 / integral(abs(psi)**2, d3x)",
+      "depends_on": [],
+      "chapter": "12_quantum",
+      "source": "v55:eq:born_probability_exact",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 3116
+    },
+    {
+      "id": "QM_non_factorizability",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "1",
+      "formula": "P(AB) != P(A)*P(B)",
+      "depends_on": [],
+      "chapter": "12_quantum",
+      "source": "v55:eq:tev_non_factorizability",
+      "lean_file": "TevQuantum.lean",
+      "lean_thm": "tev_joint_non_factorizable",
+      "role": "definition",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 3137
+    },
+    {
+      "id": "QM_spinor_initial_state",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "1",
+      "formula": "Phi_A = -Phi_B",
+      "depends_on": [],
+      "chapter": "12_quantum",
+      "source": "v55:eq:spinor_anti_correlation",
+      "lean_file": "TevQuantum.lean",
+      "lean_thm": "spinor_anti_correlation",
+      "role": "definition",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 3150
+    },
+    {
+      "id": "QM_bell_classical_limit",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "2.0",
+      "formula": "-1 + 2*theta/pi",
+      "depends_on": [],
+      "chapter": "12_quantum",
+      "source": "v55:eq:bell_classical_sawtooth",
+      "lean_file": "TevQuantum.lean",
+      "lean_thm": "classical_bell_limit_is_two",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 3200
+    },
+    {
+      "id": "QM_momentum_operator",
+      "dim": [
+        1,
+        1,
+        -1,
+        0
+      ],
+      "unit": "kg*m/s",
+      "type": "PURE",
+      "formula": "-i * SI_hbar * nabla",
+      "depends_on": [
+        "SI_hbar"
+      ],
+      "chapter": "12_quantum",
+      "source": "v55:eq:quantum_momentum_operator",
+      "role": "definition",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 3225
+    },
+    {
+      "id": "QM_canonical_commutator",
+      "dim": [
+        1,
+        2,
+        -1,
+        0
+      ],
+      "unit": "J*s",
+      "type": "PURE",
+      "formula": "i * SI_hbar * delta_jk",
+      "depends_on": [
+        "SI_hbar"
+      ],
+      "chapter": "12_quantum",
+      "source": "v55:eq:canonical_commutator",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 3235
+    },
+    {
+      "id": "QM_uncertainty_relation",
+      "dim": [
+        1,
+        2,
+        -1,
+        0
+      ],
+      "unit": "J*s",
+      "type": "PURE",
+      "val": "0.527286e-34",
+      "formula": "SI_hbar / 2",
+      "depends_on": [
+        "SI_hbar"
+      ],
+      "chapter": "12_quantum",
+      "source": "v55:eq:uncertainty_exact",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 3252
+    },
+    {
+      "id": "STAT_fermion_exchange",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "-1",
+      "formula": "cos(2 * pi * 0.5)",
+      "depends_on": [],
+      "chapter": "12_quantum",
+      "source": "v55:eq:spin_stat_factor",
+      "lean_file": "TevSpinStatistics.lean",
+      "lean_thm": "fermion_spin_half_antisymmetric",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 3271
+    },
+    {
+      "id": "STAT_pauli_zero",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "0",
+      "formula": "0",
+      "depends_on": [],
+      "chapter": "12_quantum",
+      "source": "v55:eq:pauli_zero_amplitude",
+      "lean_file": "TevSpinStatistics.lean",
+      "lean_thm": "pauli_exclusion_principle",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 3282
+    },
+    {
+      "id": "TWIST_hall_viscosity",
+      "dim": [
+        1,
+        0,
+        -1,
+        0
+      ],
+      "unit": "kg/s",
+      "type": "PURE",
+      "formula": "(1 / 4) * SI_hbar * n_e",
+      "depends_on": [
+        "SI_hbar"
+      ],
+      "chapter": "12_quantum",
+      "source": "v55:eq:hall_viscosity_exact",
+      "lean_file": "TevTwistronics.lean",
+      "lean_thm": "hall_viscosity_exact",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 3303
+    },
+    {
+      "id": "QC_eshelby_crosstalk",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "formula": "4 * pi * log(R_chip / d)",
+      "depends_on": [],
+      "chapter": "12_quantum",
+      "source": "v55:eq:eshelby_crosstalk_divergence",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 3326
+    },
+    {
+      "id": "STAT_look_elsewhere_p_val",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "8.95e-25",
+      "formula": "(1 / 254)**10",
+      "depends_on": [],
+      "chapter": "16_conclusion",
+      "source": "v56:eq:look_elsewhere_p_value",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 3534
+    },
+    {
+      "id": "APP_clifford_torus_metric",
+      "dim": [
+        0,
+        2,
+        0,
+        0
+      ],
+      "unit": "m^2",
+      "type": "PURE",
+      "val": "0.5",
+      "formula": "1/2",
+      "depends_on": [],
+      "chapter": "17_appendix_faq",
+      "source": "v55:eq:clifford_torus_metric",
+      "role": "definition",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 3550
+    },
+    {
+      "id": "APP_lode_angle_definition",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "0.222222",
+      "formula": "q / p**2",
+      "depends_on": [
+        "TOP_q",
+        "TOP_p"
+      ],
+      "chapter": "17_appendix_faq",
+      "source": "v55:eq:lode_angle_definition",
+      "role": "definition",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 3555
+    },
+    {
+      "id": "APP_helicity_conservation",
+      "dim": [
+        0,
+        2,
+        -1,
+        0
+      ],
+      "unit": "m^2/s",
+      "type": "PURE",
+      "formula": "integral(u * curl(u), d3x) = const",
+      "depends_on": [],
+      "chapter": "17_appendix_faq",
+      "source": "v55:eq:helicity_conservation",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 3566
+    },
+    {
+      "id": "APP_robin_boundary_condition",
+      "dim": [
+        1,
+        -1,
+        -2,
+        0
+      ],
+      "unit": "Pa",
+      "type": "PURE",
+      "formula": "sigma.n + Z_boundary * u_dot = 0",
+      "depends_on": [],
+      "chapter": "17_appendix_faq",
+      "source": "v55:eq:robin_boundary_condition",
+      "role": "definition",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 3630
+    },
+    {
+      "id": "APP_mode_mass_correction",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "formula": "Tr(P_mode) / Tr(I_dof)",
+      "depends_on": [],
+      "chapter": "17_appendix_faq",
+      "source": "v55:eq:mode_mass_correction",
+      "role": "definition",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 3635
+    },
+    {
+      "id": "GRAV_alpha_G",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "5.905792e-39",
+      "formula": "sqrt(3) * (ROOT_alpha**18) * (1 - 4.2 * (ROOT_alpha / pi))",
+      "depends_on": [
+        "ROOT_alpha"
+      ],
+      "chapter": "01_ontology",
+      "source": "v56:eq:alpha_G_master_def",
+      "lean_file": "TevGravityInterface.lean",
+      "lean_thm": "alphaG_refined",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 220
+    },
+    {
+      "id": "DEF_neutrino_scale_concept",
+      "dim": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "unit": "meV",
+      "type": "PURE",
+      "val": "12.2918",
+      "formula": "(2 * (ROOT_alpha**5) * (ROOT_Mp / 3) * 1e9) / (1 + 1 / (6 * pi))",
+      "depends_on": [
+        "ROOT_alpha",
+        "ROOT_Mp"
+      ],
+      "chapter": "03_dimensions",
+      "source": "v55:eq:neutrino_mass_scale_concept",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 488
+    },
+    {
+      "id": "SCALE_delta_geom",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "0.00348424",
+      "formula": "1.5 * (ROOT_alpha / pi)",
+      "depends_on": [
+        "ROOT_alpha"
+      ],
+      "chapter": "06_leptons",
+      "source": "v55:eq:stokes_boundary_layer_exact",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1107
+    },
+    {
+      "id": "LEP_proton_defect",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "-7.10023e-5",
+      "formula": "-(4/3) * (ROOT_alpha**2)",
+      "depends_on": [
+        "ROOT_alpha"
+      ],
+      "chapter": "06_leptons",
+      "source": "v55:eq:defect_exact",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1141
+    },
+    {
+      "id": "LEP_a_e_series_def",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "formula": "sum(C_k * (ROOT_alpha / pi)**k)",
+      "depends_on": [
+        "ROOT_alpha"
+      ],
+      "chapter": "06_leptons",
+      "source": "v55:eq:g_minus_2_expansion",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1239
+    },
+    {
+      "id": "LEP_a_l_schwinger_val",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "0.00116141",
+      "formula": "0.5 * (ROOT_alpha / pi)",
+      "depends_on": [
+        "ROOT_alpha"
+      ],
+      "chapter": "06_leptons",
+      "source": "v55:eq:schwinger_leading_val",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1254
+    },
+    {
+      "id": "BAR_delta_tau_purcell",
+      "dim": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "unit": "s",
+      "type": "SEMI",
+      "val": "8.637",
+      "formula": "tau_beam * (4 / 3) * ROOT_alpha",
+      "depends_on": [
+        "ROOT_alpha"
+      ],
+      "chapter": "07_baryons",
+      "source": "v55:eq:purcell_tau_shift",
+      "lean_file": "TevNucleon.lean",
+      "lean_thm": "tau_bottle_strictly_less",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1663
+    },
+    {
+      "id": "CKM_cabibbo_angle",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "rad",
+      "type": "PURE",
+      "val": "0.226868",
+      "formula": "2/9 + 2 * (ROOT_alpha / pi)",
+      "depends_on": [
+        "ROOT_alpha"
+      ],
+      "chapter": "07_baryons",
+      "source": "v55:eq:cabibbo_angle_exact",
+      "lean_file": "TevCKM.lean",
+      "lean_thm": "cabibbo_angle_def",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1721
+    },
+    {
+      "id": "NEU_M_scale",
+      "dim": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "unit": "meV",
+      "type": "PURE",
+      "val": "12.2918",
+      "formula": "(2 * (ROOT_alpha**5) * (ROOT_Mp / 3) * 1e9) / (1 + 1 / (6 * pi))",
+      "depends_on": [
+        "ROOT_alpha",
+        "ROOT_Mp"
+      ],
+      "chapter": "08_neutrinos",
+      "source": "v55:eq:neutrino_scale_formula",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1883
+    },
+    {
+      "id": "NEU_theta_nu",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "rad",
+      "type": "PURE",
+      "val": "2.471442",
+      "formula": "(pi - 2/3) - 1.5 * (ROOT_alpha / pi)",
+      "depends_on": [
+        "ROOT_alpha"
+      ],
+      "chapter": "08_neutrinos",
+      "source": "v55:eq:neutrino_lode_angle",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1908
+    },
+    {
+      "id": "NEU_theta_nu_series",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "rad",
+      "type": "PURE",
+      "formula": "(pi - 2/3) - 1.5 * (ROOT_alpha / pi) - 0.9 * (ROOT_alpha / pi)**2",
+      "depends_on": [
+        "ROOT_alpha"
+      ],
+      "chapter": "08_neutrinos",
+      "source": "v55:eq:theta_nu_expansion_chapter",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2023
+    },
+    {
+      "id": "EW_E_EW",
+      "dim": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "unit": "GeV",
+      "type": "PURE",
+      "val": "128.577053",
+      "formula": "(ROOT_Mp / ROOT_alpha) * 1e-3",
+      "depends_on": [
+        "ROOT_Mp",
+        "ROOT_alpha"
+      ],
+      "chapter": "09_electroweak",
+      "source": "v55:eq:electroweak_scale_exact",
+      "lean_file": "TevElectroweak.lean",
+      "lean_thm": "electroweakScale",
+      "role": "definition",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2095
+    },
+    {
+      "id": "MES_E_0",
+      "dim": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "unit": "MeV",
+      "type": "PURE",
+      "val": "70.025276",
+      "formula": "(5 / 67) * ROOT_Mp / (1 - (4 / 3) * (ROOT_alpha**2))",
+      "depends_on": [
+        "ROOT_Mp",
+        "ROOT_alpha"
+      ],
+      "chapter": "10_nuclear",
+      "source": "v55:eq:nambu_quantum_exact",
+      "lean_file": "TevBridge.lean",
+      "lean_thm": "nambu_quantum_bridge",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2277
+    },
+    {
+      "id": "MES_E_0_series",
+      "dim": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "unit": "MeV",
+      "type": "PURE",
+      "val": "70.025276",
+      "formula": "(5 / 67) * ROOT_Mp * (1 + (4 / 3) * (ROOT_alpha**2))",
+      "depends_on": [
+        "ROOT_Mp",
+        "ROOT_alpha"
+      ],
+      "chapter": "10_nuclear",
+      "source": "v55:eq:nambu_quantum_series",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2287
+    },
+    {
+      "id": "GRAV_alpha_18_kernel",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "3.443308e-39",
+      "formula": "ROOT_alpha**18",
+      "depends_on": [
+        "ROOT_alpha"
+      ],
+      "chapter": "11_gravity",
+      "source": "v55:eq:two_block_factorization_exact",
+      "lean_file": "TevGravityInterface.lean",
+      "lean_thm": "two_block_cascade_factorization",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2756
+    },
+    {
+      "id": "GRAV_alpha18_multiplicative",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "3.443308e-39",
+      "formula": "(ROOT_alpha**13) * (ROOT_alpha**5)",
+      "depends_on": [
+        "ROOT_alpha"
+      ],
+      "chapter": "11_gravity",
+      "source": "v56:eq:lanczos_multiplicative_alpha18",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2776
+    },
+    {
+      "id": "GRAV_delta_interface",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "0.00278738",
+      "formula": "(6 / 5) * (ROOT_alpha / pi)",
+      "depends_on": [
+        "ROOT_alpha"
+      ],
+      "chapter": "11_gravity",
+      "source": "v55:eq:interface_coupling_layer_val",
+      "lean_file": "TevGravityInterface.lean",
+      "lean_thm": "interface_coupling_exact",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2791
+    },
+    {
+      "id": "GRAV_alpha_G_pred",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "5.905792e-39",
+      "formula": "sqrt(3) * (ROOT_alpha**18) * (1 - 4.2 * (ROOT_alpha / pi))",
+      "depends_on": [
+        "ROOT_alpha"
+      ],
+      "chapter": "11_gravity",
+      "source": "v55:eq:alphaG_refined_exact_formula",
+      "lean_file": "TevGravityInterface.lean",
+      "lean_thm": "alphaG_refined",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2808
+    },
+    {
+      "id": "GW_scalar_suppression",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "0.00046456",
+      "formula": "(1 / 5) * (ROOT_alpha / pi)",
+      "depends_on": [
+        "ROOT_alpha"
+      ],
+      "chapter": "11_gravity",
+      "source": "v55:eq:gw_scalar_amplitude_suppression",
+      "lean_file": "TevGravityInterface.lean",
+      "lean_thm": "total_screening_coeff_exact",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2960
+    },
+    {
+      "id": "COSMO_baryon_asymmetry",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "6.0765e-10",
+      "formula": "(3 / 14) * (ROOT_alpha**4)",
+      "depends_on": [
+        "ROOT_alpha"
+      ],
+      "chapter": "11_gravity",
+      "source": "v55:eq:baryon_asymmetry_formula",
+      "lean_file": "TevCosmology.lean",
+      "lean_thm": "baryon_asymmetry_pos",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2987
+    },
+    {
+      "id": "RED_proton_electron_dimensionless",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "1836.152",
+      "formula": "(67 / (5 * ROOT_alpha)) - (268 / 15) * ROOT_alpha",
+      "depends_on": [
+        "ROOT_alpha"
+      ],
+      "chapter": "16_conclusion",
+      "source": "v55:eq:proton_mass_dimensionless_electron",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 3507
+    },
+    {
+      "id": "RED_proton_planck_dimensionless",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "7.685e-20",
+      "formula": "(3**0.25) * (ROOT_alpha**9) * sqrt(1 - 4.2 * (ROOT_alpha / pi))",
+      "depends_on": [
+        "ROOT_alpha"
+      ],
+      "chapter": "16_conclusion",
+      "source": "v55:eq:proton_mass_dimensionless_planck",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 3516
+    },
+    {
+      "id": "APP_alpha_G_jump_128",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "3.413851",
+      "formula": "(137.035999177 / 128)**18",
+      "depends_on": [
+        "ROOT_alpha"
+      ],
+      "chapter": "17_appendix_faq",
+      "source": "v55:eq:renorm_jump_catastrophe",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 3653
+    },
+    {
+      "id": "BAR_r_c",
+      "dim": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "unit": "fm",
+      "type": "PURE",
+      "val": "0.841236",
+      "formula": "2 * TOP_q * SCALE_lambda_p",
+      "depends_on": [
+        "TOP_N_rev",
+        "TOP_q",
+        "SCALE_lambda_p"
+      ],
+      "chapter": "07_baryons",
+      "source": "v55:eq:charge_radius_formula",
+      "lean_file": "TevNucleon.lean",
+      "lean_thm": "charge_radius_exact",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1580
+    },
+    {
+      "id": "BAR_R_m",
+      "dim": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "unit": "fm",
+      "type": "PURE",
+      "val": "0.630927",
+      "formula": "TOP_p * SCALE_lambda_p",
+      "depends_on": [
+        "TOP_p",
+        "SCALE_lambda_p"
+      ],
+      "chapter": "07_baryons",
+      "source": "v55:eq:mass_radius_formula",
+      "lean_file": "TevNucleon.lean",
+      "lean_thm": "mass_radius_exact",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1588
+    },
+    {
+      "id": "CONT_alpha_impedance_ratio",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "0.00729735256",
+      "formula": "EM_Z_0 / (2 * CONT_R_K)",
+      "depends_on": [
+        "EM_Z_0",
+        "CONT_R_K"
+      ],
+      "chapter": "01_ontology",
+      "source": "v55:eq:alpha_ratio_exact",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 293
+    },
+    {
+      "id": "DEF_alpha_impedance",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "0.00729735256",
+      "formula": "CONT_Z_0 / (2 * CONT_R_K)",
+      "depends_on": [
+        "CONT_Z_0",
+        "CONT_R_K"
+      ],
+      "chapter": "02_mises",
+      "source": "v56:eq:alpha_def",
+      "role": "definition",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 539
+    },
+    {
+      "id": "LEP_stress_koide_identity",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "0.66666667",
+      "formula": "sum(sigma_i**2) / (sum(sigma_i))**2 = 2/3",
+      "depends_on": [
+        "MISES_bps_postulate"
+      ],
+      "chapter": "02_mises",
+      "source": "v56:eq:stress_tensor_koide_exact",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 653
+    },
+    {
+      "id": "TWIST_bps_tunneling_ratio",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "0.81649658",
+      "formula": "sqrt(2.0 / 3.0)",
+      "depends_on": [
+        "MISES_bps_postulate"
+      ],
+      "chapter": "02_mises",
+      "source": "v56:eq:twist_bps_ratio_exact",
+      "lean_file": "TevTwistronics.lean",
+      "lean_thm": "mises_bps_ratio_exact",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 693
+    },
+    {
+      "id": "HW_deviator_amplitude_sqrt2",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "1.41421356",
+      "formula": "sqrt(2)",
+      "depends_on": [
+        "MISES_bps_postulate",
+        "HW_xi_rho_defs"
+      ],
+      "chapter": "02_mises",
+      "source": "v56:eq:deviator_amplitude_exact",
+      "lean_file": "TevQuantum.lean",
+      "lean_thm": "koide_amplitude_sqrt_two",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 636
+    },
+    {
+      "id": "KNOT_stability_gap",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "11.885714",
+      "formula": "25.285714 - 13.4",
+      "depends_on": [
+        "TOP_I_trefoil"
+      ],
+      "chapter": "05_clifford_proton",
+      "source": "v55:eq:trefoil_stability_gap",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 863
+    },
+    {
+      "id": "LEP_electron_tension",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "0",
+      "formula": "1 - 1",
+      "depends_on": [
+        "LEP_winding_W"
+      ],
+      "chapter": "06_leptons",
+      "source": "v55:eq:electron_tension_zero",
+      "lean_file": "TevLeptonTorus.lean",
+      "lean_thm": "electron_is_ground_state",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 897
+    },
+    {
+      "id": "LEP_muon_tension",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "0.5",
+      "formula": "3/2 - 1",
+      "depends_on": [
+        "LEP_winding_W"
+      ],
+      "chapter": "06_leptons",
+      "source": "v55:eq:muon_excess_tension",
+      "lean_file": "TevLeptonTorus.lean",
+      "lean_thm": "muon_spring_has_excess_tension",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 905
+    },
+    {
+      "id": "LEP_tau_tension",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "0.666667",
+      "formula": "5/3 - 1",
+      "depends_on": [
+        "LEP_winding_W"
+      ],
+      "chapter": "06_leptons",
+      "source": "v55:eq:tau_excess_tension",
+      "lean_file": "TevLeptonTorus.lean",
+      "lean_thm": "tau_spring_has_highest_tension",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 913
+    },
+    {
+      "id": "LEP_aspect_ratio",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "formula": "LEP_winding_W * ROOT_alpha",
+      "depends_on": [
+        "LEP_winding_W",
+        "ROOT_alpha"
+      ],
+      "chapter": "06_leptons",
+      "source": "v55:eq:lepton_aspect_ratio",
+      "lean_file": "TevLeptonTorus.lean",
+      "lean_thm": "torusAspectRatio",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 945
+    },
+    {
+      "id": "LEP_bare_masses_formula",
+      "dim": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "unit": "MeV",
+      "type": "PURE",
+      "formula": "SCALE_M_lobe * (1 + sqrt(2) * cos(2/9 + 2*pi*(k-1)/3))**2",
+      "depends_on": [
+        "SCALE_M_lobe"
+      ],
+      "chapter": "06_leptons",
+      "source": "v55:eq:bare_lepton_masses",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1084
+    },
+    {
+      "id": "LEP_m_tau_bare",
+      "dim": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "unit": "MeV",
+      "type": "PURE",
+      "val": "1770.7465",
+      "formula": "SCALE_M_lobe * (1 + sqrt(2) * cos(2/9))**2",
+      "depends_on": [
+        "SCALE_M_lobe"
+      ],
+      "chapter": "06_leptons",
+      "source": "v55:eq:tau_bare_calc",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1090
+    },
+    {
+      "id": "LEP_m_mu_bare",
+      "dim": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "unit": "MeV",
+      "type": "PURE",
+      "val": "105.2885",
+      "formula": "SCALE_M_lobe * (1 + sqrt(2) * cos(2/9 + 4*pi/3))**2",
+      "depends_on": [
+        "SCALE_M_lobe"
+      ],
+      "chapter": "06_leptons",
+      "source": "v55:eq:muon_bare_calc",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1092
+    },
+    {
+      "id": "LEP_m_e_bare",
+      "dim": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "unit": "MeV",
+      "type": "PURE",
+      "val": "0.509205",
+      "formula": "SCALE_M_lobe * (1 + sqrt(2) * cos(2/9 + 2*pi/3))**2",
+      "depends_on": [
+        "SCALE_M_lobe"
+      ],
+      "chapter": "06_leptons",
+      "source": "v55:eq:electron_bare_calc",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1094
+    },
+    {
+      "id": "LEP_C2_analytical",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "-0.328479",
+      "formula": "LEP_I_geom_val + (pi**2 / 12) - (pi**2 / 2) * log(2) + 0.75 * 1.2020569",
+      "depends_on": [
+        "LEP_I_geom_val"
+      ],
+      "chapter": "06_leptons",
+      "source": "v55:eq:c2_analytical_expansion",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1268
+    },
+    {
+      "id": "BAR_phase_coords",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "rad",
+      "type": "PURE",
+      "formula": "[0, 2*pi/3, 4*pi/3]",
+      "depends_on": [
+        "BAR_phase_shift_step"
+      ],
+      "chapter": "07_baryons",
+      "source": "v55:eq:three_phase_coords",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1378
+    },
+    {
+      "id": "BAR_d_quark_charge",
+      "dim": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "unit": "e",
+      "type": "PURE",
+      "val": "-0.333333",
+      "formula": "2/3 - 1",
+      "depends_on": [
+        "BAR_knot_pitch"
+      ],
+      "chapter": "07_baryons",
+      "source": "v56:eq:q_d_exact",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1498
+    },
+    {
+      "id": "BAR_delta_q_return",
+      "dim": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "unit": "e",
+      "type": "PURE",
+      "val": "0.666667",
+      "formula": "2 * (1/2) * (2 * (1/3))",
+      "depends_on": [
+        "BAR_q0_monopole"
+      ],
+      "chapter": "07_baryons",
+      "source": "v55:eq:dipole_return_formula",
+      "lean_file": "TevRefinements.lean",
+      "lean_thm": "dipole_return_shielding_val",
+      "role": "lemma",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1532
+    },
+    {
+      "id": "BAR_q_eff_1",
+      "dim": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "unit": "e",
+      "type": "PURE",
+      "val": "0.666667",
+      "formula": "1 - 1/3",
+      "depends_on": [
+        "BAR_q0_monopole"
+      ],
+      "chapter": "07_baryons",
+      "source": "v55:eq:q_eff_1",
+      "lean_file": "TevRefinements.lean",
+      "lean_thm": "q_eff_pos_val",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1541
+    },
+    {
+      "id": "BAR_q_eff_2",
+      "dim": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "unit": "e",
+      "type": "PURE",
+      "val": "0.666667",
+      "formula": "1 - 1/3",
+      "depends_on": [
+        "BAR_q0_monopole"
+      ],
+      "chapter": "07_baryons",
+      "source": "v55:eq:q_eff_2",
+      "lean_file": "TevRefinements.lean",
+      "lean_thm": "q_eff_pos_val",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1543
+    },
+    {
+      "id": "NEU_A_1D_sq",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "1.2",
+      "formula": "2 * (3 / 5)",
+      "depends_on": [
+        "TOP_N_1D",
+        "TOP_N_3D_calc"
+      ],
+      "chapter": "08_neutrinos",
+      "source": "v55:eq:amplitude_1D_exact",
+      "lean_file": "TevNeutrino.lean",
+      "lean_thm": "amplitude_sq_exact",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1836
+    },
+    {
+      "id": "NEU_C2_coeff",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "0.9",
+      "formula": "(3/2) * (3/5)",
+      "depends_on": [
+        "TOP_N_1D",
+        "TOP_N_3D_calc"
+      ],
+      "chapter": "08_neutrinos",
+      "source": "v55:eq:C2_operator_exact",
+      "lean_file": "TevRefinements.lean",
+      "lean_thm": "neutrino_same_reduction_operator",
+      "role": "lemma",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2033
+    },
+    {
+      "id": "NEU_sin2_2theta13",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "0.083333",
+      "formula": "1 / 12",
+      "depends_on": [
+        "NEU_gauge_dim"
+      ],
+      "chapter": "08_neutrinos",
+      "source": "v55:eq:double_angle_12",
+      "lean_file": "TevNeutrino.lean",
+      "lean_thm": "reactor_angle_double_angle_identity",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1983
+    },
+    {
+      "id": "EW_cos2_thetaW",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "0.769231",
+      "formula": "1 - EW_sin2_thetaW",
+      "depends_on": [
+        "EW_sin2_thetaW"
+      ],
+      "chapter": "09_electroweak",
+      "source": "v55:eq:weinberg_cos2_exact",
+      "lean_file": "TevElectroweak.lean",
+      "lean_thm": "weinberg_cos2_exact",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2128
+    },
+    {
+      "id": "EW_sin2_thetaW_low_q",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "0.2385",
+      "formula": "3/13 + (10/3) * (ROOT_alpha / pi)",
+      "depends_on": [
+        "EW_sin2_thetaW",
+        "ROOT_alpha"
+      ],
+      "chapter": "09_electroweak",
+      "source": "v55:eq:weinberg_low_energy_shift",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2154
+    },
+    {
+      "id": "NUC_P_D_deuteron",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "0.057692",
+      "formula": "(1 / 4) * (3 / 13)",
+      "depends_on": [
+        "TOP_N_spin",
+        "EW_sin2_thetaW"
+      ],
+      "chapter": "10_nuclear",
+      "source": "v55:eq:deuteron_d_wave_formula",
+      "lean_file": "TevNucleon.lean",
+      "lean_thm": "deuteron_d_wave_exact",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2386
+    },
+    {
+      "id": "QCD_alpha_s_MZ_val",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "0.118057",
+      "formula": "(2 / 17) * (1 + 1.5 * (ROOT_alpha / pi))",
+      "depends_on": [
+        "ROOT_alpha",
+        "QCD_strong_base_dim"
+      ],
+      "chapter": "10_nuclear",
+      "source": "v55:eq:alpha_s_mz_derivation",
+      "lean_file": "TevStrongRunning.lean",
+      "lean_thm": "alpha_s_MZ_pos",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2321
+    },
+    {
+      "id": "NUC_Eb_deuteron_val",
+      "dim": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "unit": "MeV",
+      "type": "SEMI",
+      "val": "2.224442",
+      "formula": "2.224442",
+      "depends_on": [
+        "NUC_Eb_deuteron"
+      ],
+      "chapter": "10_nuclear",
+      "source": "v55:eq:deuteron_binding_numerical",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2376
+    },
+    {
+      "id": "QM_hopf_correlation",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "formula": "-cos(theta_ab)",
+      "depends_on": [
+        "QM_non_factorizability"
+      ],
+      "chapter": "12_quantum",
+      "source": "v55:eq:hopf_correlation_minus_cos",
+      "lean_file": "TevQuantum.lean",
+      "lean_thm": "hopf_correlation_is_minus_cos",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 3162
+    },
+    {
+      "id": "STAT_significance_sigma",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "10.27",
+      "formula": "10.27",
+      "depends_on": [
+        "STAT_look_elsewhere_p_val"
+      ],
+      "chapter": "16_conclusion",
+      "source": "v56:eq:significance_ten_sigma",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 3540
+    },
+    {
+      "id": "GRAV_G_N",
+      "dim": [
+        -1,
+        3,
+        -2,
+        0
+      ],
+      "unit": "m^3/(kg*s^2)",
+      "type": "PURE",
+      "val": "6.67395e-11",
+      "formula": "GRAV_alpha_G * SI_hbar * SI_c / (ROOT_Mp_kg**2)",
+      "depends_on": [
+        "GRAV_alpha_G",
+        "SI_hbar",
+        "SI_c",
+        "ROOT_Mp_kg"
+      ],
+      "chapter": "01_ontology",
+      "source": "v56:eq:G_N_master_def",
+      "lean_file": "TevGravity.lean",
+      "lean_thm": "newton_gravitational_constant_bridge",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 222
+    },
+    {
+      "id": "LEP_mp_me_ratio",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "1836.151996",
+      "formula": "(67/5) * (1 / ROOT_alpha) * (1 - (4/3) * (ROOT_alpha**2))",
+      "depends_on": [
+        "TOP_I_trefoil",
+        "ROOT_alpha",
+        "LEP_proton_defect"
+      ],
+      "chapter": "06_leptons",
+      "source": "v55:eq:proton_electron_bridge",
+      "lean_file": "TevBridge.lean",
+      "lean_thm": "nambu_quantum_bridge",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1166
+    },
+    {
+      "id": "BAR_tau_bottle_val",
+      "dim": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "unit": "s",
+      "type": "SEMI",
+      "val": "879.06",
+      "formula": "tau_beam - BAR_delta_tau_purcell",
+      "depends_on": [
+        "BAR_delta_tau_purcell"
+      ],
+      "chapter": "07_baryons",
+      "source": "v55:eq:tau_bottle_prediction",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1676
+    },
+    {
+      "id": "CKM_V_us",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "0.224926",
+      "formula": "sin(CKM_cabibbo_angle)",
+      "depends_on": [
+        "CKM_cabibbo_angle"
+      ],
+      "chapter": "07_baryons",
+      "source": "v55:eq:V_us_exact",
+      "lean_file": "TevCKM.lean",
+      "lean_thm": "ckm_first_row_unitarity",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1731
+    },
+    {
+      "id": "CKM_V_ud",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "0.974376",
+      "formula": "cos(CKM_cabibbo_angle)",
+      "depends_on": [
+        "CKM_cabibbo_angle"
+      ],
+      "chapter": "07_baryons",
+      "source": "v55:eq:V_ud_exact",
+      "lean_file": "TevCKM.lean",
+      "lean_thm": "ckm_first_row_unitarity",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1741
+    },
+    {
+      "id": "NEU_mass_eigenstates",
+      "dim": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "unit": "meV",
+      "type": "PURE",
+      "formula": "NEU_M_scale * (1 + sqrt(1.2) * cos(NEU_theta_nu + 2*pi*(k-1)/3))**2",
+      "depends_on": [
+        "NEU_M_scale",
+        "NEU_theta_nu"
+      ],
+      "chapter": "08_neutrinos",
+      "source": "v55:eq:neutrino_mass_eigenstates",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1915
+    },
+    {
+      "id": "NEU_m1",
+      "dim": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "unit": "meV",
+      "type": "PURE",
+      "val": "0.246",
+      "formula": "NEU_M_scale * (1 + sqrt(1.2) * cos(NEU_theta_nu))**2",
+      "depends_on": [
+        "NEU_M_scale",
+        "NEU_theta_nu"
+      ],
+      "chapter": "08_neutrinos",
+      "source": "v55:eq:m_nu1_val",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1921
+    },
+    {
+      "id": "NEU_m2",
+      "dim": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "unit": "meV",
+      "type": "PURE",
+      "val": "8.674",
+      "formula": "NEU_M_scale * (1 + sqrt(1.2) * cos(NEU_theta_nu + 2*pi/3))**2",
+      "depends_on": [
+        "NEU_M_scale",
+        "NEU_theta_nu"
+      ],
+      "chapter": "08_neutrinos",
+      "source": "v55:eq:m_nu2_val",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1923
+    },
+    {
+      "id": "NEU_m3",
+      "dim": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "unit": "meV",
+      "type": "PURE",
+      "val": "50.081",
+      "formula": "NEU_M_scale * (1 + sqrt(1.2) * cos(NEU_theta_nu + 4*pi/3))**2",
+      "depends_on": [
+        "NEU_M_scale",
+        "NEU_theta_nu"
+      ],
+      "chapter": "08_neutrinos",
+      "source": "v55:eq:m_nu3_val",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1925
+    },
+    {
+      "id": "EW_M_Z_bare",
+      "dim": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "unit": "GeV",
+      "type": "PURE",
+      "val": "90.9178",
+      "formula": "EW_E_EW / sqrt(2)",
+      "depends_on": [
+        "EW_E_EW"
+      ],
+      "chapter": "09_electroweak",
+      "source": "v55:eq:m_z_bare_exact",
+      "lean_file": "TevElectroweak.lean",
+      "lean_thm": "bareMassZ",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2167
+    },
+    {
+      "id": "EW_M_W_bare",
+      "dim": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "unit": "GeV",
+      "type": "PURE",
+      "val": "79.7402",
+      "formula": "EW_E_EW * sqrt(5 / 13)",
+      "depends_on": [
+        "EW_E_EW"
+      ],
+      "chapter": "09_electroweak",
+      "source": "v55:eq:m_w_bare_exact",
+      "lean_file": "TevElectroweak.lean",
+      "lean_thm": "bareMassW",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2169
+    },
+    {
+      "id": "EW_M_H_val",
+      "dim": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "unit": "GeV",
+      "type": "PURE",
+      "val": "126.248",
+      "formula": "128.577053 * (1 - 0.018118)",
+      "depends_on": [
+        "EW_E_EW",
+        "ROOT_alpha"
+      ],
+      "chapter": "09_electroweak",
+      "source": "v55:eq:higgs_mass_val_numerical",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2220
+    },
+    {
+      "id": "EW_vev",
+      "dim": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "unit": "GeV",
+      "type": "PURE",
+      "val": "246.2063",
+      "formula": "EW_E_EW * sqrt(11 / 3)",
+      "depends_on": [
+        "EW_E_EW"
+      ],
+      "chapter": "09_electroweak",
+      "source": "v55:eq:vev_ratio_exact",
+      "lean_file": "TevNuclearSEMF.lean",
+      "lean_thm": "vev_scale_ratio_exact",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2236
+    },
+    {
+      "id": "MES_M_rho_val",
+      "dim": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "unit": "MeV",
+      "type": "PURE",
+      "val": "770.278",
+      "formula": "11 * MES_E_0",
+      "depends_on": [
+        "MES_E_0"
+      ],
+      "chapter": "06_leptons",
+      "source": "v55:eq:rho_meson_mass_nambu",
+      "lean_file": "TevMesonAnomaly.lean",
+      "lean_thm": "rho_mass_is_eleven_E0",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1336
+    },
+    {
+      "id": "MES_E_0_val",
+      "dim": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "unit": "MeV",
+      "type": "PURE",
+      "val": "70.025277",
+      "formula": "70.025277",
+      "depends_on": [
+        "MES_E_0"
+      ],
+      "chapter": "10_nuclear",
+      "source": "v55:eq:nambu_quantum_val",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2294
+    },
+    {
+      "id": "MES_M_pi_pure_theor",
+      "dim": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "unit": "MeV",
+      "type": "PURE",
+      "val": "140.05",
+      "formula": "2 * MES_E_0",
+      "depends_on": [
+        "MES_E_0"
+      ],
+      "chapter": "10_nuclear",
+      "source": "v55:eq:pion_mass_bare_nambu",
+      "lean_file": "TevMesonAnomaly.lean",
+      "lean_thm": "pion_mass_is_two_E0",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2301
+    },
+    {
+      "id": "NUC_Eb_deuteron_tree",
+      "dim": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "unit": "MeV",
+      "type": "PURE",
+      "val": "2.2398",
+      "formula": "((2 * MES_E_0)**2 / (2 * ROOT_Mp)) * (3 / 14)",
+      "depends_on": [
+        "MES_E_0",
+        "ROOT_Mp"
+      ],
+      "chapter": "10_nuclear",
+      "source": "v55:eq:deuteron_tree_binding",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2399
+    },
+    {
+      "id": "NUC_delta_pi",
+      "dim": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "unit": "MeV",
+      "type": "PURE",
+      "val": "-0.508",
+      "formula": "-0.5 * ROOT_alpha * (2 * MES_E_0) * (1 - 2 * ROOT_alpha / pi)",
+      "depends_on": [
+        "ROOT_alpha",
+        "MES_E_0"
+      ],
+      "chapter": "10_nuclear",
+      "source": "v55:eq:pion_coulomb_defect_val",
+      "lean_file": "TevRefinements.lean",
+      "lean_thm": "pion_defect_negative",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2405
+    },
+    {
+      "id": "NUC_E_frustration",
+      "dim": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "unit": "MeV",
+      "type": "PURE",
+      "formula": "(0.085 * MES_E_0 / 70.025) * (A_mass_num**(4/3))",
+      "depends_on": [
+        "MES_E_0"
+      ],
+      "chapter": "10_nuclear",
+      "source": "v55:eq:frustration_energy_scaling",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2452
+    },
+    {
+      "id": "NUC_semf_aV",
+      "dim": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "unit": "MeV",
+      "type": "PURE",
+      "val": "15.5612",
+      "formula": "(2 / 9) * MES_E_0",
+      "depends_on": [
+        "MES_E_0",
+        "TOP_p"
+      ],
+      "chapter": "10_nuclear",
+      "source": "v55:eq:semf_aV",
+      "lean_file": "TevNuclearSEMF.lean",
+      "lean_thm": "semf_aV_exact",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2479
+    },
+    {
+      "id": "NUC_semf_aS",
+      "dim": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "unit": "MeV",
+      "type": "PURE",
+      "val": "17.5063",
+      "formula": "(1 / 4) * MES_E_0",
+      "depends_on": [
+        "MES_E_0",
+        "TOP_N_spin"
+      ],
+      "chapter": "10_nuclear",
+      "source": "v55:eq:semf_aS",
+      "lean_file": "TevNuclearSEMF.lean",
+      "lean_thm": "semf_aS_exact",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2481
+    },
+    {
+      "id": "NUC_semf_aC",
+      "dim": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "unit": "MeV",
+      "type": "PURE",
+      "val": "0.68985",
+      "formula": "(27 / 20) * ROOT_alpha * MES_E_0",
+      "depends_on": [
+        "ROOT_alpha",
+        "MES_E_0",
+        "TOP_dim",
+        "TOP_p",
+        "TOP_N_spin"
+      ],
+      "chapter": "10_nuclear",
+      "source": "v55:eq:semf_aC",
+      "lean_file": "TevNuclearSEMF.lean",
+      "lean_thm": "semf_aC_exact",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2483
+    },
+    {
+      "id": "NUC_semf_aA",
+      "dim": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "unit": "MeV",
+      "type": "PURE",
+      "val": "23.3418",
+      "formula": "(1 / 3) * MES_E_0",
+      "depends_on": [
+        "MES_E_0",
+        "TOP_p"
+      ],
+      "chapter": "10_nuclear",
+      "source": "v55:eq:semf_aA",
+      "lean_file": "TevNuclearSEMF.lean",
+      "lean_thm": "semf_aA_exact",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2485
+    },
+    {
+      "id": "NUC_semf_aP",
+      "dim": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "unit": "MeV",
+      "type": "PURE",
+      "val": "11.6709",
+      "formula": "(1 / 6) * MES_E_0",
+      "depends_on": [
+        "MES_E_0",
+        "TOP_p"
+      ],
+      "chapter": "10_nuclear",
+      "source": "v55:eq:semf_aP",
+      "lean_file": "TevNuclearSEMF.lean",
+      "lean_thm": "semf_aP_exact",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2487
+    },
+    {
+      "id": "GRAV_G_N_pred_val",
+      "dim": [
+        -1,
+        3,
+        -2,
+        0
+      ],
+      "unit": "m^3/(kg*s^2)",
+      "type": "PURE",
+      "val": "6.67395e-11",
+      "formula": "GRAV_alpha_G_pred * SI_hbar * SI_c / (ROOT_Mp_kg**2)",
+      "depends_on": [
+        "GRAV_alpha_G_pred",
+        "SI_hbar",
+        "SI_c",
+        "ROOT_Mp_kg"
+      ],
+      "chapter": "11_gravity",
+      "source": "v55:eq:GN_predicted_value",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2831
+    },
+    {
+      "id": "GW_scalar_power_ratio",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "2.158e-7",
+      "formula": "((1 / 5) * (ROOT_alpha / pi))**2",
+      "depends_on": [
+        "GW_scalar_suppression"
+      ],
+      "chapter": "11_gravity",
+      "source": "v55:eq:gw_scalar_power_suppression",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2966
+    },
+    {
+      "id": "BAR_form_factor",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "0.75",
+      "formula": "BAR_R_m / BAR_r_c",
+      "depends_on": [
+        "BAR_R_m",
+        "BAR_r_c"
+      ],
+      "chapter": "07_baryons",
+      "source": "v55:eq:nucleon_form_factor_val",
+      "lean_file": "TevNucleon.lean",
+      "lean_thm": "nucleon_form_factor_exact",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1599
+    },
+    {
+      "id": "LEP_Q_koide",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "0.66666667",
+      "formula": "2.0 / 3.0",
+      "depends_on": [
+        "HW_deviator_amplitude_sqrt2"
+      ],
+      "chapter": "02_mises",
+      "source": "v56:eq:koide_canonical_two_thirds",
+      "lean_file": "TevQuantum.lean",
+      "lean_thm": "koide_exact_from_mises_balance",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 668
+    },
+    {
+      "id": "LEP_core_radius",
+      "dim": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "unit": "m",
+      "type": "PURE",
+      "formula": "LEP_aspect_ratio * LEP_ring_radius",
+      "depends_on": [
+        "LEP_aspect_ratio",
+        "LEP_ring_radius"
+      ],
+      "chapter": "06_leptons",
+      "source": "v55:eq:core_amplitude_exact",
+      "lean_file": "TevLeptonTorus.lean",
+      "lean_thm": "coreRadius",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 951
+    },
+    {
+      "id": "LEP_m_tau",
+      "dim": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "unit": "MeV",
+      "type": "PURE",
+      "val": "1776.916",
+      "formula": "LEP_m_tau_bare * (1 + SCALE_delta_geom)",
+      "depends_on": [
+        "LEP_m_tau_bare",
+        "SCALE_delta_geom"
+      ],
+      "chapter": "06_leptons",
+      "source": "v55:eq:tau_dressed_calc",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1116
+    },
+    {
+      "id": "LEP_m_mu",
+      "dim": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "unit": "MeV",
+      "type": "PURE",
+      "val": "105.6553",
+      "formula": "LEP_m_mu_bare * (1 + SCALE_delta_geom)",
+      "depends_on": [
+        "LEP_m_mu_bare",
+        "SCALE_delta_geom"
+      ],
+      "chapter": "06_leptons",
+      "source": "v55:eq:muon_dressed_calc",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1118
+    },
+    {
+      "id": "BAR_lobe_displacements",
+      "dim": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "unit": "m",
+      "type": "PURE",
+      "formula": "a_k * cos(omega_0 * t - phi_k)",
+      "depends_on": [
+        "BAR_phase_coords"
+      ],
+      "chapter": "07_baryons",
+      "source": "v55:eq:three_phase_displacements",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1385
+    },
+    {
+      "id": "BAR_q_eff_3",
+      "dim": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "unit": "e",
+      "type": "PURE",
+      "val": "-0.333333",
+      "formula": "-1 + 2/3",
+      "depends_on": [
+        "BAR_delta_q_return"
+      ],
+      "chapter": "07_baryons",
+      "source": "v55:eq:q_eff_3",
+      "lean_file": "TevRefinements.lean",
+      "lean_thm": "q_eff_neg_val",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1545
+    },
+    {
+      "id": "NEU_Q_nu",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "0.533333",
+      "formula": "(1 + NEU_A_1D_sq / 2) / 3",
+      "depends_on": [
+        "NEU_A_1D_sq"
+      ],
+      "chapter": "08_neutrinos",
+      "source": "v55:eq:neutrino_koide_exact",
+      "lean_file": "TevNeutrino.lean",
+      "lean_thm": "koide_neutrino_derived",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1842
+    },
+    {
+      "id": "NEU_sin2_theta13",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "0.021286",
+      "formula": "(1 - sqrt(11 / 12)) / 2",
+      "depends_on": [
+        "NEU_sin2_2theta13"
+      ],
+      "chapter": "08_neutrinos",
+      "source": "v55:eq:sin2_theta13_analytical",
+      "lean_file": "TevNeutrino.lean",
+      "lean_thm": "reactor_angle_double_angle_identity",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1989
+    },
+    {
+      "id": "QM_tsirelson_bound",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "2.828427",
+      "formula": "2 * sqrt(2)",
+      "depends_on": [
+        "QM_hopf_correlation"
+      ],
+      "chapter": "12_quantum",
+      "source": "v55:eq:tsirelson_bound_exact_value",
+      "lean_file": "TevQuantum.lean",
+      "lean_thm": "tsirelson_bound_exact",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 3182
+    },
+    {
+      "id": "QM_no_signaling_identity",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "0.5",
+      "formula": "0.5 * (cos(theta/2)**2 + sin(theta/2)**2) = 0.5",
+      "depends_on": [
+        "QM_hopf_correlation"
+      ],
+      "chapter": "12_quantum",
+      "source": "v55:eq:no_signaling_exact_half",
+      "lean_file": "TevQuantum.lean",
+      "lean_thm": "no_signaling_marginal_half",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 3211
+    },
+    {
+      "id": "CONT_mu_str",
+      "dim": [
+        1,
+        -1,
+        0,
+        0
+      ],
+      "unit": "kg/m",
+      "type": "PURE",
+      "val": "4.2865e+26",
+      "formula": "(SI_c**2) / (pi * GRAV_G_N)",
+      "depends_on": [
+        "SI_c",
+        "GRAV_G_N"
+      ],
+      "chapter": "01_ontology",
+      "source": "v56:eq:mu_str_master_def",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 224
+    },
+    {
+      "id": "GRAV_newton_law",
+      "dim": [
+        1,
+        1,
+        -2,
+        0
+      ],
+      "unit": "N",
+      "type": "PURE",
+      "formula": "-GRAV_G_N * M1 * M2 / (r**2)",
+      "depends_on": [
+        "GRAV_G_N"
+      ],
+      "chapter": "11_gravity",
+      "source": "v55:eq:newton_law_exact",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2683
+    },
+    {
+      "id": "CONT_mu_str_T0",
+      "dim": [
+        1,
+        -1,
+        0,
+        0
+      ],
+      "unit": "kg/m",
+      "type": "PURE",
+      "val": "4.2865e+26",
+      "formula": "(SI_c**2) / (pi * GRAV_G_N)",
+      "depends_on": [
+        "SI_c",
+        "GRAV_G_N"
+      ],
+      "chapter": "11_gravity",
+      "source": "v56:eq:mu_str_and_T0_vals",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2698
+    },
+    {
+      "id": "GRAV_L_str_equiv",
+      "dim": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "unit": "m",
+      "type": "PURE",
+      "formula": "(pi / 2) * (2 * GRAV_G_N * M / (SI_c**2))",
+      "depends_on": [
+        "GRAV_G_N",
+        "SI_c"
+      ],
+      "chapter": "11_gravity",
+      "source": "v55:eq:string_equivalent_length",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2713
+    },
+    {
+      "id": "GRAV_alpha_G_def_ratio",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "5.90610e-39",
+      "formula": "GRAV_G_N * (ROOT_Mp_kg**2) / (SI_hbar * SI_c)",
+      "depends_on": [
+        "GRAV_G_N",
+        "ROOT_Mp_kg",
+        "SI_hbar",
+        "SI_c"
+      ],
+      "chapter": "11_gravity",
+      "source": "v55:eq:alpha_G_definition_ratio",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2724
+    },
+    {
+      "id": "GRAV_c_eff",
+      "dim": [
+        0,
+        1,
+        -1,
+        0
+      ],
+      "unit": "m/s",
+      "type": "PURE",
+      "formula": "SI_c * sqrt(1 - 2 * GRAV_G_N * M / ((SI_c**2) * r))",
+      "depends_on": [
+        "SI_c",
+        "GRAV_G_N"
+      ],
+      "chapter": "11_gravity",
+      "source": "v55:eq:variable_light_speed",
+      "lean_file": "TevFoundations.lean",
+      "lean_thm": "shapiro_delay_wave_slowing",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2879
+    },
+    {
+      "id": "GRAV_refractive_index",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "formula": "1 / sqrt(1 - 2 * GRAV_G_N * M / ((SI_c**2) * r))",
+      "depends_on": [
+        "GRAV_G_N",
+        "SI_c"
+      ],
+      "chapter": "11_gravity",
+      "source": "v55:eq:refractive_index_exact",
+      "lean_file": "TevFoundations.lean",
+      "lean_thm": "vacuum_index_gt_one",
+      "role": "definition",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2887
+    },
+    {
+      "id": "GRAV_theta_defl",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "rad",
+      "type": "PURE",
+      "formula": "4 * GRAV_G_N * M / ((SI_c**2) * b)",
+      "depends_on": [
+        "GRAV_G_N",
+        "SI_c"
+      ],
+      "chapter": "11_gravity",
+      "source": "v55:eq:shapiro_deflection_formula",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2899
+    },
+    {
+      "id": "GRAV_shapiro_delay",
+      "dim": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "unit": "s",
+      "type": "PURE",
+      "formula": "(1 / SI_c) * integral(GRAV_G_N * M / ((SI_c**2) * r), ds)",
+      "depends_on": [
+        "SI_c",
+        "GRAV_G_N"
+      ],
+      "chapter": "11_gravity",
+      "source": "v55:eq:shapiro_time_delay",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2906
+    },
+    {
+      "id": "GRAV_omega_redshift",
+      "dim": [
+        0,
+        0,
+        -1,
+        0
+      ],
+      "unit": "s^-1",
+      "type": "PURE",
+      "formula": "omega_0 * sqrt(1 - 2 * GRAV_G_N * M / ((SI_c**2) * r))",
+      "depends_on": [
+        "GRAV_G_N",
+        "SI_c"
+      ],
+      "chapter": "11_gravity",
+      "source": "v55:eq:clock_redshift_exact",
+      "lean_file": "TevFoundations.lean",
+      "lean_thm": "gravitational_redshift_frequency_drop",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2915
+    },
+    {
+      "id": "COSMO_btfr",
+      "dim": [
+        0,
+        4,
+        -4,
+        0
+      ],
+      "unit": "m^4/s^4",
+      "type": "PURE",
+      "formula": "GRAV_G_N * M * COSMO_a0_mond",
+      "depends_on": [
+        "GRAV_G_N",
+        "COSMO_a0_mond"
+      ],
+      "chapter": "11_gravity",
+      "source": "v55:eq:btfr_exact",
+      "lean_file": "TevCosmology.lean",
+      "lean_thm": "tully_fisher_identity",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 3015
+    },
+    {
+      "id": "LEP_m_e",
+      "dim": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "unit": "MeV",
+      "type": "PURE",
+      "val": "0.51099914",
+      "formula": "ROOT_Mp / LEP_mp_me_ratio",
+      "depends_on": [
+        "ROOT_Mp",
+        "LEP_mp_me_ratio"
+      ],
+      "chapter": "06_leptons",
+      "source": "v55:eq:electron_mass_predicted",
+      "lean_file": "TevBridge.lean",
+      "lean_thm": "nambu_quantum_bridge",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1176
+    },
+    {
+      "id": "LEP_m_e_val",
+      "dim": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "unit": "MeV",
+      "type": "PURE",
+      "val": "0.51099914",
+      "formula": "ROOT_Mp / 1836.151996",
+      "depends_on": [
+        "ROOT_Mp",
+        "LEP_mp_me_ratio"
+      ],
+      "chapter": "06_leptons",
+      "source": "v55:eq:electron_mass_numerical_result",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1190
+    },
+    {
+      "id": "CKM_V_cb",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "0.04131",
+      "formula": "sqrt(2/3) * (CKM_V_us**2)",
+      "depends_on": [
+        "CKM_V_us"
+      ],
+      "chapter": "07_baryons",
+      "source": "v55:eq:V_cb_exact",
+      "lean_file": "TevCKM.lean",
+      "lean_thm": "V_cb_nonneg",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1747
+    },
+    {
+      "id": "NEU_dm21_sq",
+      "dim": [
+        2,
+        0,
+        0,
+        0
+      ],
+      "unit": "eV^2",
+      "type": "PURE",
+      "val": "7.5174e-5",
+      "formula": "(NEU_m2 * 1e-3)**2 - (NEU_m1 * 1e-3)**2",
+      "depends_on": [
+        "NEU_m1",
+        "NEU_m2"
+      ],
+      "chapter": "08_neutrinos",
+      "source": "v55:eq:dm21_sq_exact",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1948
+    },
+    {
+      "id": "NEU_hierarchy_normal",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "formula": "NEU_m1 < NEU_m2 and NEU_m2 < NEU_m3",
+      "depends_on": [
+        "NEU_m1",
+        "NEU_m2",
+        "NEU_m3"
+      ],
+      "chapter": "08_neutrinos",
+      "source": "v55:eq:neutrino_hierarchy_condition",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1934
+    },
+    {
+      "id": "NEU_dm31_sq",
+      "dim": [
+        2,
+        0,
+        0,
+        0
+      ],
+      "unit": "eV^2",
+      "type": "PURE",
+      "val": "2.50802e-3",
+      "formula": "(NEU_m3 * 1e-3)**2 - (NEU_m1 * 1e-3)**2",
+      "depends_on": [
+        "NEU_m1",
+        "NEU_m3"
+      ],
+      "chapter": "08_neutrinos",
+      "source": "v55:eq:dm31_sq_exact",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1950
+    },
+    {
+      "id": "NEU_sum_m",
+      "dim": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "unit": "eV",
+      "type": "PURE",
+      "val": "0.0590",
+      "formula": "(NEU_m1 + NEU_m2 + NEU_m3) * 1e-3",
+      "depends_on": [
+        "NEU_m1",
+        "NEU_m2",
+        "NEU_m3"
+      ],
+      "chapter": "08_neutrinos",
+      "source": "v55:eq:neutrino_sum_mass",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1963
+    },
+    {
+      "id": "NEU_canonical_table_sum",
+      "dim": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "unit": "eV",
+      "type": "PURE",
+      "val": "0.0590005",
+      "formula": "(NEU_m1 + NEU_m2 + NEU_m3) * 1e-3",
+      "depends_on": [
+        "NEU_m1",
+        "NEU_m2",
+        "NEU_m3"
+      ],
+      "chapter": "08_neutrinos",
+      "source": "v55:tab:neutrino_canonical_precision",
+      "role": "table",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2080
+    },
+    {
+      "id": "EW_rho_tree",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "1.0",
+      "formula": "(EW_M_W_bare**2) / (EW_M_Z_bare**2 * EW_cos2_thetaW)",
+      "depends_on": [
+        "EW_M_W_bare",
+        "EW_M_Z_bare",
+        "EW_cos2_thetaW"
+      ],
+      "chapter": "09_electroweak",
+      "source": "v55:eq:rho_tree_exact",
+      "lean_file": "TevElectroweak.lean",
+      "lean_thm": "veltman_rho_tree_level",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2178
+    },
+    {
+      "id": "EW_G_F",
+      "dim": [
+        -2,
+        0,
+        0,
+        0
+      ],
+      "unit": "GeV^-2",
+      "type": "PURE",
+      "val": "1.166505e-5",
+      "formula": "1 / (sqrt(2) * (EW_vev**2))",
+      "depends_on": [
+        "EW_vev"
+      ],
+      "chapter": "09_electroweak",
+      "source": "v55:eq:fermi_constant_exact",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2250
+    },
+    {
+      "id": "MES_M_pi_charged",
+      "dim": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "unit": "MeV",
+      "type": "PURE",
+      "val": "139.543",
+      "formula": "2 * MES_E_0 + NUC_delta_pi",
+      "depends_on": [
+        "MES_E_0",
+        "NUC_delta_pi"
+      ],
+      "chapter": "10_nuclear",
+      "source": "v55:eq:pion_dressed_mass_formula",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2411
+    },
+    {
+      "id": "NUC_semf_formula",
+      "dim": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "unit": "MeV",
+      "type": "PURE",
+      "formula": "a_V*A - a_S*A**(2/3) - a_C*Z*(Z-1)/A**(1/3) - a_A*(A-2*Z)**2/A + delta",
+      "depends_on": [
+        "NUC_semf_aV",
+        "NUC_semf_aS",
+        "NUC_semf_aC",
+        "NUC_semf_aA",
+        "NUC_semf_aP"
+      ],
+      "chapter": "10_nuclear",
+      "source": "v55:eq:semf_formula",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2468
+    },
+    {
+      "id": "NUC_semf_sum_fractions",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "0.972222",
+      "formula": "2/9 + 1/4 + 1/3 + 1/6",
+      "depends_on": [
+        "NUC_semf_aV",
+        "NUC_semf_aS",
+        "NUC_semf_aA",
+        "NUC_semf_aP"
+      ],
+      "chapter": "10_nuclear",
+      "source": "v55:eq:semf_fractions_sum_exact",
+      "lean_file": "TevNuclearSEMF.lean",
+      "lean_thm": "semf_fractions_sum_exact",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2504
+    },
+    {
+      "id": "BAR_delta_M_np",
+      "dim": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "unit": "MeV",
+      "type": "PURE",
+      "val": "1.28678",
+      "formula": "(3 / 16) * ROOT_alpha * ROOT_Mp * (1 + ROOT_alpha / pi)",
+      "depends_on": [
+        "BAR_form_factor",
+        "TOP_N_spin",
+        "ROOT_alpha",
+        "ROOT_Mp"
+      ],
+      "chapter": "07_baryons",
+      "source": "v55:eq:mass_split_exact",
+      "lean_file": "TevNucleon.lean",
+      "lean_thm": "neutron_heavier_than_proton",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1634
+    },
+    {
+      "id": "LEP_a_mu_HVP",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "6.77e-8",
+      "formula": "(2 / 3) * ((ROOT_alpha / pi)**2) * ((LEP_m_mu / (11 * MES_E_0))**2)",
+      "depends_on": [
+        "ROOT_alpha",
+        "LEP_m_mu",
+        "MES_E_0"
+      ],
+      "chapter": "06_leptons",
+      "source": "v55:eq:a_mu_hvp_formula",
+      "lean_file": "TevMesonAnomaly.lean",
+      "lean_thm": "a_mu_HVP_narrow_pos",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1345
+    },
+    {
+      "id": "BAR_M_Lambda0",
+      "dim": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "unit": "MeV",
+      "type": "PURE",
+      "val": "1114.36",
+      "formula": "ROOT_Mp + BAR_C_Lambda * LEP_m_mu",
+      "depends_on": [
+        "ROOT_Mp",
+        "BAR_C_Lambda",
+        "LEP_m_mu"
+      ],
+      "chapter": "07_baryons",
+      "source": "v55:eq:lambda_hyperon_mass_exact",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1707
+    },
+    {
+      "id": "BAR_radiation_cancellation",
+      "dim": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "unit": "m",
+      "type": "PURE",
+      "val": "0",
+      "formula": "0",
+      "depends_on": [
+        "BAR_lobe_displacements"
+      ],
+      "chapter": "07_baryons",
+      "source": "v55:eq:three_phase_sum_zero",
+      "lean_file": "TevProtonTransformer.lean",
+      "lean_thm": "three_phase_signal_cancels",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1401
+    },
+    {
+      "id": "BAR_energy_stationary",
+      "dim": [
+        0,
+        2,
+        0,
+        0
+      ],
+      "unit": "m^2",
+      "type": "PURE",
+      "val": "1.5",
+      "formula": "1.5 * a_0**2",
+      "depends_on": [
+        "BAR_lobe_displacements"
+      ],
+      "chapter": "07_baryons",
+      "source": "v55:eq:three_phase_energy_exact",
+      "lean_file": "TevProtonTransformer.lean",
+      "lean_thm": "three_phase_energy_constant",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1445
+    },
+    {
+      "id": "BAR_bjorken_weights",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "formula": "[4/9, 4/9, 1/9]",
+      "depends_on": [
+        "BAR_q_eff_1",
+        "BAR_q_eff_2",
+        "BAR_q_eff_3"
+      ],
+      "chapter": "07_baryons",
+      "source": "v55:eq:bjorken_weights_squares",
+      "lean_file": "TevRefinements.lean",
+      "lean_thm": "fortescue_squares_exact",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1553
+    },
+    {
+      "id": "CONT_T_0",
+      "dim": [
+        1,
+        1,
+        -2,
+        0
+      ],
+      "unit": "N",
+      "type": "PURE",
+      "val": "3.8524e+43",
+      "formula": "CONT_mu_str * (SI_c**2)",
+      "depends_on": [
+        "CONT_mu_str",
+        "SI_c"
+      ],
+      "chapter": "01_ontology",
+      "source": "v56:eq:T_0_master_def",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 226
+    },
+    {
+      "id": "CONT_rho_0",
+      "dim": [
+        1,
+        -3,
+        0,
+        0
+      ],
+      "unit": "kg/m^3",
+      "type": "PURE",
+      "val": "9.6915e+57",
+      "formula": "CONT_mu_str / (SCALE_lambda_p_m**2)",
+      "depends_on": [
+        "CONT_mu_str",
+        "SCALE_lambda_p_m"
+      ],
+      "chapter": "01_ontology",
+      "source": "v56:eq:rho_0_master_def",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 228
+    },
+    {
+      "id": "CONT_rho_0_val",
+      "dim": [
+        1,
+        -3,
+        0,
+        0
+      ],
+      "unit": "kg/m^3",
+      "type": "PURE",
+      "val": "9.6915e+57",
+      "formula": "CONT_mu_str / (SCALE_lambda_p_m**2)",
+      "depends_on": [
+        "CONT_mu_str",
+        "SCALE_lambda_p_m"
+      ],
+      "chapter": "11_gravity",
+      "source": "v56:eq:rho_0_exact_num",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2704
+    },
+    {
+      "id": "GW_energy_density",
+      "dim": [
+        1,
+        -1,
+        -2,
+        0
+      ],
+      "unit": "J/m^3",
+      "type": "PURE",
+      "formula": "(1 / 32) * CONT_mu_str * (h_dot**2)",
+      "depends_on": [
+        "CONT_mu_str"
+      ],
+      "chapter": "11_gravity",
+      "source": "v55:eq:gw_energy_density_formula",
+      "lean_file": "TevGravityInterface.lean",
+      "lean_thm": "cascade_total_is_18",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2935
+    },
+    {
+      "id": "GRAV_redshift_monotonicity",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "formula": "omega(r1) < omega(r2)",
+      "depends_on": [
+        "GRAV_omega_redshift"
+      ],
+      "chapter": "11_gravity",
+      "source": "v55:eq:redshift_monotonicity",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2924
+    },
+    {
+      "id": "LEP_R_e_torus",
+      "dim": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "unit": "fm",
+      "type": "PURE",
+      "val": "386.16",
+      "formula": "SI_hbar_c / m_e_predicted",
+      "depends_on": [
+        "SI_hbar_c",
+        "LEP_m_e"
+      ],
+      "chapter": "06_leptons",
+      "source": "v55:eq:lepton_radii_numerical",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 936
+    },
+    {
+      "id": "LEP_radius_equilibrium",
+      "dim": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "unit": "m",
+      "type": "PURE",
+      "formula": "SI_hbar / (LEP_m_e * SI_c)",
+      "depends_on": [
+        "SI_hbar",
+        "LEP_m_e",
+        "SI_c"
+      ],
+      "chapter": "06_leptons",
+      "source": "v55:eq:electron_radius_equilibrium",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1022
+    },
+    {
+      "id": "LEP_virial_balance",
+      "dim": [
+        1,
+        2,
+        -2,
+        0
+      ],
+      "unit": "J",
+      "type": "PURE",
+      "formula": "0.5 * LEP_m_e * (SI_c**2)",
+      "depends_on": [
+        "LEP_m_e",
+        "SI_c"
+      ],
+      "chapter": "06_leptons",
+      "source": "v55:eq:electron_virial_balance",
+      "lean_file": "TevLeptonTorus.lean",
+      "lean_thm": "-",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1031
+    },
+    {
+      "id": "LEP_a_mu_HVP_val",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "6.77e-8",
+      "formula": "6.77e-8",
+      "depends_on": [
+        "LEP_a_mu_HVP"
+      ],
+      "chapter": "06_leptons",
+      "source": "v55:eq:a_mu_hvp_numerical",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1357
+    },
+    {
+      "id": "BAR_P_rad_zero",
+      "dim": [
+        1,
+        2,
+        -3,
+        0
+      ],
+      "unit": "W",
+      "type": "PURE",
+      "val": "0",
+      "formula": "0",
+      "depends_on": [
+        "BAR_radiation_cancellation"
+      ],
+      "chapter": "07_baryons",
+      "source": "v55:eq:proton_radiation_power_zero",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1430
+    },
+    {
+      "id": "CONT_G_0",
+      "dim": [
+        1,
+        -1,
+        -2,
+        0
+      ],
+      "unit": "Pa",
+      "type": "PURE",
+      "val": "8.710e+74",
+      "formula": "CONT_rho_0 * (SI_c**2)",
+      "depends_on": [
+        "CONT_rho_0",
+        "SI_c"
+      ],
+      "chapter": "01_ontology",
+      "source": "v56:eq:G_0_master_def",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 230
+    },
+    {
+      "id": "GRAV_delta_V",
+      "dim": [
+        0,
+        3,
+        0,
+        0
+      ],
+      "unit": "m^3",
+      "type": "PURE",
+      "formula": "M / CONT_rho_0",
+      "depends_on": [
+        "CONT_rho_0"
+      ],
+      "chapter": "11_gravity",
+      "source": "v55:eq:cavitation_volume_def",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2570
+    },
+    {
+      "id": "GRAV_m_i_eq_m_g",
+      "dim": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "unit": "kg",
+      "type": "PURE",
+      "formula": "CONT_rho_0 * (E_total / (CONT_rho_0 * (SI_c**2)))",
+      "depends_on": [
+        "CONT_rho_0",
+        "SI_c"
+      ],
+      "chapter": "11_gravity",
+      "source": "v55:eq:equivalence_principle_identity",
+      "lean_file": "TevGravity.lean",
+      "lean_thm": "-",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2639
+    },
+    {
+      "id": "GRAV_G_N_density_rel",
+      "dim": [
+        -1,
+        3,
+        -2,
+        0
+      ],
+      "unit": "m^3/(kg*s^2)",
+      "type": "PURE",
+      "formula": "(SI_c**2) / (pi * CONT_rho_0 * (SCALE_lambda_p_m**2))",
+      "depends_on": [
+        "SI_c",
+        "CONT_rho_0",
+        "SCALE_lambda_p_m"
+      ],
+      "chapter": "11_gravity",
+      "source": "v55:eq:GN_density_exact_rel",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2689
+    },
+    {
+      "id": "QM_born_energy_density",
+      "dim": [
+        1,
+        -1,
+        -2,
+        0
+      ],
+      "unit": "J/m^3",
+      "type": "PURE",
+      "formula": "0.5 * CONT_rho_0 * (omega_0**2) * (psi**2)",
+      "depends_on": [
+        "CONT_rho_0",
+        "omega_0",
+        "psi"
+      ],
+      "chapter": "12_quantum",
+      "source": "v55:eq:born_energy_proportionality",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 3110
+    },
+    {
+      "id": "LEP_r_e_core",
+      "dim": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "unit": "fm",
+      "type": "PURE",
+      "val": "2.818",
+      "formula": "ROOT_alpha * LEP_R_e_torus",
+      "depends_on": [
+        "ROOT_alpha",
+        "LEP_R_e_torus"
+      ],
+      "chapter": "06_leptons",
+      "source": "v55:eq:classical_electron_radius",
+      "lean_file": "TevLeptonTorus.lean",
+      "lean_thm": "electron_core_is_classical_radius",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 958
+    },
+    {
+      "id": "CONT_sigma_yield",
+      "dim": [
+        1,
+        -1,
+        -2,
+        0
+      ],
+      "unit": "Pa",
+      "type": "PURE",
+      "val": "6.356e72",
+      "formula": "ROOT_alpha * CONT_G_0",
+      "depends_on": [
+        "ROOT_alpha",
+        "CONT_G_0"
+      ],
+      "chapter": "01_ontology",
+      "source": "v55:eq:mises_yield_cutoff",
+      "role": "definition",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 80
+    },
+    {
+      "id": "CONT_navier_cauchy_p",
+      "dim": [
+        1,
+        -2,
+        -2,
+        0
+      ],
+      "unit": "N/m^3",
+      "type": "PURE",
+      "formula": "-grad(p) + G_0 * laplace(u)",
+      "depends_on": [
+        "CONT_G_0",
+        "CONT_rho_0"
+      ],
+      "chapter": "01_ontology",
+      "source": "v55:eq:navier_cauchy_lagrange",
+      "lean_file": "TevSolenoidalBulk.lean",
+      "lean_thm": "solenoidal_pressure_integral_kernel",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 125
+    },
+    {
+      "id": "SI_c_derived",
+      "dim": [
+        0,
+        1,
+        -1,
+        0
+      ],
+      "unit": "m/s",
+      "type": "PURE",
+      "val": "299792458",
+      "formula": "sqrt(CONT_G_0 / CONT_rho_0)",
+      "depends_on": [
+        "CONT_G_0",
+        "CONT_rho_0"
+      ],
+      "chapter": "01_ontology",
+      "source": "v55:eq:speed_of_light_def",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 140
+    },
+    {
+      "id": "CONT_poisson_bound",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "formula": "CONT_G_0 / (2 * CONT_K_0)",
+      "depends_on": [
+        "CONT_G_0",
+        "CONT_K_0"
+      ],
+      "chapter": "01_ontology",
+      "source": "v55:eq:poisson_bound_ineq",
+      "lean_file": "TevElasticityBoundary.lean",
+      "lean_thm": "poisson_quasi_incompressible_bound",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 149
+    },
+    {
+      "id": "CONT_tau_frenkel",
+      "dim": [
+        1,
+        -1,
+        -2,
+        0
+      ],
+      "unit": "Pa",
+      "type": "PURE",
+      "formula": "CONT_G_0 / (2 * pi)",
+      "depends_on": [
+        "CONT_G_0"
+      ],
+      "chapter": "01_ontology",
+      "source": "v56:eq:frenkel_local_limit",
+      "role": "definition",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 240
+    },
+    {
+      "id": "EM_vector_potential",
+      "dim": [
+        1,
+        1,
+        -2,
+        -1
+      ],
+      "unit": "T*m",
+      "type": "PURE",
+      "formula": "sqrt(SI_mu_0 * CONT_G_0) * u",
+      "depends_on": [
+        "SI_mu_0",
+        "CONT_G_0"
+      ],
+      "chapter": "02_electromagnetism",
+      "source": "v55:eq:potentials_def",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 346
+    },
+    {
+      "id": "EM_field_B",
+      "dim": [
+        1,
+        0,
+        -2,
+        -1
+      ],
+      "unit": "T",
+      "type": "PURE",
+      "formula": "sqrt(SI_mu_0 * CONT_G_0) * curl(u)",
+      "depends_on": [
+        "SI_mu_0",
+        "CONT_G_0"
+      ],
+      "chapter": "02_electromagnetism",
+      "source": "v55:eq:field_B_def",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 352
+    },
+    {
+      "id": "EM_field_E",
+      "dim": [
+        1,
+        1,
+        -3,
+        -1
+      ],
+      "unit": "V/m",
+      "type": "PURE",
+      "formula": "-sqrt(SI_mu_0 * CONT_G_0) * d_dt(u)",
+      "depends_on": [
+        "SI_mu_0",
+        "CONT_G_0"
+      ],
+      "chapter": "02_electromagnetism",
+      "source": "v55:eq:field_E_def",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 354
+    },
+    {
+      "id": "EM_elastic_energy_density",
+      "dim": [
+        1,
+        -1,
+        -2,
+        0
+      ],
+      "unit": "J/m^3",
+      "type": "PURE",
+      "formula": "0.5 * CONT_rho_0 * norm(u_dot)**2 + 0.5 * CONT_G_0 * norm(curl(u))**2",
+      "depends_on": [
+        "CONT_rho_0",
+        "CONT_G_0"
+      ],
+      "chapter": "02_electromagnetism",
+      "source": "v55:eq:elastic_energy_density_raw",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 361
+    },
+    {
+      "id": "MISES_criterion_form",
+      "dim": [
+        2,
+        -2,
+        -4,
+        0
+      ],
+      "unit": "Pa^2",
+      "type": "PURE",
+      "formula": "J_2 - J_2_crit = 0",
+      "depends_on": [
+        "CONT_G_0"
+      ],
+      "chapter": "02_mises",
+      "source": "v56:eq:mises_isochoric_form",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 556
+    },
+    {
+      "id": "CONT_tau_c_yield",
+      "dim": [
+        1,
+        -1,
+        -2,
+        0
+      ],
+      "unit": "Pa",
+      "type": "POSTULATE",
+      "val": "6.356e72",
+      "formula": "ROOT_alpha * CONT_G_0",
+      "depends_on": [
+        "ROOT_alpha",
+        "CONT_G_0"
+      ],
+      "chapter": "02_mises",
+      "source": "v56:eq:critical_shear_stress_def",
+      "role": "definition",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 574
+    },
+    {
+      "id": "BAR_neutron_comp_energy",
+      "dim": [
+        1,
+        2,
+        -2,
+        0
+      ],
+      "unit": "J",
+      "type": "PURE",
+      "formula": "0.5 * integral(sigma_rr**2 / CONT_G_0, dV)",
+      "depends_on": [
+        "CONT_G_0"
+      ],
+      "chapter": "07_baryons",
+      "source": "v55:eq:neutron_heavier_work",
+      "lean_file": "TevNucleon.lean",
+      "lean_thm": "neutron_heavier_than_proton",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 1620
+    },
+    {
+      "id": "QCD_core_shear_softening",
+      "dim": [
+        1,
+        -1,
+        -2,
+        0
+      ],
+      "unit": "Pa",
+      "type": "PURE",
+      "formula": "CONT_G_0 * (r**2 / (r**2 + r_0**2))",
+      "depends_on": [
+        "CONT_G_0"
+      ],
+      "chapter": "10_nuclear",
+      "source": "v55:eq:asymptotic_freedom_core_shear",
+      "lean_file": "TevStrongRunning.lean",
+      "lean_thm": "asymptotic_freedom_at_origin",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2334
+    },
+    {
+      "id": "GRAV_U_eshelby",
+      "dim": [
+        1,
+        2,
+        -2,
+        0
+      ],
+      "unit": "J",
+      "type": "PURE",
+      "formula": "-(CONT_G_0 / (pi * (SCALE_lambda_p_m**2))) * (V1 * V2 / r)",
+      "depends_on": [
+        "CONT_G_0",
+        "SCALE_lambda_p_m"
+      ],
+      "chapter": "11_gravity",
+      "source": "v55:eq:eshelby_potential_formula",
+      "lean_file": "TevGravity.lean",
+      "lean_thm": "newton_force_from_eshelby",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2667
+    },
+    {
+      "id": "GRAV_F_eshelby",
+      "dim": [
+        1,
+        1,
+        -2,
+        0
+      ],
+      "unit": "N",
+      "type": "PURE",
+      "formula": "-(CONT_G_0 / (pi * (SCALE_lambda_p_m**2))) * (V1 * V2 / (r**2))",
+      "depends_on": [
+        "CONT_G_0",
+        "SCALE_lambda_p_m"
+      ],
+      "chapter": "11_gravity",
+      "source": "v55:eq:eshelby_force_formula",
+      "lean_file": "TevGravity.lean",
+      "lean_thm": "gravity_is_always_attractive",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2673
+    },
+    {
+      "id": "GRAV_G_eff",
+      "dim": [
+        1,
+        -1,
+        -2,
+        0
+      ],
+      "unit": "Pa",
+      "type": "PURE",
+      "formula": "CONT_G_0 * (1 - 2 * GRAV_G_N * M / ((SI_c**2) * r))",
+      "depends_on": [
+        "CONT_G_0",
+        "GRAV_G_N",
+        "SI_c"
+      ],
+      "chapter": "11_gravity",
+      "source": "v55:eq:G_eff_shear_screening",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2872
+    },
+    {
+      "id": "STAT_pauli_energy",
+      "dim": [
+        1,
+        2,
+        -2,
+        0
+      ],
+      "unit": "J",
+      "type": "PURE",
+      "formula": "0.5 * CONT_G_0 * ((SCALE_lambda_p_m / r)**2)",
+      "depends_on": [
+        "CONT_G_0",
+        "SCALE_lambda_p_m"
+      ],
+      "chapter": "12_quantum",
+      "source": "v55:eq:pauli_repulsion_energy",
+      "lean_file": "TevSpinStatistics.lean",
+      "lean_thm": "pauli_repulsion_increases_on_approach",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 3288
+    },
+    {
+      "id": "QC_phase_drift",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "rad",
+      "type": "PURE",
+      "formula": "delta_sigma / CONT_G_0",
+      "depends_on": [
+        "CONT_G_0"
+      ],
+      "chapter": "12_quantum",
+      "source": "v55:eq:phase_drift_formula",
+      "lean_file": "TevQuantum.lean",
+      "lean_thm": "analog_qubit_phase_instability",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 3338
+    },
+    {
+      "id": "GRAV_eshelby_u_r",
+      "dim": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "unit": "m",
+      "type": "PURE",
+      "formula": "GRAV_delta_V / (4 * pi * r**2)",
+      "depends_on": [
+        "GRAV_delta_V"
+      ],
+      "chapter": "11_gravity",
+      "source": "v55:eq:radial_displacement_eshelby",
+      "lean_file": "TevGravity.lean",
+      "lean_thm": "eshelby_displacement_profile",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2584
+    },
+    {
+      "id": "GRAV_strain_rr",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "formula": "-GRAV_delta_V / (2 * pi * r**3)",
+      "depends_on": [
+        "GRAV_delta_V"
+      ],
+      "chapter": "11_gravity",
+      "source": "v55:eq:strain_rr",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2590
+    },
+    {
+      "id": "GRAV_strain_theta",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "formula": "GRAV_delta_V / (4 * pi * r**3)",
+      "depends_on": [
+        "GRAV_delta_V"
+      ],
+      "chapter": "11_gravity",
+      "source": "v55:eq:strain_theta",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2592
+    },
+    {
+      "id": "GRAV_strain_phi",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "formula": "GRAV_delta_V / (4 * pi * r**3)",
+      "depends_on": [
+        "GRAV_delta_V"
+      ],
+      "chapter": "11_gravity",
+      "source": "v55:eq:strain_phi",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2594
+    },
+    {
+      "id": "GRAV_W_density",
+      "dim": [
+        1,
+        -1,
+        -2,
+        0
+      ],
+      "unit": "J/m^3",
+      "type": "PURE",
+      "formula": "3 * CONT_G_0 * (GRAV_delta_V**2) / (8 * (pi**2) * (r**6))",
+      "depends_on": [
+        "CONT_G_0",
+        "GRAV_delta_V"
+      ],
+      "chapter": "11_gravity",
+      "source": "v55:eq:eshelby_energy_density",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2610
+    },
+    {
+      "id": "QCD_confinement_potential",
+      "dim": [
+        1,
+        2,
+        -2,
+        0
+      ],
+      "unit": "J",
+      "type": "PURE",
+      "formula": "sigma_yield * S_tube * r",
+      "depends_on": [
+        "CONT_sigma_yield"
+      ],
+      "chapter": "10_nuclear",
+      "source": "v55:eq:linear_confinement_string",
+      "lean_file": "TevStrongRunning.lean",
+      "lean_thm": "confinement_force_monotone",
+      "role": "equation",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2341
+    },
+    {
+      "id": "CONT_frenkel_yield_proof",
+      "dim": [
+        1,
+        -1,
+        -2,
+        0
+      ],
+      "unit": "Pa",
+      "type": "PURE",
+      "val": "6.356e72",
+      "formula": "CONT_tau_frenkel * 2 * pi * ROOT_alpha",
+      "depends_on": [
+        "CONT_tau_frenkel",
+        "ROOT_alpha"
+      ],
+      "chapter": "01_ontology",
+      "source": "v56:eq:frenkel_cancellation_exact",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 246
+    },
+    {
+      "id": "CONT_sigma_eq_exact",
+      "dim": [
+        1,
+        -1,
+        -2,
+        0
+      ],
+      "unit": "Pa",
+      "type": "PURE",
+      "val": "1.1009e73",
+      "formula": "sqrt(3) * CONT_tau_c_yield",
+      "depends_on": [
+        "CONT_tau_c_yield"
+      ],
+      "chapter": "02_mises",
+      "source": "v56:eq:mises_equivalent_stress_exact",
+      "lean_file": "TevQuantum.lean",
+      "lean_thm": "mises_equivalent_stress_ratio",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 584
+    },
+    {
+      "id": "GRAV_strain_trace_zero",
+      "dim": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": "dimensionless",
+      "type": "PURE",
+      "val": "0",
+      "formula": "0",
+      "depends_on": [
+        "GRAV_strain_rr",
+        "GRAV_strain_theta",
+        "GRAV_strain_phi"
+      ],
+      "chapter": "11_gravity",
+      "source": "v55:eq:eshelby_trace_zero",
+      "role": "theorem",
+      "_file": "Manifest-latest-rus.tex",
+      "_line": 2603
+    }
+  ]
+}

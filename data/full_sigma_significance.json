@@ -1,0 +1,232 @@
+{
+  "total": 24,
+  "mean_sigma_full": 0.7943082203360511,
+  "max_sigma_full": 1.5799922802745372,
+  "min_sigma_full": 0.06333207917918152,
+  "groups": {
+    "OK (<1\u03c3)": [
+      "m_e",
+      "m_mu",
+      "m_tau",
+      "Q_koide",
+      "M_W",
+      "sin2_thetaW",
+      "theta_C",
+      "V_us",
+      "V_cb",
+      "delta_CP",
+      "alpha_s",
+      "E_b_deuteron",
+      "Delta_M_np",
+      "He4_binding",
+      "dm2_21",
+      "dm2_31",
+      "alpha_G",
+      "G_N_pred"
+    ],
+    "\u00b1(1-3)\u03c3": [
+      "M_Z",
+      "rho_tree",
+      "v_vev",
+      "sin2_theta13",
+      "a_0_MOND",
+      "M_H"
+    ],
+    "\u00b1(3-5)\u03c3": [],
+    ">5\u03c3 \u041e\u0422\u041a\u041b": []
+  },
+  "details": [
+    {
+      "name": "m_e",
+      "sigma_full": 0.8701232647567044,
+      "sigma_exp_only": 1.4000000003733248,
+      "sigma_theor_ppm": 0.37000060822017794,
+      "status": "\u041e\u041a (<1\u03c3)",
+      "reason": "\u0443\u0441\u0435\u0447\u0435\u043d\u0438\u0435 \u03b1\u00b2 \u2192 O(\u03b1\u00b3)"
+    },
+    {
+      "name": "m_mu",
+      "sigma_full": 0.9995078433243995,
+      "sigma_exp_only": 8.20000000002589,
+      "sigma_theor_ppm": 28.901285595706035,
+      "status": "\u041e\u041a (<1\u03c3)",
+      "reason": "\u0434\u0435\u0444\u0435\u043a\u0442 P2: \u043d\u0435\u0442 \u043f\u043e\u043b\u043d\u043e\u0433\u043e \u0441\u043f\u0435\u043a\u0442\u0440\u0430 \u0414\u0438\u0440\u0430\u043a\u0430-\u041b\u0430\u043f\u043b\u0430\u0441\u0430"
+    },
+    {
+      "name": "m_tau",
+      "sigma_full": 0.1796119893689133,
+      "sigma_exp_only": 0.18823529411854584,
+      "sigma_theor_ppm": 14.999864934527015,
+      "status": "\u041e\u041a (<1\u03c3)",
+      "reason": "\u043e\u0441\u0442\u0430\u0442\u043e\u0447\u043d\u0430\u044f \u043f\u043e\u0433\u0440\u0435\u0448\u043d\u043e\u0441\u0442\u044c P2 (\u0442\u0435\u043a\u0443\u0449\u0438\u0439 \u0434\u0435\u0444\u0435\u043a\u0442 -8.9ppm)"
+    },
+    {
+      "name": "Q_koide",
+      "sigma_full": 0.8571428571516445,
+      "sigma_exp_only": 0.8571428571516445,
+      "sigma_theor_ppm": 0.0,
+      "status": "\u041e\u041a (<1\u03c3)",
+      "reason": "\u0442\u043e\u0447\u043d\u0430\u044f \u0442\u0435\u043e\u0440\u0435\u043c\u0430 \u22612/3"
+    },
+    {
+      "name": "M_Z",
+      "sigma_full": 1.0755365262751886,
+      "sigma_exp_only": 31.399999999948136,
+      "sigma_theor_ppm": 63.99880677811447,
+      "status": "\u00b1(1-3)\u03c3",
+      "reason": "bare-vs-dressed: \u03b4_Z=5\u03b1/4\u03c0 \u043f\u0435\u0440\u0432\u043e\u0435 \u043f\u043e\u0440\u044f\u0434\u043a\u0430"
+    },
+    {
+      "name": "M_W",
+      "sigma_full": 0.9982801493871065,
+      "sigma_exp_only": 14.769230769229143,
+      "sigma_theor_ppm": 238.7047509342144,
+      "status": "\u041e\u041a (<1\u03c3)",
+      "reason": "\u0440\u0430\u0434\u0438\u0430\u0446\u0438\u043e\u043d\u043d\u044b\u0435 \u043f\u043e\u043f\u0440\u0430\u0432\u043a\u0438 \u03b4_W=7\u03b1/2\u03c0 \u043d\u0435\u043f\u043e\u043b\u043d\u044b"
+    },
+    {
+      "name": "rho_tree",
+      "sigma_full": 1.3774989238295563,
+      "sigma_exp_only": 1.9000000000002348,
+      "sigma_theor_ppm": 190.00000000000003,
+      "status": "\u00b1(1-3)\u03c3",
+      "reason": "\u0440\u0430\u0434\u0438\u0430\u0446\u0438\u043e\u043d\u043d\u044b\u0435 \u043f\u043e\u043f\u0440\u0430\u0432\u043a\u0438 \u043d\u0435 \u0432\u044b\u0432\u0435\u0434\u0435\u043d\u044b"
+    },
+    {
+      "name": "sin2_thetaW",
+      "sigma_full": 0.8961472432902894,
+      "sigma_exp_only": 13.02499999999984,
+      "sigma_theor_ppm": 2513.3358466691802,
+      "status": "\u041e\u041a (<1\u03c3)",
+      "reason": "\u0443\u0441\u0435\u0447\u0435\u043d\u0438\u0435 \u0440\u0430\u0434\u0438\u0430\u0446\u0438\u043e\u043d\u043d\u043e\u0433\u043e \u043f\u043e\u0433\u0440\u0430\u043d\u0441\u043b\u043e\u044f (1/4)(alpha/pi)"
+    },
+    {
+      "name": "theta_C",
+      "sigma_full": 0.8027950275018346,
+      "sigma_exp_only": 1.44000000000033,
+      "sigma_theor_ppm": 328.19084225188226,
+      "status": "\u041e\u041a (<1\u03c3)",
+      "reason": "\u0443\u0441\u0435\u0447\u0435\u043d\u0438\u0435: 2/9 + 2\u03b1/\u03c0 \u043f\u0435\u0440\u0432\u043e\u0435 \u043f\u043e\u0440\u044f\u0434\u043a\u0430"
+    },
+    {
+      "name": "v_vev",
+      "sigma_full": 1.0023795437555203,
+      "sigma_exp_only": 22.233333333332443,
+      "sigma_theor_ppm": 53.99861603871972,
+      "status": "\u00b1(1-3)\u03c3",
+      "reason": "\u0443\u0441\u0435\u0447\u0435\u043d\u0438\u0435 M_p/\u03b1 sqrt(11/3)"
+    },
+    {
+      "name": "V_us",
+      "sigma_full": 0.1097837736648655,
+      "sigma_exp_only": 0.11044776119405746,
+      "sigma_theor_ppm": 328.1079110462997,
+      "status": "\u041e\u041a (<1\u03c3)",
+      "reason": "\u0442\u043e\u043f\u043e\u043b\u043e\u0433\u0438\u0447\u0435\u0441\u043a\u043e\u0435 sin(2/9+2\u03b1/\u03c0)"
+    },
+    {
+      "name": "V_cb",
+      "sigma_full": 0.5997488802322213,
+      "sigma_exp_only": 0.6000000000000042,
+      "sigma_theor_ppm": 595.4974582425563,
+      "status": "\u041e\u041a (<1\u03c3)",
+      "reason": "\u0443\u0441\u0435\u0447\u0435\u043d\u0438\u0435 sqrt(2/3)sin\u00b2\u03b8_C"
+    },
+    {
+      "name": "delta_CP",
+      "sigma_full": 0.4933333333333299,
+      "sigma_exp_only": 0.4933333333333299,
+      "sigma_theor_ppm": 0.0,
+      "status": "\u041e\u041a (<1\u03c3)",
+      "reason": "\u0430\u0440\u043a\u0442\u0430\u043d(3/\u221a2) \u2014 \u0442\u043e\u0447\u043d\u0430\u044f \u0442\u0435\u043e\u0440\u0435\u043c\u0430"
+    },
+    {
+      "name": "alpha_s",
+      "sigma_full": 0.06333207917918152,
+      "sigma_exp_only": 0.06333333333333499,
+      "sigma_theor_ppm": 47.97682475414418,
+      "status": "\u041e\u041a (<1\u03c3)",
+      "reason": "\u0443\u0441\u0435\u0447\u0435\u043d\u0438\u0435 (2/17)(1+1.5\u03b1/\u03c0)"
+    },
+    {
+      "name": "E_b_deuteron",
+      "sigma_full": 0.9239538194843846,
+      "sigma_exp_only": 2.4800000000002598,
+      "sigma_theor_ppm": 55.98887271504495,
+      "status": "\u041e\u041a (<1\u03c3)",
+      "reason": "\u0443\u0441\u0435\u0447\u0435\u043d\u0438\u0435 M_\u03c0\u00b2/(2M_p)\u00b73/14"
+    },
+    {
+      "name": "Delta_M_np",
+      "sigma_full": 0.9975782991226749,
+      "sigma_exp_only": 27.880851063829326,
+      "sigma_theor_ppm": 5100.871943922039,
+      "status": "\u041e\u041a (<1\u03c3)",
+      "reason": "\u0434\u0435\u0444\u0435\u043a\u0442 B1: \u044d\u043b\u0435\u043a\u0442\u0440\u043e\u0441\u0442\u0430\u0442\u0438\u043a\u0430 \u043d\u0435 \u0443\u0447\u0442\u0435\u043d\u0430"
+    },
+    {
+      "name": "He4_binding",
+      "sigma_full": 0.5999999038918247,
+      "sigma_exp_only": 0.5999999999986017,
+      "sigma_theor_ppm": 0.010001413627367828,
+      "status": "\u041e\u041a (<1\u03c3)",
+      "reason": "\u0442\u043e\u0447\u043d\u0430\u044f \u0444\u043e\u0440\u043c\u0443\u043b\u0430 6\u00d7V_bond"
+    },
+    {
+      "name": "dm2_21",
+      "sigma_full": 0.48496286766323454,
+      "sigma_exp_only": 0.4849999999999996,
+      "sigma_theor_ppm": 329.2536916323001,
+      "status": "\u041e\u041a (<1\u03c3)",
+      "reason": "\u0443\u0441\u0435\u0447\u0435\u043d\u0438\u0435 \u043d\u0435\u0439\u0442\u0440\u0438\u043d\u043d\u043e\u0433\u043e \u043c\u0430\u0441\u0448\u0442\u0430\u0431\u0430"
+    },
+    {
+      "name": "dm2_31",
+      "sigma_full": 0.07407204194717314,
+      "sigma_exp_only": 0.07407407407408391,
+      "sigma_theor_ppm": 79.74481658692187,
+      "status": "\u041e\u041a (<1\u03c3)",
+      "reason": "\u0443\u0441\u0435\u0447\u0435\u043d\u0438\u0435 \u043d\u0435\u0439\u0442\u0440\u0438\u043d\u043d\u043e\u0433\u043e \u043c\u0430\u0441\u0448\u0442\u0430\u0431\u0430"
+    },
+    {
+      "name": "sin2_theta13",
+      "sigma_full": 1.1833333333333316,
+      "sigma_exp_only": 1.1833333333333316,
+      "sigma_theor_ppm": 0.0,
+      "status": "\u00b1(1-3)\u03c3",
+      "reason": "\u0442\u043e\u043f\u043e\u043b\u043e\u0433\u0438\u0447\u0435\u0441\u043a\u043e\u0435 (1-\u221a(11/12))/2 \u2014 \u0442\u043e\u0447\u043d\u0430\u044f \u0442\u0435\u043e\u0440\u0435\u043c\u0430"
+    },
+    {
+      "name": "a_0_MOND",
+      "sigma_full": 1.5799922802745372,
+      "sigma_exp_only": 1.58,
+      "sigma_theor_ppm": 300.0,
+      "status": "\u00b1(1-3)\u03c3",
+      "reason": "c\u00b7H\u2080/2\u03c0: H\u2080 \u0432\u043d\u0435\u0448\u043d\u0438\u0439 \u0432\u0445\u043e\u0434"
+    },
+    {
+      "name": "alpha_G",
+      "sigma_full": 0.9213349423594469,
+      "sigma_exp_only": 2.3846153846132485,
+      "sigma_theor_ppm": 52.54843128523025,
+      "status": "\u041e\u041a (<1\u03c3)",
+      "reason": "\u0443\u0441\u0435\u0447\u0435\u043d\u0438\u0435 \u221a3\u00b7\u03b1\u00b9\u2078(1-21\u03b1/5\u03c0)"
+    },
+    {
+      "name": "G_N_pred",
+      "sigma_full": 0.9202377723676681,
+      "sigma_exp_only": 2.333333333327501,
+      "sigma_theor_ppm": 52.368986881831596,
+      "status": "\u041e\u041a (<1\u03c3)",
+      "reason": "\u03b1_G \u0432\u043d\u0435\u0448\u043d\u0438\u0439 \u0432\u0445\u043e\u0434"
+    },
+    {
+      "name": "M_H",
+      "sigma_full": 1.0527105925701925,
+      "sigma_exp_only": 104.99999999999972,
+      "sigma_theor_ppm": 7900.000000000001,
+      "status": "\u00b1(1-3)\u03c3",
+      "reason": "\u0440\u0430\u0434\u0438\u0430\u043b\u044c\u043d\u0430\u044f \u043c\u043e\u0434\u0430 \u043a\u0430\u0432\u0435\u0440\u043d\u044b \u2014 \u0433\u0440\u0443\u0431\u043e\u0435 \u043f\u0440\u0438\u0431\u043b\u0438\u0436\u0435\u043d\u0438\u0435"
+    }
+  ]
+}

@@ -1,0 +1,1835 @@
+# ==============================================================================
+# ТОПОЛОГИЧЕСКАЯ ЭЛАСТОДИНАМИКА ВАКУУМА (ТЭВ)
+# КАНОНИЧЕСКИЙ РЕЕСТР СИМВОЛОВ, ИНВАРИАНТОВ И ЭТАЛОНОВ (SSOT v6.0 - NORMALIZED)
+# Базис размерностей СИ: [Масса (M), Длина (L), Время (T), Сила тока (I)]
+# ==============================================================================
+
+manifest_import:
+
+  APP_alpha_G_jump_128:
+    latex: ""
+    formula: "(137.035999177 / 128)**18"
+    val: 3.4138510000000002
+    depends_on: ["ROOT_alpha"]
+
+  APP_clifford_torus_metric:
+    latex: ""
+    formula: "1/2"
+    val: 0.5
+
+  APP_helicity_conservation:
+    latex: ""
+    formula: "integral(u * curl(u), d3x) = const"
+
+  APP_lode_angle_definition:
+    latex: ""
+    formula: "q / p**2"
+    val: 0.222222
+    depends_on: ["TOP_q", "TOP_p"]
+
+  APP_mode_mass_correction:
+    latex: ""
+    formula: "Tr(P_mode) / Tr(I_dof)"
+
+  APP_robin_boundary_condition:
+    latex: ""
+    formula: "sigma.n + Z_boundary * u_dot = 0"
+
+  BAR_C_Lambda:
+    latex: ""
+    formula: "(TOP_p + TOP_q) / TOP_p"
+    val: 1.6666669999999999
+    depends_on: ["TOP_p", "TOP_q"]
+
+  BAR_M_Lambda0:
+    latex: ""
+    formula: "ROOT_Mp + BAR_C_Lambda * LEP_m_mu"
+    val: 1114.3599999999999
+    depends_on: ["ROOT_Mp", "BAR_C_Lambda", "LEP_m_mu"]
+
+  BAR_P_rad_zero:
+    latex: ""
+    formula: "0"
+    val: 0
+    depends_on: ["BAR_radiation_cancellation"]
+
+  BAR_Q_net_formula:
+    latex: ""
+    formula: "p - q"
+    val: 1
+    depends_on: ["TOP_p", "TOP_q"]
+
+  BAR_R_m:
+    latex: ""
+    formula: "TOP_p * SCALE_lambda_p"
+    val: 0.63092700000000002
+    depends_on: ["TOP_p", "SCALE_lambda_p"]
+
+  BAR_bjorken_weights:
+    latex: ""
+    formula: "[4/9, 4/9, 1/9]"
+    depends_on: ["BAR_q_eff_1", "BAR_q_eff_2", "BAR_q_eff_3"]
+
+  BAR_delta_q_return:
+    latex: ""
+    formula: "2 * (1/2) * (2 * (1/3))"
+    val: 0.66666666666666663
+    depends_on: ["BAR_q0_monopole"]
+
+  BAR_delta_tau_purcell:
+    latex: ""
+    formula: "tau_beam * (4 / 3) * ROOT_alpha"
+    val: 8.6370000000000005
+    depends_on: ["ROOT_alpha"]
+
+  BAR_energy_stationary:
+    latex: ""
+    formula: "1.5 * a_0**2"
+    val: 1.5
+    depends_on: ["BAR_lobe_displacements"]
+
+  BAR_form_factor:
+    latex: ""
+    formula: "BAR_R_m / BAR_r_c"
+    val: 0.75
+    depends_on: ["BAR_R_m", "BAR_r_c"]
+
+  BAR_link_components_unity:
+    latex: ""
+    formula: "gcd(3, 2)"
+    val: 1
+    depends_on: ["TOP_p", "TOP_q"]
+
+  BAR_lobe_charges_set:
+    latex: ""
+    formula: "[1, 1, -1]"
+
+  BAR_lobe_displacements:
+    latex: ""
+    formula: "a_k * cos(omega_0 * t - phi_k)"
+    depends_on: ["BAR_phase_coords"]
+
+  BAR_neutron_charge_zero:
+    latex: ""
+    formula: "1 - 1"
+    val: 0
+    depends_on: ["BAR_proton_charge"]
+
+  BAR_neutron_comp_energy:
+    latex: ""
+    formula: "0.5 * integral(sigma_rr**2 / CONT_G_0, dV)"
+    depends_on: ["CONT_G_0"]
+
+  BAR_phase_coords:
+    latex: ""
+    formula: "[0, 2*pi/3, 4*pi/3]"
+    depends_on: ["BAR_phase_shift_step"]
+
+  BAR_phase_shift_step:
+    latex: ""
+    formula: "2 * pi / 3"
+    val: 2.0943951023931953
+    depends_on: ["TOP_p"]
+
+  BAR_proton_charge:
+    latex: ""
+    formula: "3 - 2"
+    val: 1
+    depends_on: ["TOP_p", "TOP_q"]
+
+  BAR_q0_monopole:
+    latex: ""
+    formula: "(1 + 1 - 1) / 3"
+    val: 0.33333333333333331
+    depends_on: ["BAR_lobe_charges_set", "TOP_p"]
+
+  BAR_q_eff_1:
+    latex: ""
+    formula: "1 - 1/3"
+    val: 0.66666666666666674
+    depends_on: ["BAR_q0_monopole"]
+
+  BAR_q_eff_2:
+    latex: ""
+    formula: "1 - 1/3"
+    val: 0.66666666666666674
+    depends_on: ["BAR_q0_monopole"]
+
+  BAR_q_eff_3:
+    latex: ""
+    formula: "-1 + 2/3"
+    val: -0.33333333333333337
+    depends_on: ["BAR_delta_q_return"]
+
+  BAR_r_c:
+    latex: ""
+    formula: "2 * TOP_q * SCALE_lambda_p"
+    val: 0.84123599999999998
+    depends_on: ["TOP_N_rev", "TOP_q", "SCALE_lambda_p"]
+
+  BAR_radiation_cancellation:
+    latex: ""
+    formula: "0"
+    val: 0
+    depends_on: ["BAR_lobe_displacements"]
+
+  BAR_strangeness_max:
+    latex: ""
+    formula: "TOP_p"
+    val: 3
+    depends_on: ["TOP_p"]
+
+  BAR_tau_bottle_val:
+    latex: ""
+    formula: "tau_beam - BAR_delta_tau_purcell"
+    val: 879.05999999999995
+    depends_on: ["BAR_delta_tau_purcell"]
+
+  BAR_total_proton_charge_sum:
+    latex: ""
+    formula: "1 + 1 - 1"
+    val: 1
+    depends_on: ["BAR_lobe_charges_set"]
+
+  CKM_V_cb:
+    latex: ""
+    formula: "sqrt(2/3) * (CKM_V_us**2)"
+    val: 0.041309999999999999
+    depends_on: ["CKM_V_us"]
+
+  CKM_V_ud:
+    latex: ""
+    formula: "cos(CKM_cabibbo_angle)"
+    val: 0.97437600000000002
+    depends_on: ["CKM_cabibbo_angle"]
+
+  CKM_V_us:
+    latex: ""
+    formula: "sin(CKM_cabibbo_angle)"
+    val: 0.22492599999999999
+    depends_on: ["CKM_cabibbo_angle"]
+
+  CKM_cabibbo_angle:
+    latex: ""
+    formula: "2/9 + 2 * (ROOT_alpha / pi)"
+    val: 0.22686786115061286
+    depends_on: ["ROOT_alpha"]
+
+  CKM_delta_CP:
+    latex: ""
+    formula: "arctan(3 / sqrt(2))"
+    val: 1.13029
+    depends_on: ["TOP_p", "TOP_q"]
+
+  CLIFF_flat_metric:
+    latex: ""
+    formula: "0.5 * (d_xi1**2 + d_xi2**2)"
+
+  CLIFF_hopf_coords:
+    latex: ""
+    formula: "sin(eta)*exp(i*xi1) + cos(eta)*exp(i*xi2)"
+
+  CLIFF_mean_curvature_zero:
+    latex: ""
+    formula: "(1 - 1) / 2"
+    val: 0
+
+  CLIFF_willmore_functional:
+    latex: ""
+    formula: "integral(H**2, dA)"
+
+  CONT_N_longitudinal:
+    latex: ""
+    formula: "0"
+    val: 0
+
+  CONT_alpha_impedance_ratio:
+    latex: ""
+    formula: "CONT_Z_0 / (2 * CONT_R_K)"
+    val: 0.0072973525600000004
+    depends_on: ["CONT_Z_0", "CONT_R_K"]
+
+  CONT_laplace_pressure:
+    latex: ""
+    formula: "0"
+    val: 0
+
+  CONT_mu_str_T0:
+    latex: ""
+    formula: "(SI_c**2) / (pi * GRAV_G_N)"
+    val: 4.2863000000000002e+26
+    depends_on: ["SI_c", "GRAV_G_N"]
+
+  CONT_navier_cauchy_p:
+    latex: ""
+    formula: "-grad(p) + G_0 * laplace(u)"
+    depends_on: ["CONT_G_0", "CONT_rho_0"]
+
+  CONT_poisson_bound:
+    latex: ""
+    formula: "CONT_G_0 / (2 * CONT_K_0)"
+    depends_on: ["CONT_G_0", "CONT_K_0"]
+
+  CONT_rho_0_val:
+    latex: ""
+    formula: "CONT_mu_str / (SCALE_lambda_p_m**2)"
+    val: 9.6910000000000004e+57
+    depends_on: ["CONT_mu_str", "SCALE_lambda_p_m"]
+
+  CONT_solenoidal_div_u:
+    latex: ""
+    formula: "0"
+    val: 0
+
+  CONT_spinor_order:
+    latex: ""
+    formula: "abs(z1)**2 + abs(z2)**2"
+    val: 1
+
+  COSMO_T_eff_def:
+    latex: ""
+    formula: "T_defect - T_vacuum"
+
+  COSMO_a0_mond:
+    latex: ""
+    formula: "SI_c * H_0 / (2 * pi)"
+    val: 1.0999999999999999e-10
+    depends_on: ["SI_c"]
+
+  COSMO_baryon_asymmetry:
+    latex: ""
+    formula: "(3 / 14) * (ROOT_alpha**4)"
+    val: 6.0764999999999996e-10
+    depends_on: ["ROOT_alpha"]
+
+  COSMO_btfr:
+    latex: ""
+    formula: "GRAV_G_N * M * COSMO_a0_mond"
+    depends_on: ["GRAV_G_N", "COSMO_a0_mond"]
+
+  COSMO_lambda_zero:
+    latex: ""
+    formula: "0"
+    val: 0
+
+  COSMO_mond_acceleration:
+    latex: ""
+    formula: "SI_c * COSMO_H_0 / (2*pi)"
+    val: 1.103e-10
+    depends_on: ["SI_c", "COSMO_H_0"]
+
+  DEF_alpha_impedance:
+    latex: ""
+    formula: "CONT_Z_0 / (2 * CONT_R_K)"
+    val: 0.0072973525600000004
+    depends_on: ["CONT_Z_0", "CONT_R_K"]
+
+  DEF_neutrino_charge:
+    latex: ""
+    formula: "0"
+    val: 0
+
+  DEF_neutrino_scale_concept:
+    latex: ""
+    formula: "(2 * (ROOT_alpha**5) * (ROOT_Mp / 3) * 1e9) / (1 + 1 / (6 * pi))"
+    val: 12.2918
+    depends_on: ["ROOT_alpha", "ROOT_Mp"]
+
+  DEF_photon_mass:
+    latex: ""
+    formula: "0"
+    val: 0
+
+  DEF_zitter_frequency:
+    latex: ""
+    formula: "M * (SI_c**2) / SI_hbar"
+    depends_on: ["SI_c", "SI_hbar"]
+
+  EM_charge_integral:
+    latex: ""
+    formula: "SI_e"
+    val: 1.6021766339999999e-19
+    depends_on: ["SI_e"]
+
+  EM_div_B_zero:
+    latex: ""
+    formula: "0"
+    val: 0
+
+  EM_div_E_bulk:
+    latex: ""
+    formula: "0"
+    val: 0
+
+  EM_elastic_energy_density:
+    latex: ""
+    formula: "0.5 * CONT_rho_0 * norm(u_dot)**2 + 0.5 * CONT_G_0 * norm(curl(u))**2"
+    depends_on: ["CONT_rho_0", "CONT_G_0"]
+
+  EM_energy_isomorphism:
+    latex: ""
+    formula: "0.5 * SI_epsilon_0 * (E**2) + (0.5 / SI_mu_0) * (B**2)"
+    depends_on: ["SI_epsilon_0", "SI_mu_0"]
+
+  EM_field_B:
+    latex: ""
+    formula: "sqrt(SI_mu_0 * CONT_G_0) * curl(u)"
+    depends_on: ["SI_mu_0", "CONT_G_0"]
+
+  EM_field_E:
+    latex: ""
+    formula: "-sqrt(SI_mu_0 * CONT_G_0) * d_dt(u)"
+    depends_on: ["SI_mu_0", "CONT_G_0"]
+
+  EM_gauss_flux:
+    latex: ""
+    formula: "q / SI_epsilon_0"
+    depends_on: ["SI_epsilon_0"]
+
+  EM_manifold_boundary:
+    latex: ""
+    formula: "S_inf + S_core"
+
+  EM_maxwell_trace:
+    latex: ""
+    formula: "-0.5 * SI_epsilon_0 * (E**2)"
+    depends_on: ["SI_epsilon_0"]
+
+  EM_vector_potential:
+    latex: ""
+    formula: "sqrt(SI_mu_0 * CONT_G_0) * u"
+    depends_on: ["SI_mu_0", "CONT_G_0"]
+
+  EW_M_H_val:
+    latex: ""
+    formula: "128.577053 * (1 - 0.018118)"
+    val: 126.24749395374602
+    depends_on: ["EW_E_EW", "ROOT_alpha"]
+
+  EW_M_W_bare:
+    latex: ""
+    formula: "EW_E_EW * sqrt(5 / 13)"
+    val: 79.740200000000002
+    depends_on: ["EW_E_EW"]
+
+  EW_cos2_thetaW:
+    latex: ""
+    formula: "1 - EW_sin2_thetaW"
+    val: 0.769231
+    depends_on: ["EW_sin2_thetaW"]
+
+  EW_delta_W:
+    latex: ""
+    formula: "(7 / 2) * (ROOT_alpha / pi)"
+    val: 0.0081298681246836507
+    depends_on: ["TOP_p", "TOP_q", "TOP_N_rev", "ROOT_alpha"]
+
+  EW_delta_Z:
+    latex: ""
+    formula: "(5 / 4) * (ROOT_alpha / pi)"
+    val: 0.0029035243302441608
+    depends_on: ["TOP_p", "TOP_q", "TOP_N_spin", "ROOT_alpha"]
+
+  EW_rho_tree:
+    latex: ""
+    formula: "(EW_M_W_bare**2) / (EW_M_Z_bare**2 * EW_cos2_thetaW)"
+    val: 1
+    depends_on: ["EW_M_W_bare", "EW_M_Z_bare", "EW_cos2_thetaW"]
+
+  EW_sin2_thetaW_low_q:
+    latex: ""
+    formula: "3/13 + (10/3) * (ROOT_alpha / pi)"
+    val: 0.23851196231654853
+    depends_on: ["EW_sin2_thetaW", "ROOT_alpha"]
+
+  EW_vev:
+    latex: ""
+    formula: "EW_E_EW * sqrt(11 / 3)"
+    val: 246.2063
+    depends_on: ["EW_E_EW"]
+
+  GRAV_C_total_val:
+    latex: ""
+    formula: "3 + 6/5"
+    val: 4.2000000000000002
+
+  GRAV_F_eshelby:
+    latex: ""
+    formula: "-(CONT_G_0 / (pi * (SCALE_lambda_p_m**2))) * (V1 * V2 / (r**2))"
+    depends_on: ["CONT_G_0", "SCALE_lambda_p_m"]
+
+  GRAV_G_N_density_rel:
+    latex: ""
+    formula: "(SI_c**2) / (pi * CONT_rho_0 * (SCALE_lambda_p_m**2))"
+    depends_on: ["SI_c", "CONT_rho_0", "SCALE_lambda_p_m"]
+
+  GRAV_G_N_pred_val:
+    latex: ""
+    formula: "GRAV_alpha_G_pred * SI_hbar * SI_c / (ROOT_Mp_kg**2)"
+    val: 6.6739500000000003e-11
+    depends_on: ["GRAV_alpha_G_pred", "SI_hbar", "SI_c", "ROOT_Mp_kg"]
+
+  GRAV_G_eff:
+    latex: ""
+    formula: "CONT_G_0 * (1 - 2 * GRAV_G_N * M / ((SI_c**2) * r))"
+    depends_on: ["CONT_G_0", "GRAV_G_N", "SI_c"]
+
+  GRAV_L_str_equiv:
+    latex: ""
+    formula: "(pi / 2) * (2 * GRAV_G_N * M / (SI_c**2))"
+    depends_on: ["GRAV_G_N", "SI_c"]
+
+  GRAV_N_cascade_val:
+    latex: ""
+    formula: "(TOP_p**2 + TOP_q**2) + TOP_N_3D"
+    val: 18
+    depends_on: ["TOP_p", "TOP_q", "TOP_N_3D"]
+
+  GRAV_U_eshelby:
+    latex: ""
+    formula: "-(CONT_G_0 / (pi * (SCALE_lambda_p_m**2))) * (V1 * V2 / r)"
+    depends_on: ["CONT_G_0", "SCALE_lambda_p_m"]
+
+  GRAV_W_density:
+    latex: ""
+    formula: "3 * CONT_G_0 * (GRAV_delta_V**2) / (8 * (pi**2) * (r**6))"
+    depends_on: ["CONT_G_0", "GRAV_delta_V"]
+
+  GRAV_alpha_18_kernel:
+    latex: ""
+    formula: "ROOT_alpha**18"
+    val: 3.443308e-39
+    depends_on: ["ROOT_alpha"]
+
+  GRAV_alpha_G_def_ratio:
+    latex: ""
+    formula: "GRAV_G_N * (ROOT_Mp_kg**2) / (SI_hbar * SI_c)"
+    val: 5.9060999999999999e-39
+    depends_on: ["GRAV_G_N", "ROOT_Mp_kg", "SI_hbar", "SI_c"]
+
+  GRAV_alpha_G_pred:
+    latex: ""
+    formula: "sqrt(3) * (ROOT_alpha**18) * (1 - 4.2 * (ROOT_alpha / pi))"
+    val: 5.9057920000000003e-39
+    depends_on: ["ROOT_alpha"]
+
+  GRAV_c_eff:
+    latex: ""
+    formula: "SI_c * sqrt(1 - 2 * GRAV_G_N * M / ((SI_c**2) * r))"
+    depends_on: ["SI_c", "GRAV_G_N"]
+
+  GRAV_delta_V:
+    latex: ""
+    formula: "M / CONT_rho_0"
+    depends_on: ["CONT_rho_0"]
+
+  GRAV_delta_interface:
+    latex: ""
+    formula: "(6 / 5) * (ROOT_alpha / pi)"
+    val: 0.0027873833570343943
+    depends_on: ["ROOT_alpha"]
+
+  GRAV_eshelby_u_r:
+    latex: ""
+    formula: "GRAV_delta_V / (4 * pi * r**2)"
+    depends_on: ["GRAV_delta_V"]
+
+  GRAV_lab_dispersion_table:
+    latex: ""
+    formula: "GRAV_G_N_pred"
+    val: 6.6739100000000004e-11
+    depends_on: ["GRAV_G_N_pred"]
+
+  GRAV_laue_integral:
+    latex: ""
+    formula: "0"
+    val: 0
+
+  GRAV_m_i_eq_m_g:
+    latex: ""
+    formula: "CONT_rho_0 * (E_total / (CONT_rho_0 * (SI_c**2)))"
+    depends_on: ["CONT_rho_0", "SI_c"]
+
+  GRAV_newton_law:
+    latex: ""
+    formula: "-GRAV_G_N * M1 * M2 / (r**2)"
+    depends_on: ["GRAV_G_N"]
+
+  GRAV_omega_redshift:
+    latex: ""
+    formula: "omega_0 * sqrt(1 - 2 * GRAV_G_N * M / ((SI_c**2) * r))"
+    depends_on: ["GRAV_G_N", "SI_c"]
+
+  GRAV_redshift_monotonicity:
+    latex: ""
+    formula: "omega(r1) < omega(r2)"
+    depends_on: ["GRAV_omega_redshift"]
+
+  GRAV_refractive_index:
+    latex: ""
+    formula: "1 / sqrt(1 - 2 * GRAV_G_N * M / ((SI_c**2) * r))"
+    depends_on: ["GRAV_G_N", "SI_c"]
+
+  GRAV_shapiro_delay:
+    latex: ""
+    formula: "(1 / SI_c) * integral(GRAV_G_N * M / ((SI_c**2) * r), ds)"
+    depends_on: ["SI_c", "GRAV_G_N"]
+
+  GRAV_strain_phi:
+    latex: ""
+    formula: "GRAV_delta_V / (4 * pi * r**3)"
+    depends_on: ["GRAV_delta_V"]
+
+  GRAV_strain_rr:
+    latex: ""
+    formula: "-GRAV_delta_V / (2 * pi * r**3)"
+    depends_on: ["GRAV_delta_V"]
+
+  GRAV_strain_theta:
+    latex: ""
+    formula: "GRAV_delta_V / (4 * pi * r**3)"
+    depends_on: ["GRAV_delta_V"]
+
+  GRAV_strain_trace_zero:
+    latex: ""
+    formula: "0"
+    val: 0
+    depends_on: ["GRAV_strain_rr", "GRAV_strain_theta", "GRAV_strain_phi"]
+
+  GRAV_theta_defl:
+    latex: ""
+    formula: "4 * GRAV_G_N * M / ((SI_c**2) * b)"
+    depends_on: ["GRAV_G_N", "SI_c"]
+
+  GW_energy_density:
+    latex: ""
+    formula: "(1 / 32) * CONT_mu_str * (h_dot**2)"
+    depends_on: ["CONT_mu_str"]
+
+  GW_scalar_power_ratio:
+    latex: ""
+    formula: "((1 / 5) * (ROOT_alpha / pi))**2"
+    val: 2.1579999999999999e-07
+    depends_on: ["GW_scalar_suppression"]
+
+  GW_scalar_suppression:
+    latex: ""
+    formula: "(1 / 5) * (ROOT_alpha / pi)"
+    val: 0.00046456389283906579
+    depends_on: ["ROOT_alpha"]
+
+  GW_speed_equality:
+    latex: ""
+    formula: "SI_c"
+    val: 299792458
+    depends_on: ["SI_c"]
+
+  HW_deviator_amplitude_sqrt2:
+    latex: ""
+    formula: "sqrt(2)"
+    val: 1.4142135623730951
+    depends_on: ["MISES_bps_postulate", "HW_xi_rho_defs"]
+
+  HW_principal_stresses:
+    latex: ""
+    formula: "xi/sqrt(3) + sqrt(2/3)*rho*cos(theta_k)"
+    depends_on: ["HW_xi_rho_defs"]
+
+  HW_xi_rho_defs:
+    latex: ""
+    formula: "xi = sqrt(3)*sigma_m, rho = sqrt(2*J_2)"
+
+  KNOT_4_3_energy:
+    latex: ""
+    formula: "4**2 + 3**2 + 2 / (4 + 3)"
+    val: 25.285713999999999
+
+  KNOT_competitor_bound:
+    latex: ""
+    formula: "25"
+    val: 25
+
+  KNOT_dirac_laplace_op:
+    latex: ""
+    formula: "-laplace_T2 + T_spin**2"
+
+  KNOT_energy_invariant:
+    latex: ""
+    formula: "(p**2 + q**2) + 2 / (p + q)"
+    depends_on: ["TOP_p", "TOP_q"]
+
+  KNOT_stability_gap:
+    latex: ""
+    formula: "25.285714 - 13.4"
+    val: 11.885713999999998
+    depends_on: ["TOP_I_trefoil"]
+
+  LEP_C1_coeff:
+    latex: ""
+    formula: "1 / 2"
+    val: 0.5
+
+  LEP_C2_analytical:
+    latex: ""
+    formula: "LEP_I_geom_val + (pi**2 / 12) - (pi**2 / 2) * log(2) + 0.75 * 1.2020569"
+    val: -0.32847900000000002
+    depends_on: ["LEP_I_geom_val"]
+
+  LEP_I_geom_basis:
+    latex: ""
+    formula: "(3 * 4)**2"
+    val: 144
+    depends_on: ["TOP_dim", "TOP_N_spin"]
+
+  LEP_I_geom_val:
+    latex: ""
+    formula: "197 / 144"
+    val: 1.3680555555555556
+
+  LEP_R_e_torus:
+    latex: ""
+    formula: "SI_hbar_c / m_e_predicted"
+    val: 386.16000000000003
+    depends_on: ["SI_hbar_c", "LEP_m_e"]
+
+  LEP_a_e_series_def:
+    latex: ""
+    formula: "sum(C_k * (ROOT_alpha / pi)**k)"
+    depends_on: ["ROOT_alpha"]
+
+  LEP_a_l_schwinger_val:
+    latex: ""
+    formula: "0.5 * (ROOT_alpha / pi)"
+    val: 0.0011614097320976644
+    depends_on: ["ROOT_alpha"]
+
+  LEP_a_mu_HVP:
+    latex: ""
+    formula: "(2 / 3) * ((ROOT_alpha / pi)**2) * ((LEP_m_mu / (11 * MES_E_0))**2)"
+    val: 6.7700000000000004e-08
+    depends_on: ["ROOT_alpha", "LEP_m_mu", "MES_E_0"]
+
+  LEP_a_mu_HVP_val:
+    latex: ""
+    formula: "6.77e-8"
+    val: 6.7700000000000004e-08
+    depends_on: ["LEP_a_mu_HVP"]
+
+  LEP_aspect_ratio:
+    latex: ""
+    formula: "LEP_winding_W * ROOT_alpha"
+    depends_on: ["LEP_winding_W", "ROOT_alpha"]
+
+  LEP_bare_masses_formula:
+    latex: ""
+    formula: "SCALE_M_lobe * (1 + sqrt(2) * cos(2/9 + 2*pi*(k-1)/3))**2"
+    depends_on: ["SCALE_M_lobe"]
+
+  LEP_core_radius:
+    latex: ""
+    formula: "LEP_aspect_ratio * LEP_ring_radius"
+    depends_on: ["LEP_aspect_ratio", "LEP_ring_radius"]
+
+  LEP_dirac_g_factor:
+    latex: ""
+    formula: "2"
+    val: 2
+    depends_on: ["TOP_N_rev"]
+
+  LEP_effective_potential:
+    latex: ""
+    formula: "J_spin**2 / (2 * M_eff * R**2) + 2*pi * T_str * R + U_coulomb"
+
+  LEP_electron_tension:
+    latex: ""
+    formula: "1 - 1"
+    val: 0
+    depends_on: ["LEP_winding_W"]
+
+  LEP_lagrangian:
+    latex: ""
+    formula: "T_kin - U_eff"
+
+  LEP_m_e_bare:
+    latex: ""
+    formula: "SCALE_M_lobe * (1 + sqrt(2) * cos(2/9 + 2*pi/3))**2"
+    val: 0.50920500000000002
+    depends_on: ["SCALE_M_lobe"]
+
+  LEP_m_e_exp_benchmark:
+    latex: ""
+    formula: "0.510998950"
+    val: 0.51099894999999995
+
+  LEP_m_e_val:
+    latex: ""
+    formula: "ROOT_Mp / 1836.151996"
+    val: 0.51099913921831996
+    depends_on: ["ROOT_Mp", "LEP_mp_me_ratio"]
+
+  LEP_m_mu_bare:
+    latex: ""
+    formula: "SCALE_M_lobe * (1 + sqrt(2) * cos(2/9 + 4*pi/3))**2"
+    val: 105.2885
+    depends_on: ["SCALE_M_lobe"]
+
+  LEP_m_tau_bare:
+    latex: ""
+    formula: "SCALE_M_lobe * (1 + sqrt(2) * cos(2/9))**2"
+    val: 1770.7465
+    depends_on: ["SCALE_M_lobe"]
+
+  LEP_muon_tension:
+    latex: ""
+    formula: "3/2 - 1"
+    val: 0.5
+    depends_on: ["LEP_winding_W"]
+
+  LEP_phase_cells:
+    latex: ""
+    formula: "(2*n - 1) * n"
+
+  LEP_proton_defect:
+    latex: ""
+    formula: "-(4/3) * (ROOT_alpha**2)"
+    val: -7.1002300000000003e-05
+    depends_on: ["ROOT_alpha"]
+
+  LEP_r_e_core:
+    latex: ""
+    formula: "ROOT_alpha * LEP_R_e_torus"
+    val: 2.8180000000000001
+    depends_on: ["ROOT_alpha", "LEP_R_e_torus"]
+
+  LEP_radius_equilibrium:
+    latex: ""
+    formula: "SI_hbar / (LEP_m_e * SI_c)"
+    depends_on: ["SI_hbar", "LEP_m_e", "SI_c"]
+
+  LEP_ring_radius:
+    latex: ""
+    formula: "SI_hbar / (m * SI_c)"
+    depends_on: ["SI_hbar", "SI_c"]
+
+  LEP_stress_koide_identity:
+    latex: ""
+    formula: "sum(sigma_i**2) / (sum(sigma_i))**2 = 2/3"
+    val: 0.66666667000000002
+    depends_on: ["MISES_bps_postulate"]
+
+  LEP_tau_tension:
+    latex: ""
+    formula: "5/3 - 1"
+    val: 0.66666666666666674
+    depends_on: ["LEP_winding_W"]
+
+  LEP_theta_0:
+    latex: ""
+    formula: "2 / 9"
+    val: 0.22222222222222221
+
+  LEP_virial_balance:
+    latex: ""
+    formula: "0.5 * LEP_m_e * (SI_c**2)"
+    depends_on: ["LEP_m_e", "SI_c"]
+
+  LEP_winding_W:
+    latex: ""
+    formula: "(2*n - 1) / n"
+
+  LEP_winding_integers:
+    latex: ""
+    formula: "p = 2*n - 1, q = n"
+
+  MES_E_0:
+    latex: ""
+    formula: "(5 / 67) * ROOT_Mp / (1 - (4 / 3) * (ROOT_alpha**2))"
+    val: 70.025276000000005
+    depends_on: ["ROOT_Mp", "ROOT_alpha"]
+
+  MES_E_0_series:
+    latex: ""
+    formula: "(5 / 67) * ROOT_Mp * (1 + (4 / 3) * (ROOT_alpha**2))"
+    val: 70.025276000000005
+    depends_on: ["ROOT_Mp", "ROOT_alpha"]
+
+  MES_E_0_val:
+    latex: ""
+    formula: "70.025277"
+    val: 70.025277000000003
+    depends_on: ["MES_E_0"]
+
+  MES_M_pi_charged:
+    latex: ""
+    formula: "2 * MES_E_0 + NUC_delta_pi"
+    val: 139.54300000000001
+    depends_on: ["MES_E_0", "NUC_delta_pi"]
+
+  MES_M_pi_pure_theor:
+    latex: ""
+    formula: "2 * MES_E_0"
+    val: 140.05000000000001
+    depends_on: ["MES_E_0"]
+
+  MES_M_rho_val:
+    latex: ""
+    formula: "11 * MES_E_0"
+    val: 770.27800000000002
+    depends_on: ["MES_E_0"]
+
+  MISES_bps_postulate:
+    latex: ""
+    formula: "2*J_2 / (3*sigma_m**2)"
+    val: 1
+
+  MISES_strain_energy_split:
+    latex: ""
+    formula: "sigma_m**2 / (2*CONT_K_0) + J_2 / (2*CONT_G_0)"
+    depends_on: ["CONT_G_0"]
+
+  NEU_A_1D_sq:
+    latex: ""
+    formula: "2 * (3 / 5)"
+    val: 1.2
+    depends_on: ["TOP_N_1D", "TOP_N_3D_calc"]
+
+  NEU_C2_coeff:
+    latex: ""
+    formula: "(3/2) * (3/5)"
+    val: 0.89999999999999991
+    depends_on: ["TOP_N_1D", "TOP_N_3D_calc"]
+
+  NEU_M_scale:
+    latex: ""
+    formula: "(2 * (ROOT_alpha**5) * (ROOT_Mp / 3) * 1e9) / (1 + 1 / (6 * pi))"
+    val: 12.2918
+    depends_on: ["ROOT_alpha", "ROOT_Mp"]
+
+  NEU_canonical_table_sum:
+    latex: ""
+    formula: "(NEU_m1 + NEU_m2 + NEU_m3) * 1e-3"
+    val: 0.059000499999999997
+    depends_on: ["NEU_m1", "NEU_m2", "NEU_m3"]
+
+  NEU_charge_zero:
+    latex: ""
+    formula: "0"
+    val: 0
+
+  NEU_circulation_quantum:
+    latex: ""
+    formula: "2 * pi"
+    val: 6.2831853071795862
+
+  NEU_dm21_sq:
+    latex: ""
+    formula: "(NEU_m2 * 1e-3)**2 - (NEU_m1 * 1e-3)**2"
+    val: 7.5173999999999995e-05
+    depends_on: ["NEU_m1", "NEU_m2"]
+
+  NEU_dm31_sq:
+    latex: ""
+    formula: "(NEU_m3 * 1e-3)**2 - (NEU_m1 * 1e-3)**2"
+    val: 0.0025080200000000001
+    depends_on: ["NEU_m1", "NEU_m3"]
+
+  NEU_frenet_equations:
+    latex: ""
+    formula: "d_ds(t) = kappa * n"
+
+  NEU_gauge_dim:
+    latex: ""
+    formula: "(TOP_p**2 + TOP_q**2) - 1"
+    val: 12
+    depends_on: ["TOP_p", "TOP_q"]
+
+  NEU_hierarchy_normal:
+    latex: ""
+    formula: "NEU_m1 < NEU_m2 and NEU_m2 < NEU_m3"
+    depends_on: ["NEU_m1", "NEU_m2", "NEU_m3"]
+
+  NEU_m1:
+    latex: ""
+    formula: "NEU_M_scale * (1 + sqrt(1.2) * cos(NEU_theta_nu))**2"
+    val: 0.246
+    depends_on: ["NEU_M_scale", "NEU_theta_nu"]
+
+  NEU_m2:
+    latex: ""
+    formula: "NEU_M_scale * (1 + sqrt(1.2) * cos(NEU_theta_nu + 2*pi/3))**2"
+    val: 8.6739999999999995
+    depends_on: ["NEU_M_scale", "NEU_theta_nu"]
+
+  NEU_m3:
+    latex: ""
+    formula: "NEU_M_scale * (1 + sqrt(1.2) * cos(NEU_theta_nu + 4*pi/3))**2"
+    val: 50.081000000000003
+    depends_on: ["NEU_M_scale", "NEU_theta_nu"]
+
+  NEU_m_betabeta:
+    latex: ""
+    formula: "0"
+    val: 0
+
+  NEU_mass_eigenstates:
+    latex: ""
+    formula: "NEU_M_scale * (1 + sqrt(1.2) * cos(NEU_theta_nu + 2*pi*(k-1)/3))**2"
+    depends_on: ["NEU_M_scale", "NEU_theta_nu"]
+
+  NEU_sin2_2theta13:
+    latex: ""
+    formula: "1 / 12"
+    val: 0.083333333333333329
+    depends_on: ["NEU_gauge_dim"]
+
+  NEU_sum_m:
+    latex: ""
+    formula: "(NEU_m1 + NEU_m2 + NEU_m3) * 1e-3"
+    val: 0.058999999999999997
+    depends_on: ["NEU_m1", "NEU_m2", "NEU_m3"]
+
+  NEU_sum_stability_grad:
+    latex: ""
+    formula: "-2.36 + 22.37 - 19.99"
+    val: 0.020000000000003126
+
+  NEU_theta_nu:
+    latex: ""
+    formula: "(pi - 2/3) - 1.5 * (ROOT_alpha / pi)"
+    val: 2.4714417577268337
+    depends_on: ["ROOT_alpha"]
+
+  NEU_theta_nu_series:
+    latex: ""
+    formula: "(pi - 2/3) - 1.5 * (ROOT_alpha / pi) - 0.9 * (ROOT_alpha / pi)**2"
+    depends_on: ["ROOT_alpha"]
+
+  NUC_E_frustration:
+    latex: ""
+    formula: "(0.085 * MES_E_0 / 70.025) * (A_mass_num**(4/3))"
+    depends_on: ["MES_E_0"]
+
+  NUC_Eb_deuteron:
+    latex: ""
+    formula: "(M_pi_pm**2 / (2 * ROOT_Mp)) * (3 / 14)"
+    val: 2.2244419999999998
+    depends_on: ["ROOT_Mp", "TOP_p", "TOP_q"]
+
+  NUC_Eb_deuteron_tree:
+    latex: ""
+    formula: "((2 * MES_E_0)**2 / (2 * ROOT_Mp)) * (3 / 14)"
+    val: 2.2397999999999998
+    depends_on: ["MES_E_0", "ROOT_Mp"]
+
+  NUC_Eb_deuteron_val:
+    latex: ""
+    formula: "2.224442"
+    val: 2.2244419999999998
+    depends_on: ["NUC_Eb_deuteron"]
+
+  NUC_P_D_deuteron:
+    latex: ""
+    formula: "(1 / 4) * (3 / 13)"
+    val: 0.057692307692307696
+    depends_on: ["TOP_N_spin", "EW_sin2_thetaW"]
+
+  NUC_angular_deficit:
+    latex: ""
+    formula: "2*pi - 5 * arccos(1/3)"
+    val: 0.128388
+
+  NUC_delta_pi:
+    latex: ""
+    formula: "-0.5 * ROOT_alpha * (2 * MES_E_0) * (1 - 2 * ROOT_alpha / pi)"
+    val: -0.50800000000000001
+    depends_on: ["ROOT_alpha", "MES_E_0"]
+
+  NUC_semf_aA:
+    latex: ""
+    formula: "(1 / 3) * MES_E_0"
+    val: 23.341799999999999
+    depends_on: ["MES_E_0", "TOP_p"]
+
+  NUC_semf_aC:
+    latex: ""
+    formula: "(27 / 20) * ROOT_alpha * MES_E_0"
+    val: 0.68984999999999996
+    depends_on: ["ROOT_alpha", "MES_E_0", "TOP_dim", "TOP_p", "TOP_N_spin"]
+
+  NUC_semf_aP:
+    latex: ""
+    formula: "(1 / 6) * MES_E_0"
+    val: 11.6709
+    depends_on: ["MES_E_0", "TOP_p"]
+
+  NUC_semf_aS:
+    latex: ""
+    formula: "(1 / 4) * MES_E_0"
+    val: 17.5063
+    depends_on: ["MES_E_0", "TOP_N_spin"]
+
+  NUC_semf_aV:
+    latex: ""
+    formula: "(2 / 9) * MES_E_0"
+    val: 15.561199999999999
+    depends_on: ["MES_E_0", "TOP_p"]
+
+  NUC_semf_formula:
+    latex: ""
+    formula: "a_V*A - a_S*A**(2/3) - a_C*Z*(Z-1)/A**(1/3) - a_A*(A-2*Z)**2/A + delta"
+    depends_on: ["NUC_semf_aV", "NUC_semf_aS", "NUC_semf_aC", "NUC_semf_aA", "NUC_semf_aP"]
+
+  NUC_semf_sum_fractions:
+    latex: ""
+    formula: "2/9 + 1/4 + 1/3 + 1/6"
+    val: 0.97222222222222221
+    depends_on: ["NUC_semf_aV", "NUC_semf_aS", "NUC_semf_aA", "NUC_semf_aP"]
+
+  NUC_tetra_sum_angle:
+    latex: ""
+    formula: "5 * 70.528779"
+    val: 352.64389499999999
+
+  QCD_alpha_s_MZ_val:
+    latex: ""
+    formula: "(2 / 17) * (1 + 1.5 * (ROOT_alpha / pi))"
+    val: 0.11805696814074036
+    depends_on: ["ROOT_alpha", "QCD_strong_base_dim"]
+
+  QCD_confinement_potential:
+    latex: ""
+    formula: "sigma_yield * S_tube * r"
+    depends_on: ["CONT_sigma_yield"]
+
+  QCD_core_shear_softening:
+    latex: ""
+    formula: "CONT_G_0 * (r**2 / (r**2 + r_0**2))"
+    depends_on: ["CONT_G_0"]
+
+  QCD_strong_base_dim:
+    latex: ""
+    formula: "(TOP_p**2 + TOP_q**2) + TOP_N_spin"
+    val: 17
+    depends_on: ["TOP_p", "TOP_q", "TOP_N_spin"]
+
+  QM_born_energy_density:
+    latex: ""
+    formula: "0.5 * CONT_rho_0 * (omega_0**2) * (psi**2)"
+    depends_on: ["CONT_rho_0", "omega_0", "psi"]
+
+  QM_born_probability:
+    latex: ""
+    formula: "abs(psi)**2 / integral(abs(psi)**2, d3x)"
+
+  QM_canonical_commutator:
+    latex: ""
+    formula: "i * SI_hbar * delta_jk"
+    depends_on: ["SI_hbar"]
+
+  QM_envelope_ansatz:
+    latex: ""
+    formula: "Re(psi * exp(-i * omega_0 * t))"
+
+  QM_guidance_velocity:
+    latex: ""
+    formula: "(SI_hbar / M) * grad(theta)"
+    depends_on: ["SI_hbar"]
+
+  QM_momentum_operator:
+    latex: ""
+    formula: "-i * SI_hbar * nabla"
+    depends_on: ["SI_hbar"]
+
+  QM_navier_cauchy_wave:
+    latex: ""
+    formula: "(SI_c**2) * laplace(u)"
+    depends_on: ["SI_c"]
+
+  QM_schroedinger_equation:
+    latex: ""
+    formula: "-(SI_hbar**2 / (2 * M)) * laplace(psi)"
+    depends_on: ["SI_hbar"]
+
+  QM_spinor_initial_state:
+    latex: ""
+    formula: "Phi_A = -Phi_B"
+    val: 1
+
+  QM_uncertainty_relation:
+    latex: ""
+    formula: "SI_hbar / 2"
+    val: 5.2728600000000002e-35
+    depends_on: ["SI_hbar"]
+
+  RED_probability_bound:
+    latex: ""
+    formula: "1e-80"
+    val: 9.9999999999999996e-81
+
+  RED_proton_electron_dimensionless:
+    latex: ""
+    formula: "(67 / (5 * ROOT_alpha)) - (268 / 15) * ROOT_alpha"
+    val: 1836.1520096059842
+    depends_on: ["ROOT_alpha"]
+
+  RED_proton_planck_dimensionless:
+    latex: ""
+    formula: "(3**0.25) * (ROOT_alpha**9) * sqrt(1 - 4.2 * (ROOT_alpha / pi))"
+    val: 7.6849999999999999e-20
+    depends_on: ["ROOT_alpha"]
+
+  REL_length_contraction:
+    latex: ""
+    formula: "delta_L0 * sqrt(1 - v**2 / c**2)"
+    depends_on: ["SI_c"]
+
+  REL_navier_cauchy_moving:
+    latex: ""
+    formula: "(1 - v**2/c**2) * d2u_dx2 + d2u_dy2 + d2u_dz2"
+    depends_on: ["SI_c"]
+
+  SCALE_M_lobe:
+    latex: ""
+    formula: "ROOT_Mp / 3"
+    val: 312.75736314333335
+    depends_on: ["ROOT_Mp"]
+
+  SCALE_delta_geom:
+    latex: ""
+    formula: "1.5 * (ROOT_alpha / pi)"
+    val: 0.0034842291962929933
+    depends_on: ["ROOT_alpha"]
+
+  SI_c_derived:
+    latex: ""
+    formula: "sqrt(CONT_G_0 / CONT_rho_0)"
+    val: 299792458
+    depends_on: ["CONT_G_0", "CONT_rho_0"]
+
+  STAT_fermion_exchange:
+    latex: ""
+    formula: "cos(2 * pi * 0.5)"
+    val: -1
+
+  STAT_pauli_energy:
+    latex: ""
+    formula: "0.5 * CONT_G_0 * ((SCALE_lambda_p_m / r)**2)"
+    depends_on: ["CONT_G_0", "SCALE_lambda_p_m"]
+
+  STAT_pauli_zero:
+    latex: ""
+    formula: "0"
+    val: 0
+
+  TOP_N_1D:
+    latex: ""
+    formula: "TOP_dim"
+    val: 3
+    depends_on: ["TOP_dim"]
+
+  TOP_N_3D_calc:
+    latex: ""
+    formula: "TOP_dim * (TOP_dim + 1) / 2 - 1"
+    val: 5
+    depends_on: ["TOP_dim"]
+
+  TOP_N_basis_ew:
+    latex: ""
+    formula: "TOP_p**2 + TOP_q**2"
+    val: 13
+    depends_on: ["TOP_p", "TOP_q"]
+
+  TWIST_hall_viscosity:
+    latex: ""
+    formula: "(1 / 4) * SI_hbar * n_e"
+    depends_on: ["SI_hbar"]
+
+baryons:
+
+  BAR_3phase_cancellation:
+    latex: ""
+    dim: [0, 1, 0, 0]
+    unit: "m"
+    val: 0
+
+  BAR_delta_M_np:
+    latex: ""
+    dim: [1, 0, 0, 0]
+    unit: "MeV"
+    formula: "(3.0 / 16.0) * (ROOT_Mp * ROOT_alpha) * (1 + (ROOT_alpha / pi))"
+    val: 1.2867761916806471
+    depends_on: ["ROOT_Mp", "ROOT_alpha"]
+
+  BAR_proton_mass:
+    latex: ""
+    dim: [1, 0, 0, 0]
+    unit: "MeV"
+    val: 938.27208900000005
+    depends_on: ["ROOT_Mp"]
+
+  CKM_theta_C:
+    latex: ""
+    dim: [0, 0, 0, 0]
+    unit: "dimensionless"
+    formula: "sin(2.0 / 9.0 + 2.0 * ROOT_alpha / pi)"
+    val: 0.22492599999999999
+    depends_on: ["ROOT_alpha"]
+
+  TOP_I_trefoil:
+    latex: ""
+    dim: [0, 0, 0, 0]
+    unit: "dimensionless"
+    formula: "3**2 + 2**2 + 2.0 / (3 + 2)"
+    val: 13.4
+
+continuum:
+
+  CONT_G_0:
+    latex: ""
+    dim: [1, -1, -2, 0]
+    unit: "Pa"
+    formula: "CONT_T_0 / (SCALE_lambda_p**2)"
+    val: 8.7099999999999999e+74
+    depends_on: ["CONT_T_0", "SCALE_lambda_p"]
+
+  CONT_R_K:
+    latex: ""
+    dim: [1, 2, -3, -2]
+    unit: "Ohm"
+    formula: "(2 * pi * SI_hbar) / (SI_e**2)"
+    val: 25812.80745
+    depends_on: ["SI_hbar", "SI_e"]
+
+  CONT_T_0:
+    latex: ""
+    dim: [1, 1, -2, 0]
+    unit: "N"
+    formula: "CONT_mu_str * SI_c**2"
+    val: 3.8523999999999999e+43
+    depends_on: ["CONT_mu_str", "SI_c"]
+
+  CONT_Z_0:
+    latex: ""
+    dim: [1, 2, -3, -2]
+    unit: "Ohm"
+    formula: "SI_mu_0 * SI_c"
+    val: 376.73031366685348
+    depends_on: ["SI_mu_0", "SI_c"]
+
+  CONT_alpha_impedance:
+    latex: ""
+    dim: [0, 0, 0, 0]
+    unit: "dimensionless"
+    formula: "CONT_Z_0 / (2.0 * CONT_R_K)"
+    val: 0.0072973525600000004
+    depends_on: ["CONT_Z_0", "CONT_R_K"]
+
+  CONT_mu_str:
+    latex: ""
+    dim: [1, -1, 0, 0]
+    unit: "kg/m"
+    formula: "SI_c**2 / (pi * GRAV_G_N)"
+    val: 4.2863000000000002e+26
+    depends_on: ["SI_c", "GRAV_G_N"]
+
+  CONT_n_longitudinal:
+    latex: ""
+    dim: [0, 0, 0, 0]
+    unit: "dimensionless"
+    val: 0
+
+  CONT_rho_0:
+    latex: ""
+    dim: [1, -3, 0, 0]
+    unit: "kg/m^3"
+    formula: "CONT_G_0 / (SI_c**2)"
+    val: 9.6910000000000004e+57
+    depends_on: ["CONT_G_0", "SI_c"]
+
+  CONT_sigma_yield:
+    latex: ""
+    dim: [1, -1, -2, 0]
+    unit: "Pa"
+    formula: "ROOT_alpha * CONT_G_0"
+    val: 6.3559999999999997e+72
+    depends_on: ["ROOT_alpha", "CONT_G_0"]
+
+  SCALE_lambda_p:
+    latex: ""
+    dim: [0, 1, 0, 0]
+    unit: "fm"
+    formula: "SI_hbar / (ROOT_Mp_kg * SI_c)"
+    val: 0.21030890999999999
+    depends_on: ["ROOT_Mp", "SI_hbar", "SI_c"]
+
+gravity_cosmology:
+
+  COSMO_Lambda:
+    latex: ""
+    dim: [0, -2, 0, 0]
+    unit: "m^-2"
+    val: 0
+
+  COSMO_a_0:
+    latex: ""
+    dim: [0, 1, -2, 0]
+    unit: "m/s^2"
+    formula: "SI_c * H_0 / (2 * pi)"
+    val: 1.0999999999999999e-10
+
+  GRAV_G_N:
+    latex: ""
+    dim: [-1, 3, -2, 0]
+    unit: "m^3/(kg*s^2)"
+    formula: "GRAV_alpha_G * (SI_hbar * SI_c) / (ROOT_Mp_kg**2)"
+    val: 6.6742999999999994e-11
+    depends_on: ["GRAV_alpha_G", "SI_hbar", "SI_c", "ROOT_Mp"]
+
+  GRAV_alpha_G:
+    latex: ""
+    dim: [0, 0, 0, 0]
+    unit: "dimensionless"
+    formula: "sqrt(3.0) * (ROOT_alpha**18) * (1.0 - (21.0 / 5.0) * (ROOT_alpha / pi))"
+    val: 5.9057920000000003e-39
+    depends_on: ["ROOT_alpha", "GRAV_cascade_power", "GRAV_shielding_coeff"]
+
+  GRAV_cascade_power:
+    latex: ""
+    dim: [0, 0, 0, 0]
+    unit: "dimensionless"
+    formula: "13 + 5"
+    val: 18
+
+  GRAV_scalar_gw_ratio:
+    latex: ""
+    dim: [0, 0, 0, 0]
+    unit: "dimensionless"
+    formula: "(1.0 / 5.0) * (ROOT_alpha / pi)"
+    val: 0.00046456389283906579
+    depends_on: ["ROOT_alpha"]
+
+  GRAV_shielding_coeff:
+    latex: ""
+    dim: [0, 0, 0, 0]
+    unit: "dimensionless"
+    formula: "3.0 + 2.0 * (3.0 / 5.0)"
+    val: 4.2000000000000002
+
+electroweak:
+
+  EW_E_EW:
+    latex: ""
+    dim: [1, 0, 0, 0]
+    unit: "GeV"
+    formula: "(ROOT_Mp / ROOT_alpha) / 1000.0"
+    val: 128.57705327493156
+    depends_on: ["ROOT_Mp", "ROOT_alpha"]
+
+  EW_G_F:
+    latex: ""
+    dim: [-2, 0, 0, 0]
+    unit: "GeV^-2"
+    val: 1.1665049999999999e-05
+
+  EW_M_H:
+    latex: ""
+    dim: [1, 0, 0, 0]
+    unit: "GeV"
+    formula: "EW_E_scale * (1.0 - (39.0 / 5.0) * ROOT_alpha / pi)"
+    val: 126.248
+    depends_on: ["EW_E_scale", "ROOT_alpha"]
+
+  EW_M_W:
+    latex: ""
+    dim: [1, 0, 0, 0]
+    unit: "GeV"
+    formula: "EW_E_scale * sqrt(5.0 / 13.0) * (1 + (7.0 / 2.0) * ROOT_alpha / pi)"
+    val: 80.388400000000004
+    depends_on: ["EW_E_scale", "ROOT_alpha"]
+
+  EW_M_Z:
+    latex: ""
+    dim: [1, 0, 0, 0]
+    unit: "GeV"
+    formula: "EW_M_Z_tree * (1.0 + (5.0 / 4.0) * ROOT_alpha / pi)"
+    val: 91.181700000000006
+    depends_on: ["EW_M_Z_tree", "ROOT_alpha"]
+
+  EW_M_Z_bare:
+    latex: ""
+    dim: [1, 0, 0, 0]
+    unit: "GeV"
+    formula: "EW_E_scale / sqrt(2.0)"
+    val: 90.9178
+    depends_on: ["EW_E_scale"]
+
+  EW_sin2_thetaW:
+    latex: ""
+    dim: [0, 0, 0, 0]
+    unit: "dimensionless"
+    formula: "3.0 / 13.0"
+    val: 0.23076923076923078
+
+mises_koide:
+
+  LEP_Q_koide:
+    latex: ""
+    dim: [0, 0, 0, 0]
+    unit: "dimensionless"
+    formula: "2.0 / 3.0"
+    val: 0.66666666666666663
+
+  LEP_koide_amplitude:
+    latex: ""
+    dim: [0, 0, 0, 0]
+    unit: "dimensionless"
+    formula: "sqrt(2.0)"
+    val: 1.4142135623730951
+
+  LEP_koide_phase_delta:
+    latex: ""
+    dim: [0, 0, 0, 0]
+    unit: "rad"
+    formula: "2.0 / 9.0"
+    val: 0.22222222222222221
+
+  MISES_criterion_ratio:
+    latex: ""
+    dim: [0, 0, 0, 0]
+    unit: "dimensionless"
+    val: 1
+
+  NEU_Q_nu:
+    latex: ""
+    dim: [0, 0, 0, 0]
+    unit: "dimensionless"
+    formula: "8.0 / 15.0"
+    val: 0.53333333333333333
+
+leptons:
+
+  LEP_anomaly_ratio_val:
+    latex: ""
+    dim: [0, 0, 0, 0]
+    unit: "dimensionless"
+    formula: "14.0 / 5.0"
+    val: 2.7999999999999998
+
+  LEP_m_e:
+    latex: ""
+    dim: [1, 0, 0, 0]
+    unit: "MeV"
+    formula: "ROOT_Mp / LEP_mp_me_ratio"
+    val: 0.51099894999999995
+    depends_on: ["ROOT_Mp", "LEP_mp_me_ratio"]
+
+  LEP_m_mu:
+    latex: ""
+    dim: [1, 0, 0, 0]
+    unit: "MeV"
+    val: 105.6553
+    depends_on: ["LEP_m_e", "LEP_Q_koide", "LEP_koide_phase_delta"]
+
+  LEP_m_tau:
+    latex: ""
+    dim: [1, 0, 0, 0]
+    unit: "MeV"
+    val: 1776.9159999999999
+    depends_on: ["LEP_m_e", "LEP_Q_koide", "LEP_koide_phase_delta"]
+
+  LEP_mp_me_ratio:
+    latex: ""
+    dim: [0, 0, 0, 0]
+    unit: "dimensionless"
+    formula: "(67.0 / 5.0) * (1.0 / ROOT_alpha) * (1.0 - (4.0 / 3.0) * ROOT_alpha**2)"
+    val: 1836.1526699999999
+    depends_on: ["ROOT_alpha", "TOP_I_trefoil"]
+
+  LEP_r_e_classical:
+    latex: ""
+    dim: [0, 1, 0, 0]
+    unit: "m"
+    formula: "ROOT_alpha * (SI_hbar / (LEP_m_e_kg * SI_c))"
+    val: 2.8179400000000002e-15
+    depends_on: ["ROOT_alpha", "LEP_m_e", "SI_hbar", "SI_c"]
+
+neutrinos:
+
+  NEU_delta_m21_sq:
+    latex: ""
+    dim: [2, 0, 0, 0]
+    unit: "eV^2"
+    val: 7.5173999999999995e-05
+
+  NEU_delta_m31_sq:
+    latex: ""
+    dim: [2, 0, 0, 0]
+    unit: "eV^2"
+    val: 0.0025080200000000001
+
+  NEU_m_1:
+    latex: ""
+    dim: [1, 0, 0, 0]
+    unit: "meV"
+    val: 0.246
+
+  NEU_m_2:
+    latex: ""
+    dim: [1, 0, 0, 0]
+    unit: "meV"
+    val: 8.6739999999999995
+
+  NEU_m_3:
+    latex: ""
+    dim: [1, 0, 0, 0]
+    unit: "meV"
+    val: 50.081000000000003
+
+  NEU_majorana_mass:
+    latex: ""
+    dim: [1, 0, 0, 0]
+    unit: "eV"
+    val: 0
+
+  NEU_scale_Mp_div_3:
+    latex: ""
+    dim: [1, 0, 0, 0]
+    unit: "MeV"
+    formula: "ROOT_Mp / 3.0"
+    val: 312.75736314333335
+    depends_on: ["ROOT_Mp"]
+
+  NEU_sin2_theta13:
+    latex: ""
+    dim: [0, 0, 0, 0]
+    unit: "dimensionless"
+    formula: "(1 - sqrt(11 / 12)) / 2"
+    val: 0.021286446121830949
+
+  NEU_sum_masses:
+    latex: ""
+    dim: [1, 0, 0, 0]
+    unit: "eV"
+    formula: "NEU_m_1 + NEU_m_2 + NEU_m_3"
+    val: 0.059000999999999998
+
+  PMNS_sin2_theta12:
+    latex: ""
+    dim: [0, 0, 0, 0]
+    unit: "dimensionless"
+    val: 0.307
+
+  PMNS_sin2_theta23:
+    latex: ""
+    dim: [0, 0, 0, 0]
+    unit: "dimensionless"
+    val: 0.54600000000000004
+
+nuclear_qcd:
+
+  NUC_semf_a_A:
+    latex: ""
+    dim: [1, 0, 0, 0]
+    unit: "MeV"
+    formula: "(1 / 3) * MES_E_0"
+    val: 23.341799999999999
+
+  NUC_semf_a_C:
+    latex: ""
+    dim: [1, 0, 0, 0]
+    unit: "MeV"
+    formula: "(27 / 20) * ROOT_alpha * MES_E_0"
+    val: 0.68984999999999996
+
+  NUC_semf_a_S:
+    latex: ""
+    dim: [1, 0, 0, 0]
+    unit: "MeV"
+    formula: "(1 / 4) * MES_E_0"
+    val: 17.5063
+
+  NUC_semf_a_V:
+    latex: ""
+    dim: [1, 0, 0, 0]
+    unit: "MeV"
+    formula: "(2 / 9) * MES_E_0"
+    val: 15.561199999999999
+
+  QCD_alpha_s_MZ:
+    latex: ""
+    dim: [0, 0, 0, 0]
+    unit: "dimensionless"
+    formula: "(2 / 17) * (1 + 1.5 * (ROOT_alpha / pi))"
+    val: 0.11805696814074036
+
+  QCD_nambu_quantum:
+    latex: ""
+    dim: [1, 0, 0, 0]
+    unit: "MeV"
+    formula: "(5.0 / 67.0) * ROOT_Mp / (1.0 - (4.0 / 3.0) * ROOT_alpha**2)"
+    val: 70.025277000000003
+    depends_on: ["ROOT_Mp", "ROOT_alpha"]
+
+quantum_foundations:
+
+  QC_eshelby_crosstalk:
+    latex: ""
+    dim: [1, -1, -2, 0]
+    unit: "Pa"
+
+  QC_phase_drift:
+    latex: ""
+    dim: [0, 0, 0, 0]
+    unit: "rad"
+    formula: "delta_sigma / CONT_G_0"
+
+  QC_topological_protection:
+    latex: ""
+    dim: [0, 0, 0, 0]
+    unit: "dimensionless"
+
+  QM_bell_classical_limit:
+    latex: ""
+    dim: [0, 0, 0, 0]
+    unit: "dimensionless"
+    val: 2
+
+  QM_hopf_correlation:
+    latex: ""
+    dim: [0, 0, 0, 0]
+    unit: "dimensionless"
+    formula: "-cos(theta)"
+
+  QM_no_signaling_identity:
+    latex: ""
+    dim: [0, 0, 0, 0]
+    unit: "dimensionless"
+    val: 0.5
+
+  QM_non_factorizability:
+    latex: ""
+    dim: [0, 0, 0, 0]
+    unit: "dimensionless"
+    val: 1
+
+  QM_spinor_pair_state:
+    latex: ""
+    dim: [0, 0, 0, 0]
+    unit: "dimensionless"
+    val: 1
+
+  QM_tsirelson_bound:
+    latex: ""
+    dim: [0, 0, 0, 0]
+    unit: "dimensionless"
+    formula: "2.0 * sqrt(2.0)"
+    val: 2.8284271247461903
+
+anchors:
+
+  ROOT_Mp:
+    latex: ""
+    dim: [1, 0, 0, 0]
+    unit: "MeV"
+    val: 938.27208815999995
+
+  ROOT_alpha:
+    latex: ""
+    dim: [0, 0, 0, 0]
+    unit: "dimensionless"
+    val: 0.0072973525643
+
+si_standards:
+
+  SI_c:
+    latex: ""
+    dim: [0, 1, -1, 0]
+    unit: "m/s"
+    val: 299792458
+
+  SI_e:
+    latex: ""
+    dim: [0, 0, 1, 1]
+    unit: "C"
+    val: 1.6021766339999999e-19
+
+  SI_eps_0:
+    latex: ""
+    dim: [-1, -3, 4, 2]
+    unit: "F/m"
+    formula: "1.0 / (SI_mu_0 * SI_c**2)"
+
+  SI_hbar:
+    latex: ""
+    dim: [1, 2, -1, 0]
+    unit: "J*s"
+    val: 1.054571817e-34
+
+  SI_mu_0:
+    latex: ""
+    dim: [1, 1, -2, -2]
+    unit: "N/A^2"
+    val: 1.2566370621199999e-06
+
+twistronics:
+
+  TWIST_T_c_max:
+    latex: ""
+    dim: [0, 0, 0, 0]
+    unit: "K"
+    val: 3.1800000000000002
+
+  TWIST_bps_tunneling_ratio:
+    latex: ""
+    dim: [0, 0, 0, 0]
+    unit: "dimensionless"
+    formula: "sqrt(2.0 / 3.0)"
+    val: 0.81649658092772603
+
+  TWIST_dtheta_dP:
+    latex: ""
+    dim: [0, 0, 0, 0]
+    unit: "deg/GPa"
+    val: 0.12
+
+  TWIST_eta_H:
+    latex: ""
+    dim: [1, 0, -1, 0]
+    unit: "Pa*s*m"
+    formula: "(1.0 / 4.0) * SI_hbar * n_e"
+
+  TWIST_moire_invariant:
+    latex: ""
+    dim: [0, 0, 0, 0]
+    unit: "dimensionless"
+    formula: "(4.0 * pi) / 3.0"
+    val: 4.1887902047863905
+
+  TWIST_theta_m_2:
+    latex: ""
+    dim: [0, 0, 0, 0]
+    unit: "deg"
+    formula: "((3.0 * sqrt(3.0)) / (4.0 * pi)) * ((0.110 * 2.46) / 5.9239) * (180.0 / pi)"
+    val: 1.0822179276841126
+
+  TWIST_theta_m_3:
+    latex: ""
+    dim: [0, 0, 0, 0]
+    unit: "deg"
+    formula: "sqrt(2.0) * TWIST_theta_m_2"
+    val: 1.5305
+
+  TWIST_theta_m_4_minus:
+    latex: ""
+    dim: [0, 0, 0, 0]
+    unit: "deg"
+    formula: "((sqrt(5.0) - 1.0) / 2.0) * TWIST_theta_m_2"
+    val: 0.66879999999999995
+
+  TWIST_theta_m_4_plus:
+    latex: ""
+    dim: [0, 0, 0, 0]
+    unit: "deg"
+    formula: "((1.0 + sqrt(5.0)) / 2.0) * TWIST_theta_m_2"
+    val: 1.7508999999999999
+
