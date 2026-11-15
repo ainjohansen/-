@@ -66,6 +66,9 @@ noncomputable def weinberg_sin2_dressed (p : EWParams) : ℝ :=
 noncomputable def weinberg_cos2_dressed (p : EWParams) : ℝ :=
   (10 / 13 : ℝ) - weinberg_boundary_layer p
 
+theorem rho_dressed_shift_coeff :
+    (2 : ℚ) * ((7 : ℚ) / 2 - (5 : ℚ) / 4) = 9 / 2 := by norm_num
+
 -- ТЕОРЕМА 1: Тригонометрическое сохранение полной вероятности одетого угла
 theorem weinberg_dressed_sum_one (p : EWParams) :
     weinberg_sin2_dressed p + weinberg_cos2_dressed p = 1 := by
